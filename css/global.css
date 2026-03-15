@@ -47,6 +47,13 @@
   --text-3xl:  2.25rem;
   --text-4xl:  3rem;
 
+  /* Line height — use with line-height: var(--line-height-tight); etc. */
+  --line-height-tight:  1.25;   /* headings, labels, single-line emphasis */
+  --line-height-snug:   1.375;  /* subheadings, compact body */
+  --line-height-normal: 1.5;    /* default body text */
+  --line-height-relaxed: 1.6;   /* readable paragraphs, form hints */
+  --line-height-loose:  1.75;   /* long-form, lists, spacious layout */
+
   /* Radius */
   --radius:    12px;
   --radius-lg: 16px;
@@ -1145,7 +1152,7 @@ textarea.form-input {
 .steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
+  gap: 12px;
   margin-top: 32px;
 }
 
@@ -1174,6 +1181,7 @@ textarea.form-input {
 .step__title {
   font-weight: 600;
   font-size: var(--text-base);
+  line-height: var(--line-height-snug);
   color: var(--text-primary);
   margin-bottom: 8px;
 }

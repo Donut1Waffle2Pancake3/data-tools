@@ -7,7 +7,7 @@ const path = require('path');
 
 const root = path.join(__dirname, '..');
 const svgPath = path.join(root, 'assets', 'favicon.svg');
-const outDir = root;
+const outDir = path.join(root, 'assets');
 
 async function main() {
   const sharp = require('sharp');
@@ -43,7 +43,7 @@ async function main() {
     appleTouch
   );
 
-  console.log('Generated: favicon.ico, favicon-16x16.png, favicon-32x32.png, favicon-48x48.png, apple-touch-icon.png');
+  console.log('Generated: assets/favicon.ico, assets/apple-touch-icon.png (+ intermediates in assets/)');
 }
 
 main().catch((err) => {

@@ -7,107 +7,66 @@
   <!-- ============================================================
        SEO
   ============================================================ -->
-  <title>JSON to CSV Converter Online (Free & Private)</title>
-  <meta name="description" content="Convert JSON to CSV instantly in your browser. Free online JSON to CSV converter with paste, upload, copy, and download support. No signup required." />
-  <link rel="canonical" href="https://tinydatatool.com/json-to-csv/" />
+  <title>TSV to CSV Converter Online (Free & Private)</title>
+  <meta name="description" content="Convert TSV to CSV instantly in your browser. Free online TSV to CSV converter—paste tab-separated data or upload a file and get comma-separated CSV. No signup required." />
+  <link rel="canonical" href="https://tinydatatool.com/tsv-to-csv/" />
 
   <meta property="og:type"        content="website" />
-  <meta property="og:title"       content="JSON to CSV Converter Online (Free & Private)" />
-  <meta property="og:description" content="Convert JSON to CSV instantly in your browser. Free online JSON to CSV converter with paste, upload, copy, and download. No signup required." />
-  <meta property="og:url"         content="https://tinydatatool.com/json-to-csv/" />
+  <meta property="og:title"       content="TSV to CSV Converter Online (Free & Private)" />
+  <meta property="og:description" content="Convert TSV to CSV instantly in your browser. Free browser-based TSV to CSV converter with paste, upload, copy, and download. No signup required." />
+  <meta property="og:url"         content="https://tinydatatool.com/tsv-to-csv/" />
   <meta property="og:site_name"   content="TinyTools" />
 
   <meta name="twitter:card"        content="summary" />
-  <meta name="twitter:title"       content="JSON to CSV Converter Online (Free & Private)" />
-  <meta name="twitter:description" content="Convert JSON to CSV instantly in your browser. Free, private, no signup." />
+  <meta name="twitter:title"       content="TSV to CSV Converter Online (Free & Private)" />
+  <meta name="twitter:description" content="Convert TSV to CSV instantly in your browser. Free, private, no signup." />
 
-  <!-- ============================================================
-       JSON-LD
-  ============================================================ -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "JSON to CSV Converter",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Any",
-    "creator": { "@type": "Organization", "name": "TinyTools" },
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "description": "A free browser-based tool to convert JSON to CSV. Paste or upload JSON, download or copy CSV. No upload required.",
-    "url": "https://tinydatatool.com/json-to-csv/"
-  }
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"TSV to CSV Converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","creator":{"@type":"Organization","name":"TinyTools"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"A free browser-based tool to convert TSV to CSV. Paste or upload tab-separated data, download or copy comma-separated output. No upload required.","url":"https://tinydatatool.com/tsv-to-csv/"}
   </script>
 
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="../assets/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
-
-  <!-- ============================================================
-       Global Stylesheet
-  ============================================================ -->
   <link rel="stylesheet" href="../css/global.min.css" />
 </head>
 <body>
 
-  <!-- ============================================================
-       HEADER (injected by js/header.js)
-  ============================================================ -->
-  <div id="site-header-root" data-base="../" data-active="json-to-csv"></div>
+  <div id="site-header-root" data-base="../" data-active="tsv-to-csv"></div>
 
-  <!-- ============================================================
-       MAIN
-  ============================================================ -->
   <main id="main-content">
 
-    <!-- Hero -->
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <span class="hero__eyebrow">Free JSON to CSV Converter</span>
-        <h1 id="hero-heading">JSON to CSV Converter</h1>
-        <p class="hero__sub">Convert JSON data into CSV instantly in your browser. Paste JSON or upload a JSON file and generate clean CSV in seconds. Free, fast, and private.</p>
+        <span class="hero__eyebrow">Free TSV to CSV Converter</span>
+        <h1 id="hero-heading">TSV to CSV Converter</h1>
+        <p class="hero__sub">Convert tab-separated files into CSV instantly in your browser. Paste TSV text or upload a .tsv file and get clean comma-separated output in seconds. Free, fast, and private.</p>
       </div>
     </section>
 
-    <!-- Tool Card -->
-    <section aria-label="JSON to CSV converter" id="tool">
+    <section aria-label="TSV to CSV converter" id="tool">
       <div class="container">
-        <div class="tool-card" role="region" aria-label="JSON to CSV converter">
+        <div class="tool-card" role="region" aria-label="TSV to CSV converter">
 
-          <!-- JSON Input: Paste -->
           <div class="form-group">
             <div class="form-label-row">
-              <label class="form-label" for="jsonInput">Paste JSON or upload a file</label>
+              <label class="form-label" for="tsvInput">Paste TSV or upload a file</label>
               <a href="#" class="clear-link" id="clearLink" role="button">Clear</a>
             </div>
-            <textarea
-              id="jsonInput"
-              class="form-input"
-              placeholder='[{"name":"Alice","age":28},{"name":"Bob","age":35}]'
-              aria-describedby="jsonInputHint"
-              spellcheck="false"
-            ></textarea>
-            <p class="form-hint" id="jsonInputHint">Use a top-level array of objects. Keys become CSV columns.</p>
+            <textarea id="tsvInput" class="form-input" placeholder="name&#9;age&#9;city&#10;Alice&#9;28&#9;New York&#10;Bob&#9;35&#9;Chicago" aria-describedby="tsvInputHint" spellcheck="false"></textarea>
+            <p class="form-hint" id="tsvInputHint">Tab-separated values. One row per line, columns separated by tabs.</p>
           </div>
 
-          <!-- File Upload -->
-          <div
-            class="drop-zone"
-            id="dropZone"
-            role="button"
-            tabindex="0"
-            aria-label="Upload JSON file. Click or drag and drop."
-            aria-describedby="drop-hint"
-          >
+          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload TSV file. Click or drag and drop." aria-describedby="drop-hint">
             <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
             </svg>
-            <p class="drop-zone__label">Or upload a .json file</p>
+            <p class="drop-zone__label">Or upload a .tsv or .txt file</p>
             <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
-            <input type="file" id="fileInput" accept=".json,application/json" aria-label="Select JSON file" />
+            <input type="file" id="fileInput" accept=".tsv,.txt,text/tab-separated-values,text/plain" aria-label="Select TSV file" />
           </div>
 
-          <!-- Convert Button -->
-          <button class="btn-primary" id="convertBtn" type="button" aria-label="Convert JSON to CSV" disabled>
+          <button class="btn-primary" id="convertBtn" type="button" aria-label="Convert to CSV" disabled>
             <span class="spinner" aria-hidden="true"></span>
             Convert to CSV
             <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
@@ -115,7 +74,6 @@
             </svg>
           </button>
 
-          <!-- Error Message -->
           <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
             <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
@@ -124,7 +82,6 @@
             <span id="errorText"></span>
           </div>
 
-          <!-- Output: CSV preview + Copy + Download -->
           <div class="result-section" id="resultSection" aria-live="polite">
             <div class="result-section__heading">
               <p class="result-section__title">CSV output</p>
@@ -132,7 +89,7 @@
             </div>
             <div class="form-group" style="margin-top: 12px;">
               <label class="form-label" for="csvOutput">Preview</label>
-              <textarea id="csvOutput" class="form-input" readonly placeholder="Convert JSON to see CSV here." aria-label="Generated CSV preview" style="min-height: 120px;"></textarea>
+              <textarea id="csvOutput" class="form-input" readonly placeholder="Convert TSV to see CSV here." aria-label="Generated CSV preview" style="min-height: 120px;"></textarea>
             </div>
             <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
               <button class="btn-download" id="copyBtn" type="button" aria-label="Copy CSV to clipboard">
@@ -150,7 +107,6 @@
             </div>
           </div>
 
-          <!-- Privacy Note -->
           <div class="privacy-note" aria-label="Privacy information">
             <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
@@ -163,43 +119,42 @@
       </div>
     </section>
 
-    <!-- How to Convert -->
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
         <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Convert JSON to CSV</h2>
+        <h2 class="section-title" id="how-heading">How to Convert TSV to CSV</h2>
         <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
-            <p class="step__title">Paste your JSON or upload a file</p>
-            <p class="step__desc">Paste JSON data into the input box or upload a .json file using the upload area.</p>
+            <p class="step__title">Paste your TSV data or upload a file</p>
+            <p class="step__desc">Paste tab-separated text into the input box or upload a .tsv or .txt file using the upload area.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Check your format</p>
-            <p class="step__desc">Make sure your JSON is a top-level array of objects. Each object becomes a row; keys become columns.</p>
+            <p class="step__title">Click Convert to CSV</p>
+            <p class="step__desc">Click the convert button to generate comma-separated output from your TSV.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Click Convert to CSV</p>
-            <p class="step__desc">Click the convert button to generate CSV from your JSON.</p>
+            <p class="step__title">Review the CSV output</p>
+            <p class="step__desc">Check the preview to confirm the conversion looks correct.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">4</span>
             <p class="step__title">Copy or download</p>
-            <p class="step__desc">Copy the CSV output to your clipboard or download it as a .csv file.</p>
+            <p class="step__desc">Copy the CSV to your clipboard or download it as a .csv file.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- Why Convert JSON to CSV -->
     <section class="content-section" aria-labelledby="why-heading">
       <div class="container--wide">
         <p class="section-label">Why use this tool</p>
-        <h2 class="section-title" id="why-heading">Why Convert JSON to CSV?</h2>
-        <p class="section-body">JSON is commonly used in APIs and applications, while CSV is widely used in spreadsheets and data analysis. Converting JSON to CSV is useful when you need to:</p>
+        <h2 class="section-title" id="why-heading">Why Convert TSV to CSV?</h2>
+        <p class="section-body">Tab-separated and comma-separated formats are both common for spreadsheet and export data. Many tools and workflows expect CSV, so converting TSV to CSV makes your data compatible with more software.</p>
+        <p class="section-body" style="margin-top: 12px;">Converting TSV to CSV is useful when you need to:</p>
         <div class="benefits">
           <div class="benefit">
             <div class="benefit__icon" aria-hidden="true">
@@ -210,8 +165,8 @@
               </svg>
             </div>
             <div>
-              <p class="benefit__title">Open in Excel or Sheets</p>
-              <p class="benefit__desc">Open structured data in Excel or Google Sheets for viewing and editing.</p>
+              <p class="benefit__title">Import into CSV-only tools</p>
+              <p class="benefit__desc">Use data in applications, databases, or scripts that expect comma-separated format.</p>
             </div>
           </div>
           <div class="benefit">
@@ -222,8 +177,8 @@
               </svg>
             </div>
             <div>
-              <p class="benefit__title">Analyze API data</p>
-              <p class="benefit__desc">Analyze API data in spreadsheets with filters, formulas, and charts.</p>
+              <p class="benefit__title">Share data more widely</p>
+              <p class="benefit__desc">CSV is the default export in many tools; converting TSV to CSV helps others open and use your file.</p>
             </div>
           </div>
           <div class="benefit">
@@ -234,8 +189,8 @@
               </svg>
             </div>
             <div>
-              <p class="benefit__title">Structured records to table</p>
-              <p class="benefit__desc">Convert structured records into a clear table with one row per item.</p>
+              <p class="benefit__title">Match software defaults</p>
+              <p class="benefit__desc">Normalize tab-delimited exports into comma-separated format for systems that assume CSV.</p>
             </div>
           </div>
           <div class="benefit">
@@ -246,20 +201,19 @@
               </svg>
             </div>
             <div>
-              <p class="benefit__title">Universal tabular format</p>
-              <p class="benefit__desc">Export application data into CSV for use in any tool or database.</p>
+              <p class="benefit__title">One format across workflows</p>
+              <p class="benefit__desc">Keep everything in comma-separated form so imports and exports stay consistent.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Private and Secure -->
     <section class="content-section" aria-labelledby="secure-heading">
       <div class="container--wide">
         <p class="section-label">Privacy</p>
         <h2 class="section-title" id="secure-heading">Private and Secure Conversion</h2>
-        <p class="section-body">Your files and pasted data are never uploaded to a server. This JSON to CSV converter runs entirely in your browser using client-side processing.</p>
+        <p class="section-body">Your files and pasted data are never uploaded to a server. This TSV to CSV converter runs entirely in your browser using client-side processing.</p>
         <div class="benefits">
           <div class="benefit">
             <div class="benefit__icon" aria-hidden="true">
@@ -302,92 +256,92 @@
       </div>
     </section>
 
-    <!-- FAQ -->
     <section class="content-section" aria-labelledby="faq-heading">
       <div class="container--wide">
         <p class="section-label">FAQ</p>
         <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
-              <span itemprop="name">What JSON format is supported?</span>
+              <span itemprop="name">What is TSV?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">This tool supports top-level arrays of objects. Each object becomes a row and keys become CSV columns.</span>
+              <span itemprop="text">TSV stands for tab-separated values. It is a plain text format where each column is separated by a tab character instead of a comma.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">Does it support nested JSON?</span>
+              <span itemprop="name">What is CSV?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Nested values are converted into JSON strings inside a CSV cell.</span>
+              <span itemprop="text">CSV stands for comma-separated values. Each column is separated by a comma; values that contain commas or quotes are wrapped in double quotes in the output.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
-              <span itemprop="name">Is this tool free?</span>
+              <span itemprop="name">Why convert TSV to CSV?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. No signup required.</span>
+              <span itemprop="text">Many tools, databases, and APIs expect CSV. Converting TSV to CSV lets you use tab-delimited exports in those systems without changing their configuration.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
-              <span itemprop="name">Are files uploaded anywhere?</span>
+              <span itemprop="name">Will commas be handled correctly?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">No. Everything runs locally in your browser.</span>
+              <span itemprop="text">Yes. Values that contain commas, quotes, or line breaks are wrapped in double quotes in the CSV output, and internal quotes are escaped by doubling them, so the file remains valid.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
-              <span itemprop="name">Can I open the CSV in Excel?</span>
+              <span itemprop="name">Is this tool free?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The output CSV works in Excel, Google Sheets, and other spreadsheet tools.</span>
+              <span itemprop="text">Yes. The TSV to CSV converter is free to use with no signup required.</span>
             </div>
           </div>
-
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">Are my files uploaded anywhere?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. Everything runs locally in your browser.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Can I open the CSV in Excel or Google Sheets?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The generated CSV works in Excel, Google Sheets, and other spreadsheet tools.</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <div id="related-tools-root" data-base="../" data-current="json-to-csv"></div>
+    <div id="related-tools-root" data-base="../" data-current="tsv-to-csv"></div>
 
   </main>
 
-  <!-- ============================================================
-       FOOTER (injected by js/footer.js)
-  ============================================================ -->
   <div id="site-footer-root"></div>
 
-  <!-- ============================================================
-       Global JS (header, footer, nav dropdown, FAQ accordion)
-  ============================================================ -->
   <script src="../js/header.js"></script>
   <script src="../js/footer.js"></script>
   <script src="../js/related-tools.js"></script>
   <script src="../js/global.js"></script>
 
-  <!-- ============================================================
-       JSON to CSV — Tool Logic
-  ============================================================ -->
   <script>
-
     (function () {
-
-      const jsonInput    = document.getElementById('jsonInput');
+      const tsvInput     = document.getElementById('tsvInput');
       const fileInput    = document.getElementById('fileInput');
       const dropZone     = document.getElementById('dropZone');
       const convertBtn   = document.getElementById('convertBtn');
@@ -401,48 +355,58 @@
       const downloadLink = document.getElementById('downloadLink');
 
       let csvBlobUrl = null;
+      let lastUploadFilename = '';
 
-      // ---- Escape a value for CSV (RFC 4180 style) ----
-      function escapeCsvValue(val) {
+      // Parse TSV text into rows of cells (handles quoted fields with tabs/newlines, "" escape)
+      function parseTSV(text) {
+        const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+        if (!normalized) return [];
+        const rows = [];
+        let currentRow = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < normalized.length; i++) {
+          const ch = normalized[i];
+          if (ch === '"') {
+            if (inQuotes && normalized[i + 1] === '"') {
+              current += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (ch === '\t' && !inQuotes) {
+            currentRow.push(current);
+            current = '';
+          } else if (ch === '\n' && !inQuotes) {
+            currentRow.push(current);
+            rows.push(currentRow);
+            currentRow = [];
+            current = '';
+          } else {
+            current += ch;
+          }
+        }
+        currentRow.push(current);
+        rows.push(currentRow);
+        return rows;
+      }
+
+      // Escape a CSV cell: if contains comma, quote, or newline, wrap in quotes and double internal quotes
+      function escapeCsvCell(val) {
         if (val === null || val === undefined) return '';
-        const str = typeof val === 'object' ? JSON.stringify(val) : String(val);
+        const str = String(val);
         if (/[",\r\n]/.test(str)) {
           return '"' + str.replace(/"/g, '""') + '"';
         }
         return str;
       }
 
-      // ---- Get all keys in order: first object's keys, then any extra from others ----
-      function getAllKeys(rows) {
-        const keySet = new Set();
-        const order = [];
-        for (const row of rows) {
-          for (const k of Object.keys(row)) {
-            if (!keySet.has(k)) {
-              keySet.add(k);
-              order.push(k);
-            }
-          }
-        }
-        return order;
-      }
-
-      // ---- Convert array of objects to CSV string ----
-      function jsonToCsv(data) {
-        if (!Array.isArray(data) || data.length === 0) {
-          throw new Error('JSON must be a non-empty array of objects.');
-        }
-        const rows = data.map(item => {
-          if (item !== null && typeof item === 'object' && !Array.isArray(item)) return item;
-          throw new Error('Each array element must be an object.');
-        });
-        const keys = getAllKeys(rows);
-        if (keys.length === 0) throw new Error('Objects must have at least one key.');
-        const headerRow = keys.map(k => escapeCsvValue(k)).join(',');
-        const dataRows = rows.map(row =>
-          keys.map(k => escapeCsvValue(row[k])).join(',')
-        );
-        return [headerRow, ...dataRows].join('\n');
+      function tsvToCsv(tsvText) {
+        const rows = parseTSV(tsvText);
+        if (rows.length === 0) throw new Error('The TSV appears to be empty.');
+        return rows.map(function (cells) {
+          return cells.map(escapeCsvCell).join(',');
+        }).join('\n');
       }
 
       function showError(msg) {
@@ -465,54 +429,44 @@
         downloadLink.style.display = 'none';
       }
 
-      function setProcessing(active) {
-        if (active) {
-          convertBtn.disabled = true;
-          convertBtn.classList.add('spinning');
-          convertBtn.setAttribute('aria-busy', 'true');
-        } else {
-          convertBtn.classList.remove('spinning');
-          convertBtn.removeAttribute('aria-busy');
-          checkReady();
-        }
-      }
-
       function getInputText() {
-        return (jsonInput.value || '').trim();
+        return (tsvInput.value || '').trim();
       }
 
-      // ---- Validate: must be non-empty array of objects with at least one key ----
-      function isInputValidForConvert() {
-        const text = getInputText();
-        if (!text) return false;
-        try {
-          const data = JSON.parse(text);
-          if (!Array.isArray(data) || data.length === 0) return false;
-          for (let i = 0; i < data.length; i++) {
-            const item = data[i];
-            if (item === null || typeof item !== 'object' || Array.isArray(item)) return false;
-          }
-          const keys = getAllKeys(data);
-          return keys.length > 0;
-        } catch (e) {
-          return false;
-        }
-      }
-
-      var validationTimer = null;
-      function checkReady() {
-        convertBtn.disabled = !isInputValidForConvert();
-      }
-
-      function setInputText(text) {
-        jsonInput.value = text;
+      function setInputText(text, filename) {
+        tsvInput.value = text;
+        lastUploadFilename = filename || '';
         clearError();
         clearResult();
-        if (validationTimer) clearTimeout(validationTimer);
-        validationTimer = setTimeout(checkReady, 300);
+        checkReady();
       }
 
-      // ---- File upload ----
+      function isInputValid() {
+        return getInputText().length > 0;
+      }
+
+      function checkReady() {
+        convertBtn.disabled = !isInputValid();
+      }
+
+      function getDownloadFilename() {
+        if (lastUploadFilename) {
+          const base = lastUploadFilename.replace(/\.[^/.]+$/, '');
+          return (base || 'output') + '.csv';
+        }
+        return 'output.csv';
+      }
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        tsvInput.value = '';
+        lastUploadFilename = '';
+        clearError();
+        clearResult();
+        checkReady();
+        tsvInput.focus();
+      });
+
       dropZone.addEventListener('click', function (e) {
         if (e.target !== fileInput) fileInput.click();
       });
@@ -521,9 +475,9 @@
       });
       fileInput.addEventListener('change', function () {
         if (fileInput.files && fileInput.files[0]) {
-          readFileAsText(fileInput.files[0]).then(function (text) {
-            setInputText(text);
-            checkReady();
+          const file = fileInput.files[0];
+          readFileAsText(file).then(function (text) {
+            setInputText(text, file.name);
           }).catch(function (err) {
             showError(err.message || 'Failed to read file.');
           });
@@ -536,74 +490,57 @@
         e.preventDefault();
         dropZone.classList.remove('drag-over');
         const file = e.dataTransfer.files[0];
-        if (file && (file.name.toLowerCase().endsWith('.json') || file.type === 'application/json')) {
+        if (file && (file.name.toLowerCase().endsWith('.tsv') || file.name.toLowerCase().endsWith('.txt') || file.type === 'text/tab-separated-values' || file.type === 'text/plain')) {
           readFileAsText(file).then(function (text) {
-            setInputText(text);
-            checkReady();
+            setInputText(text, file.name);
           }).catch(function (err) {
             showError(err.message || 'Failed to read file.');
           });
         } else if (file) {
-          showError('Please drop a .json file.');
+          showError('Please drop a .tsv or .txt file.');
         }
       });
 
-      // ---- Input: debounced validation for Convert button ----
-      jsonInput.addEventListener('input', function () {
-        if (validationTimer) clearTimeout(validationTimer);
-        validationTimer = setTimeout(checkReady, 300);
-      });
-      jsonInput.addEventListener('paste', function () {
-        setTimeout(function () {
-          if (validationTimer) clearTimeout(validationTimer);
-          validationTimer = setTimeout(checkReady, 300);
-        }, 0);
+      tsvInput.addEventListener('input', function () {
+        lastUploadFilename = '';
+        checkReady();
       });
 
-      // ---- Convert ----
       convertBtn.addEventListener('click', function () {
         clearError();
         clearResult();
-        const text = getInputText();
-        if (!isInputValidForConvert()) return;
-        setProcessing(true);
+        var text = getInputText();
+        if (!text) {
+          showError('Please paste TSV or upload a .tsv or .txt file.');
+          tsvInput.focus();
+          return;
+        }
+        convertBtn.disabled = true;
+        convertBtn.classList.add('spinning');
+        convertBtn.setAttribute('aria-busy', 'true');
         try {
-          const data = JSON.parse(text);
-          const csv = jsonToCsv(data);
+          var csv = tsvToCsv(text);
           resultSection.classList.add('visible');
           csvOutput.value = csv;
-          const lineCount = csv.split(/\r\n|\r|\n/).length;
+          var lineCount = csv.split(/\r\n|\r|\n/).length;
           resultMeta.textContent = lineCount + ' row' + (lineCount !== 1 ? 's' : '') + ' (including header)';
-          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
           if (csvBlobUrl) URL.revokeObjectURL(csvBlobUrl);
           csvBlobUrl = URL.createObjectURL(blob);
           downloadLink.href = csvBlobUrl;
-          downloadLink.download = 'output.csv';
+          downloadLink.download = getDownloadFilename();
           downloadLink.style.display = 'inline-flex';
         } catch (err) {
-          if (err instanceof SyntaxError) {
-            showError('Invalid JSON. Please check your syntax (e.g. quotes, commas, brackets).');
-          } else {
-            showError(err.message || 'Conversion failed.');
-          }
+          showError(err.message || 'Conversion failed. Check that your input is valid TSV.');
         } finally {
-          setProcessing(false);
+          convertBtn.classList.remove('spinning');
+          convertBtn.removeAttribute('aria-busy');
+          checkReady();
         }
       });
 
-      // ---- Clear ----
-      clearLink.addEventListener('click', function (e) {
-        e.preventDefault();
-        jsonInput.value = '';
-        clearError();
-        clearResult();
-        checkReady();
-        jsonInput.focus();
-      });
-
-      // ---- Copy ----
       copyBtn.addEventListener('click', function () {
-        const csv = csvOutput.value;
+        var csv = csvOutput.value;
         if (!csv) return;
         navigator.clipboard.writeText(csv).then(function () {
           copyBtn.textContent = 'Copied!';
@@ -612,9 +549,7 @@
           showError('Copy failed. You can select and copy the preview text manually.');
         });
       });
-
     })();
-
   </script>
 </body>
 </html>

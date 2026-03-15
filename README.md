@@ -30,7 +30,7 @@ npm install
 npm run generate-favicons
 ```
 
-This updates `favicon.ico` and `apple-touch-icon.png` in the project root. Commit the new files if you want the site to use them.
+This updates `assets/favicon.ico` and `assets/apple-touch-icon.png`. Commit the new files if you want the site to use them.
 
 ## Project structure
 

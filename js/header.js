@@ -11,6 +11,7 @@
     { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
     { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON to CSV' },
     { id: 'csv-to-tsv', href: 'csv-to-tsv/index.html', label: 'CSV to TSV' },
+    { id: 'tsv-to-csv', href: 'tsv-to-csv/index.html', label: 'TSV to CSV' },
   ];
 
   function getHeaderHtml(base, active) {

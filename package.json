@@ -2,9 +2,11 @@
   "name": "data-tools",
   "private": true,
   "scripts": {
-    "generate-favicons": "node scripts/generate-favicons.js"
+    "generate-favicons": "node scripts/generate-favicons.js",
+    "build": "cleancss -o css/global.min.css css/global.css"
   },
   "devDependencies": {
+    "clean-css-cli": "^5.6.0",
     "sharp": "^0.33.5",
     "png-to-ico": "^2.1.0"
   }
