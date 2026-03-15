@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "generate-favicons": "node scripts/generate-favicons.js",
-    "build": "cleancss -o css/global.min.css css/global.css"
+    "build": "cleancss -o css/global.min.css css/global.css",
+    "build:vercel": "npm run build && node scripts/rewrite-html-for-prod.js"
   },
   "devDependencies": {
     "clean-css-cli": "^5.6.0",

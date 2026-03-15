@@ -20,7 +20,7 @@
   /* Colors: text */
   --text-primary: #111827;
   --text-secondary: #4b5563;
-  --text-muted: #94a3b8;
+  --text-muted: #767676; /* minimum grey for 4.5:1 on #fff (WCAG AA) */
 
   /* Colors: brand / accent */
   --accent: #2563eb;
@@ -182,7 +182,7 @@ a:hover {
 
 .nav-dropdown__chevron {
   transition: transform var(--transition);
-  color: var(--text-muted);
+  color: inherit;
 }
 
 .nav-dropdown[data-open] .nav-dropdown__chevron {
@@ -448,7 +448,7 @@ body.nav-drawer-open .nav-drawer {
 .home-tools {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
 
 .home-tool-card {
@@ -456,7 +456,7 @@ body.nav-drawer-open .nav-drawer {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 20px;
   text-decoration: none;
   color: inherit;
   transition: border-color var(--transition), box-shadow var(--transition);
@@ -465,12 +465,13 @@ body.nav-drawer-open .nav-drawer {
 .home-tool-card:hover {
   border-color: var(--accent);
   box-shadow: var(--shadow-md);
+  text-decoration: none;
 }
 
 .home-tool-card__label {
   font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--accent);
+  color: var(--text-secondary);
 }
 
 .home-tool-card__desc {
