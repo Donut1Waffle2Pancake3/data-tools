@@ -19,7 +19,7 @@
   function getHeaderHtml(base, active) {
     const baseSlash = base ? base.replace(/\/?$/, '/') : '';
     const homeHref = baseSlash ? baseSlash + 'index.html' : 'index.html';
-    const logoSrc = baseSlash + 'assets/Logo%20PNG%20Compressed.png';
+    const logoSrc = baseSlash + 'assets/Logo%20-%20TinyDataTool.png';
 
     const navItemsHtml = NAV_ITEMS.map(function (item) {
       const isActive = item.id === active;
@@ -40,7 +40,7 @@
       '  <div class="site-header__inner">\n' +
       '\n' +
       '    <a href="' + homeHref + '" aria-label="TinyDataTool home" style="display:flex;align-items:center;line-height:1;flex-shrink:0">\n' +
-      '      <img src="' + logoSrc + '" alt="TinyDataTool" width="87" height="37" />\n' +
+      '      <img class="site-header__logo" src="' + logoSrc + '" alt="TinyDataTool" />\n' +
       '    </a>\n' +
       '\n' +
       '    <span class="site-header__badge">Instant · Free · Private</span>\n' +

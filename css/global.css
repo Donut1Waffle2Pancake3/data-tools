@@ -137,6 +137,13 @@ a:hover {
   position: relative;
 }
 
+.site-header__logo {
+  height: 40px;
+  width: auto;
+  display: block;
+  vertical-align: middle;
+}
+
 .site-header__badge {
   position: absolute;
   left: 50%;
