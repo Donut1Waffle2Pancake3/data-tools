@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tinytools.tools/sitemap.xml
+Sitemap: https://tinydatatool.com/sitemap.xml

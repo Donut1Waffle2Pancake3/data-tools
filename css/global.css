@@ -411,6 +411,15 @@ body.nav-drawer-open .nav-drawer {
   line-height: 1.6;
 }
 
+.hero__404 {
+  font-size: clamp(4rem, 18vw, 7rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
 /* ============================================================
    TOOL CARD
 ============================================================ */

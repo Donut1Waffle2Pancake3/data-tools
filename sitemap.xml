@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://tinytools.tools/</loc>
+    <loc>https://tinydatatool.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://tinytools.tools/split-csv/</loc>
+    <loc>https://tinydatatool.com/split-csv/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tinytools.tools/merge-csv/</loc>
+    <loc>https://tinydatatool.com/merge-csv/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tinytools.tools/json-to-csv/</loc>
+    <loc>https://tinydatatool.com/json-to-csv/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tinytools.tools/csv-to-tsv/</loc>
+    <loc>https://tinydatatool.com/csv-to-tsv/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
