@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       SEO
+  ============================================================ -->
+  <title>Merge CSV Files Online — Free CSV Merger | TinyTools</title>
+  <meta name="description" content="Merge multiple CSV files into one instantly in your browser. Free, private, and fast — no uploads required. Combine, join, or concatenate CSV files with TinyTools." />
+  <link rel="canonical" href="https://tinytools.tools/merge-csv/" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Merge CSV Files Online — Free CSV Merger | TinyTools" />
+  <meta property="og:description" content="Merge multiple CSV files into one instantly in your browser. Free, private, and fast — no uploads required." />
+  <meta property="og:url"         content="https://tinytools.tools/merge-csv/" />
+  <meta property="og:site_name"   content="TinyTools" />
+
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="Merge CSV Files Online — Free CSV Merger | TinyTools" />
+  <meta name="twitter:description" content="Merge multiple CSV files into one instantly in your browser. Free, private, and fast — no uploads required." />
+
+  <!-- ============================================================
+       JSON-LD
+  ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Merge CSV Tool",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "creator": { "@type": "Organization", "name": "TinyTools" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "description": "A free browser-based tool to merge multiple CSV files into one. No upload required — all processing happens locally.",
+    "url": "https://tinytools.tools/merge-csv/"
+  }
+  </script>
+
+  <!-- ============================================================
+       Global Stylesheet
+  ============================================================ -->
+  <link rel="stylesheet" href="../css/global.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       HEADER (injected by js/header.js)
+  ============================================================ -->
+  <div id="site-header-root" data-base="../" data-active="merge-csv"></div>
+
+  <!-- ============================================================
+       MAIN
+  ============================================================ -->
+  <main id="main-content">
+
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <span class="hero__eyebrow">CSV Merger Tool</span>
+        <h1 id="hero-heading">Merge CSV Files<br>Into One</h1>
+        <p class="hero__sub">Upload multiple CSV files and combine them into a single file — instantly, in your browser.</p>
+      </div>
+    </section>
+
+    <!-- Tool Card -->
+    <section aria-label="CSV merge tool" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="CSV merger">
+
+          <!-- Drop Zone -->
+          <div
+            class="drop-zone"
+            id="dropZone"
+            role="button"
+            tabindex="0"
+            aria-label="Upload CSV files. Click or drag and drop."
+            aria-describedby="drop-hint"
+          >
+            <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+            </svg>
+            <p class="drop-zone__label">Upload CSV files or drag and drop them here</p>
+            <p class="drop-zone__hint" id="drop-hint">Select two or more CSV files · Processed entirely in your browser</p>
+            <input type="file" id="fileInput" accept=".csv,text/csv" multiple aria-label="Select CSV files" />
+          </div>
+
+          <!-- Selected File List -->
+          <div class="file-list" id="fileList" aria-live="polite" aria-label="Selected files">
+            <div class="file-list__header">
+              <span class="file-list__label">Selected files</span>
+              <div class="file-list__header-right">
+                <button type="button" class="file-list__remove-all" id="removeAllBtn">Remove All</button>
+                <span class="file-list__count" id="fileCount"></span>
+              </div>
+            </div>
+            <div class="file-list__items" id="fileListItems"></div>
+          </div>
+
+          <!-- Merge Button -->
+          <button class="btn-primary" id="mergeBtn" type="button" aria-label="Merge CSV files" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            Merge Files
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+              <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
+            </svg>
+          </button>
+
+          <!-- Error Message -->
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <!-- Result: Download -->
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Your merged file</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="result-download">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex-shrink:0;color:var(--accent)">
+                <rect x="1" y="1" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.3"/>
+                <path d="M4 6h8M4 9h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+              </svg>
+              <span class="result-download__filename" id="resultFilename"></span>
+              <span class="result-download__meta" id="resultRowCount"></span>
+              <a
+                class="btn-download"
+                id="downloadLink"
+                href="#"
+                download="merged.csv"
+                aria-label="Download merged CSV file"
+              >
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                  <path d="M6.5 1.5v7M3.5 6l3 3 3-3M1.5 11.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Download
+              </a>
+            </div>
+          </div>
+
+          <!-- Privacy Note -->
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Files are processed entirely in your browser and are never uploaded to any server.
+          </div>
+
+        </div><!-- /.tool-card -->
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" id="how-heading">Merge CSV files in three steps</h2>
+        <p class="section-body">Everything runs in your browser. No account, no software, no files leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Upload your files</p>
+            <p class="step__desc">Select two or more CSV files using the upload area, or drag and drop them in.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Review your selection</p>
+            <p class="step__desc">Remove any files you don't need. The tool checks that all headers match before merging.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Download the result</p>
+            <p class="step__desc">Click Merge Files and download your combined CSV — one header row, all data rows.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Use This Tool -->
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Fast, private, and simple by design</h2>
+        <p class="section-body">Most online CSV tools are cluttered with ads, require sign-ups, or upload your data to a server. This one doesn't.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">100% Private</p>
+              <p class="benefit__desc">Your data never leaves your browser. No uploads, no cloud storage, no logs.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Instant Results</p>
+              <p class="benefit__desc">Processing happens locally at full browser speed. Even large files merge in seconds.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 9h6M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Single Header Row</p>
+              <p class="benefit__desc">Headers from the first file are kept once. Duplicate headers from other files are removed automatically.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <circle cx="12.5" cy="5.5" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Completely Free</p>
+              <p class="benefit__desc">No account required. No file size limits enforced by a paywall. Just the tool.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">How do I merge CSV files into one file?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Upload two or more CSV files using the tool above. Once your files are selected, click "Merge Files." The tool combines all the data rows into a single CSV, preserving just one header row, and gives you a download link for the result.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Is this CSV merger free to use?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes, completely free. No account, no subscription, no file size paywall. The tool runs entirely in your browser, which is why there are no server costs to pass on.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Are my files uploaded to a server?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. All processing is handled locally in your browser using the Web File API. Nothing is sent to any server, and there are no logs of your files or their contents. This makes the tool safe for sensitive or confidential data.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">What happens if my CSV headers don't match?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The tool compares the header row of every file before merging. If any file has different column names or a different column order, it will show a clear error message telling you which file doesn't match. All headers must be identical for the merge to proceed.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">Does this work on large CSV files?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The tool processes files in-browser and handles most typical CSV sizes well. Very large files may take a moment depending on your device, but there is no server-side size limit. Performance depends on the total combined size of your input files.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What will the merged file be named?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The output file is named based on how many files you merged. For example, merging three files produces <code>merged-3-files.csv</code>. You can rename the file after downloading it.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER (injected by js/footer.js)
+  ============================================================ -->
+  <div id="site-footer-root"></div>
+
+  <!-- ============================================================
+       Global JS (header, footer, nav dropdown, FAQ accordion)
+  ============================================================ -->
+  <script src="../js/header.js"></script>
+  <script src="../js/footer.js"></script>
+  <script src="../js/global.js"></script>
+
+  <!-- ============================================================
+       Merge CSV — Tool Logic
+  ============================================================ -->
+  <script>
+
+    // ============================================================
+    // ANALYTICS HOOKS
+    // ============================================================
+    const Analytics = {
+      filesSelected:    (count)            => { /* HOOK: files selected */ },
+      fileRemoved:      (filename)         => { /* HOOK: file removed */ },
+      mergeStarted:     (count)            => { /* HOOK: merge started */ },
+      mergeCompleted:   (count, rowCount)  => { /* HOOK: merge completed */ },
+      downloadClicked:  (filename)         => { /* HOOK: download clicked */ },
+    };
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    let selectedFiles = []; // array of File objects
+    let mergeDone     = false; // true after successful merge; reset on file change
+
+    // ============================================================
+    // DOM REFERENCES
+    // ============================================================
+    const dropZone       = document.getElementById('dropZone');
+    const fileInput      = document.getElementById('fileInput');
+    const fileList       = document.getElementById('fileList');
+    const fileListItems  = document.getElementById('fileListItems');
+    const fileCount      = document.getElementById('fileCount');
+    const removeAllBtn   = document.getElementById('removeAllBtn');
+    const mergeBtn       = document.getElementById('mergeBtn');
+    const errorMsg       = document.getElementById('errorMsg');
+    const errorText      = document.getElementById('errorText');
+    const resultSection  = document.getElementById('resultSection');
+    const resultMeta     = document.getElementById('resultMeta');
+    const resultFilename = document.getElementById('resultFilename');
+    const resultRowCount = document.getElementById('resultRowCount');
+    const downloadLink   = document.getElementById('downloadLink');
+
+    // ============================================================
+    // FILE SELECTION
+    // ============================================================
+    dropZone.addEventListener('click', (e) => {
+      if (e.target !== fileInput) fileInput.click();
+    });
+
+    dropZone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        addFiles(Array.from(fileInput.files));
+        fileInput.value = '';
+      }
+    });
+
+    dropZone.addEventListener('dragover',  (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', ()  => { dropZone.classList.remove('drag-over'); });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const files = Array.from(e.dataTransfer.files).filter(
+        f => f.name.toLowerCase().endsWith('.csv') || f.type === 'text/csv'
+      );
+      if (files.length > 0) addFiles(files);
+    });
+
+    function addFiles(incoming) {
+      // Deduplicate by name + size
+      const existing = new Set(selectedFiles.map(f => f.name + f.size));
+      const newFiles  = incoming.filter(f => {
+        if (!f.name.toLowerCase().endsWith('.csv') && f.type !== 'text/csv') return false;
+        return !existing.has(f.name + f.size);
+      });
+      if (newFiles.length === 0) return;
+
+      selectedFiles = [...selectedFiles, ...newFiles];
+      mergeDone     = false;
+      clearError();
+      clearResult();
+      renderFileList();
+      checkReady();
+      Analytics.filesSelected(selectedFiles.length);
+    }
+
+    function removeFile(index) {
+      const removed = selectedFiles[index];
+      selectedFiles.splice(index, 1);
+      mergeDone = false;
+      clearError();
+      clearResult();
+      renderFileList();
+      checkReady();
+      Analytics.fileRemoved(removed.name);
+    }
+
+    function removeAllFiles() {
+      if (selectedFiles.length === 0) return;
+      selectedFiles = [];
+      fileInput.value = '';
+      mergeDone = false;
+      clearError();
+      clearResult();
+      renderFileList();
+      checkReady();
+    }
+
+    if (removeAllBtn) removeAllBtn.addEventListener('click', removeAllFiles);
+
+    function renderFileList() {
+      if (selectedFiles.length === 0) {
+        fileList.classList.remove('visible');
+        fileListItems.innerHTML = '';
+        return;
+      }
+
+      fileList.classList.add('visible');
+      fileCount.textContent = `${selectedFiles.length} file${selectedFiles.length !== 1 ? 's' : ''}`;
+      fileListItems.innerHTML = '';
+
+      selectedFiles.forEach((file, idx) => {
+        const item = document.createElement('div');
+        item.className = 'file-list__item';
+        item.style.animationDelay = `${idx * 30}ms`;
+        item.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex-shrink:0;color:var(--accent)">
+            <rect x="1" y="1" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M4 6h8M4 9h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          <span class="file-list__item-name">${escapeHtml(file.name)}</span>
+          <span class="file-list__item-size">${formatFileSize(file.size)}</span>
+          <button class="btn-remove-file" aria-label="Remove ${escapeHtml(file.name)}" data-index="${idx}">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M14.793 6.27L11.043 10.02L14.762 13.738C15.074 14.02 15.074 14.488 14.762 14.77C14.48 15.082 14.012 15.082 13.73 14.77L9.98 11.05L6.262 14.77C5.98 15.082 5.512 15.082 5.23 14.77C4.918 14.488 4.918 14.02 5.23 13.707L8.949 9.988L5.23 6.27C4.918 5.988 4.918 5.52 5.23 5.207C5.512 4.926 5.98 4.926 6.293 5.207L10.012 8.957L13.73 5.238C14.012 4.926 14.48 4.926 14.793 5.238C15.074 5.52 15.074 5.988 14.793 6.27Z" fill="currentColor"/>
+            </svg>
+          </button>
+        `;
+        item.querySelector('.btn-remove-file').addEventListener('click', () => removeFile(idx));
+        fileListItems.appendChild(item);
+      });
+    }
+
+    // ============================================================
+    // READY STATE
+    // ============================================================
+    function checkReady() {
+      mergeBtn.disabled = selectedFiles.length < 2 || mergeDone;
+    }
+
+    // ============================================================
+    // MERGE LOGIC
+    // ============================================================
+    mergeBtn.addEventListener('click', async () => {
+      clearError();
+      clearResult();
+
+      if (selectedFiles.length < 2) {
+        showError('Please select at least two CSV files to merge.');
+        return;
+      }
+
+      setProcessing(true);
+      Analytics.mergeStarted(selectedFiles.length);
+
+      try {
+        const parsed = [];
+
+        for (const file of selectedFiles) {
+          const text  = await readFileAsText(file);
+          const lines = parseCSVLines(text);
+          if (lines.length === 0) throw new Error(`"${file.name}" appears to be empty.`);
+          parsed.push({ name: file.name, header: lines[0], rows: lines.slice(1) });
+        }
+
+        // Validate header consistency
+        const refHeader = parsed[0].header;
+        for (let i = 1; i < parsed.length; i++) {
+          if (parsed[i].header !== refHeader) {
+            throw new Error(
+              `Header mismatch: "${parsed[i].name}" has different columns than "${parsed[0].name}". All files must have identical headers to merge.`
+            );
+          }
+        }
+
+        // Combine data rows
+        const allRows = parsed.flatMap(p => p.rows.filter(r => r.trim() !== ''));
+
+        if (allRows.length === 0) {
+          throw new Error('All selected files are empty or contain only header rows — there is no data to merge.');
+        }
+
+        const mergedContent = [refHeader, ...allRows].join('\n');
+        const blob          = new Blob([mergedContent], { type: 'text/csv;charset=utf-8;' });
+        const url           = URL.createObjectURL(blob);
+        const filename      = `merged-${selectedFiles.length}-files.csv`;
+
+        downloadLink.href     = url;
+        downloadLink.download = filename;
+        downloadLink.addEventListener('click', () => Analytics.downloadClicked(filename), { once: true });
+
+        resultFilename.textContent = filename;
+        resultRowCount.textContent = `${allRows.length.toLocaleString()} row${allRows.length !== 1 ? 's' : ''}`;
+        resultMeta.textContent     = `${selectedFiles.length} files merged, ${allRows.length.toLocaleString()} total data rows`;
+        resultSection.classList.add('visible');
+
+        mergeDone = true;
+        Analytics.mergeCompleted(selectedFiles.length, allRows.length);
+
+      } catch (err) {
+        showError(err.message || 'Something went wrong. Please check your files and try again.');
+      } finally {
+        setProcessing(false);
+      }
+    });
+
+    // ============================================================
+    // UI HELPERS
+    // ============================================================
+    function setProcessing(active) {
+      if (active) {
+        mergeBtn.disabled = true;
+        mergeBtn.classList.add('spinning');
+        mergeBtn.setAttribute('aria-busy', 'true');
+      } else {
+        mergeBtn.classList.remove('spinning');
+        mergeBtn.removeAttribute('aria-busy');
+        checkReady();
+      }
+    }
+
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorMsg.classList.add('visible');
+    }
+
+    function clearError() {
+      errorMsg.classList.remove('visible');
+    }
+
+    function clearResult() {
+      resultSection.classList.remove('visible');
+      if (downloadLink.href && downloadLink.href !== location.href) {
+        URL.revokeObjectURL(downloadLink.href);
+        downloadLink.href = '#';
+      }
+    }
+
+  </script>
+</body>
+</html>

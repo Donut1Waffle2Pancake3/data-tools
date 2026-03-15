@@ -1,0 +1,1147 @@
+/* ============================================================
+   TinyTools — Global Stylesheet
+   Shared across all tool pages.
+============================================================ */
+
+/* ============================================================
+   DESIGN SYSTEM — CSS Variables
+============================================================ */
+:root {
+  /* Colors: surfaces */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-secondary: #f8f8f8;
+
+  /* Colors: borders */
+  --border: #e6eaf0;
+  --border-strong: #bbbbbb;
+  --border-focus: #2563eb;
+
+  /* Colors: text */
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #94a3b8;
+
+  /* Colors: brand / accent */
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  --accent-hover: #1d4ed8;
+
+  /* Colors: status */
+  --success: #15803d;
+  --success-bg: #f0fdf4;
+  --error: #b42318;
+  --error-bg: #fef3f2;
+
+  /* Typography */
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Type scale */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.125rem;
+  --text-lg:   1.25rem;
+  --text-xl:   1.5rem;
+  --text-2xl:  1.875rem;
+  --text-3xl:  2.25rem;
+  --text-4xl:  3rem;
+
+  /* Radius */
+  --radius:    12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.04);
+
+  /* Motion */
+  --transition: 0.1s ease;
+}
+
+/* ============================================================
+   RESET & BASE
+============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   LAYOUT CONTAINERS
+============================================================ */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.container--wide {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============================================================
+   HEADER & GLOBAL NAV
+============================================================ */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 16px 0;
+  position: relative;
+  z-index: 100;
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  gap: 24px;
+  position: relative;
+}
+
+.site-header__badge {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* ---- Nav (far right) ---- */
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.nav-dropdown__trigger:hover,
+.nav-dropdown__trigger:focus-visible,
+.nav-dropdown[data-open] .nav-dropdown__trigger {
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.nav-dropdown__chevron {
+  transition: transform var(--transition);
+  color: var(--text-muted);
+}
+
+.nav-dropdown[data-open] .nav-dropdown__chevron {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown__menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  min-width: 210px;
+  padding: 6px;
+  z-index: 200;
+}
+
+.nav-dropdown[data-open] .nav-dropdown__menu {
+  display: block;
+}
+
+.nav-dropdown__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  transition: background var(--transition), color var(--transition);
+  text-decoration: none;
+}
+
+.nav-dropdown__item:hover {
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.nav-dropdown__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* Active page indicator */
+.nav-dropdown__item--active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.nav-dropdown__item--active::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   HERO
+============================================================ */
+.hero {
+  padding: 64px 0 48px;
+  text-align: center;
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: normal;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.hero__sub {
+  font-size: var(--text-md);
+  color: var(--text-secondary);
+  max-width: 480px;
+  margin: 0 auto 8px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   TOOL CARD
+============================================================ */
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: 40px;
+  margin-bottom: 16px;
+}
+
+/* ============================================================
+   HOME PAGE — TOOL CARDS
+============================================================ */
+.home-tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.home-tool-card {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.home-tool-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.home-tool-card__label {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.home-tool-card__desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   DROP ZONE
+============================================================ */
+.drop-zone {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  position: relative;
+  background: var(--surface-secondary);
+}
+
+.drop-zone:hover,
+.drop-zone:focus-within {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.upload-icon {
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.drop-zone__label {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.drop-zone__hint {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* Hidden file input sits over the entire drop zone */
+.drop-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* ============================================================
+   FILE SELECTED INFO (single-file tools, e.g. Split CSV)
+============================================================ */
+.file-selected-info {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--success-bg);
+  border: 1px solid #c3dfc5;
+  border-radius: var(--radius);
+  margin-top: 16px;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.file-selected-info.visible {
+  display: flex;
+}
+
+.file-selected-info__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-selected-info__size {
+  flex-shrink: 0;
+  font-weight: 400;
+}
+
+/* ============================================================
+   FILE LIST (multi-file tools, e.g. Merge CSV)
+============================================================ */
+.file-list {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.file-list.visible {
+  display: flex;
+}
+
+.file-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.file-list__header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.file-list__remove-all {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: var(--text-xs);
+  font-family: var(--font-body);
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.file-list__remove-all:hover {
+  color: var(--accent-hover);
+}
+
+.file-list__label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.file-list__count {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.file-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.file-list__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  animation: slideIn 0.15s ease both;
+}
+
+.file-list__item-name {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-list__item-size {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   REMOVE / CLEAR FILE BUTTONS
+============================================================ */
+.btn-clear-file,
+.btn-remove-file {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: color var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-clear-file:hover,
+.btn-remove-file:hover {
+  color: var(--error);
+}
+
+/* ============================================================
+   FORM FIELDS
+============================================================ */
+.form-group {
+  margin-top: 24px;
+}
+
+.form-label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.form-label .form-hint {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  font-size: var(--text-base);
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.form-input:hover {
+  border-color: var(--border-strong);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: var(--surface);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   PRIMARY BUTTON
+============================================================ */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 14px 24px;
+  font-size: var(--text-base);
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:disabled {
+  background: #c5c9d0;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   SPINNER / PROCESSING STATE
+============================================================ */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+
+.spinning .spinner  { display: block; }
+.spinning .btn-icon { display: none; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   STATUS MESSAGES
+============================================================ */
+.status-message {
+  display: none;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  margin-top: 16px;
+  line-height: 1.5;
+}
+
+.status-message.visible {
+  display: flex;
+}
+
+.status-message--error {
+  background: var(--error-bg);
+  border: 1px solid #f4c0c8;
+  color: var(--error);
+}
+
+.status-message__icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ============================================================
+   RESULTS SECTION (Split CSV — multiple output files)
+============================================================ */
+.results-section {
+  display: none;
+  margin-top: 24px;
+}
+
+.results-section.visible {
+  display: block;
+}
+
+.results-section__heading {
+  margin-bottom: 16px;
+}
+
+.results-section__title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.results-section__meta {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   RESULT SECTION (Merge CSV — single output file)
+============================================================ */
+.result-section {
+  display: none;
+  margin-top: 24px;
+}
+
+.result-section.visible {
+  display: block;
+}
+
+.result-section__heading {
+  margin-bottom: 16px;
+}
+
+.result-section__title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.result-section__meta {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.result-download {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  animation: slideIn 0.2s ease both;
+}
+
+.result-download__filename {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result-download__meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   DOWNLOAD LIST (Split CSV — list of part files)
+============================================================ */
+.download-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.download-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--transition), background var(--transition);
+  animation: slideIn 0.2s ease both;
+}
+
+.download-item:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.download-item__filename {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.download-item__meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   DOWNLOAD BUTTONS
+============================================================ */
+
+/* Inline download button (used in download list items) */
+.download-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--accent);
+  padding: 5px 10px;
+  border: 1.5px solid var(--accent);
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+  text-decoration: none;
+}
+
+.download-link:hover {
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* "Download All Files" button (Split CSV) */
+.btn-download-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 12px 20px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.btn-download-all:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Single "Download" button (Merge CSV) */
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.btn-download:hover {
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ============================================================
+   PRIVACY NOTE
+============================================================ */
+.privacy-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 20px;
+}
+
+.privacy-note svg {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  width: 16px;
+  height: 16px;
+}
+
+/* ============================================================
+   CONTENT SECTIONS
+============================================================ */
+.content-section {
+  padding: 56px 0;
+}
+
+.content-section + .content-section {
+  border-top: 1px solid var(--border);
+  padding-top: 52px;
+}
+
+.content-section--centered {
+  text-align: center;
+}
+
+.content-section--centered .section-body {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: normal;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.section-body {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  max-width: 580px;
+  line-height: 1.7;
+}
+
+/* ============================================================
+   STEPS
+============================================================ */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.step__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+  border-radius: 50%;
+  font-size: var(--text-base);
+  font-weight: 500;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+}
+
+.step__title {
+  font-weight: 600;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.step__desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   BENEFITS
+============================================================ */
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.benefit {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.benefit__icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: var(--accent-light);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+.benefit__title {
+  font-weight: 600;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.benefit__desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   FAQ
+============================================================ */
+.faq-list {
+  margin-top: 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: none;
+  padding: 16px 20px;
+  font-size: var(--text-base);
+  font-weight: 400;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: background var(--transition), color var(--transition);
+}
+
+.faq-question:hover,
+.faq-question[aria-expanded="true"] {
+  background: var(--surface-secondary);
+}
+
+.faq-chevron {
+  flex-shrink: 0;
+  transition: transform var(--transition);
+  color: var(--text-primary);
+}
+
+.faq-question[aria-expanded="true"] .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  display: none;
+  padding: 0 20px 16px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.7;
+  background: var(--surface-secondary);
+}
+
+.faq-answer.open {
+  display: block;
+}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  padding: 20px 0;
+  margin-top: 56px;
+}
+
+.site-footer__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.site-footer__copy {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.site-footer__note {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ============================================================
+   UTILITY
+============================================================ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================================
+   ANIMATIONS
+============================================================ */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 600px) {
+  .tool-card { padding: 28px 20px; }
+}
+
+@media (max-width: 500px) {
+  .hero         { padding: 40px 0 32px; }
+  .steps        { grid-template-columns: 1fr; }
+  .benefits     { grid-template-columns: 1fr; }
+  .site-header__badge { display: none; }
+}
