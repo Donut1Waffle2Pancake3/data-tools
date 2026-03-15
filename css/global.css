@@ -21,6 +21,7 @@
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --text-muted: #767676; /* minimum grey for 4.5:1 on #fff (WCAG AA) */
+  --text-muted-on-surface: #575757; /* for hint text on grey (e.g. drop zone) — 4.5:1 on #f8f8f8 */
 
   /* Colors: brand / accent */
   --accent: #2563eb;
@@ -610,7 +611,7 @@ body.nav-drawer-open .nav-drawer {
 
 .drop-zone__hint {
   font-size: var(--text-sm);
-  color: var(--text-muted);
+  color: var(--text-muted-on-surface);
 }
 
 /* Hidden file input sits over the entire drop zone */

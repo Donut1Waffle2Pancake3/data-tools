@@ -170,24 +170,42 @@ const NAV_GROUPS = [
 })();
 
 /* ============================================================
-   TinyDataTool — Related tools section (CSV / data tools)
+   TinyDataTool — Related tools section
    Injects the Related tools block into #related-tools-root.
-   Set data-base (e.g. "../") and data-current (e.g. "csv-to-tsv")
-   so the current tool can be excluded from the list.
+   Shows only tools from the same nav group as the current page
+   (e.g. on CSV Sorter, shows other CSV tools only).
+   Set data-base (e.g. "../") and data-current (e.g. "csv-sorter").
 ============================================================ */
 
 (function () {
-  const INTRO = 'Need help with other file conversion tasks? Try these tools.';
+  const INTRO = 'More tools in this category.';
 
   function getRelatedToolsHtml(base, currentId) {
     const baseSlash = base ? base.replace(/\/?$/, '/') : '';
-    const flatItems = NAV_GROUPS.reduce(function (acc, g) { return acc.concat(g.items); }, []);
-    const links = flatItems
-      .filter(function (item) { return item.id !== currentId; })
-      .map(function (item) {
-        return '<a href="' + baseSlash + item.href + '" class="btn-secondary">' + item.label + '</a>';
-      })
-      .join('\n          ');
+    var relatedItems = [];
+    for (var g = 0; g < NAV_GROUPS.length; g++) {
+      var group = NAV_GROUPS[g];
+      var inGroup = group.items.some(function (item) { return item.id === currentId; });
+      if (inGroup) {
+        relatedItems = group.items.filter(function (item) { return item.id !== currentId; });
+        break;
+      }
+    }
+    if (relatedItems.length === 0) {
+      return '<section class="content-section" aria-labelledby="related-heading">\n' +
+        '  <div class="container--wide">\n' +
+        '    <p class="section-label">More tools</p>\n' +
+        '    <h2 class="section-title" id="related-heading">Related tools</h2>\n' +
+        '    <p class="section-body">' + INTRO + '</p>\n' +
+        '    <div class="related-tools-list">\n' +
+        '      <a href="' + baseSlash + 'tools/index.html" class="btn-secondary">Browse all tools</a>\n' +
+        '    </div>\n' +
+        '  </div>\n' +
+        '</section>';
+    }
+    var links = relatedItems.map(function (item) {
+      return '<a href="' + baseSlash + item.href + '" class="btn-secondary">' + item.label + '</a>';
+    }).join('\n          ');
 
     return (
       '<section class="content-section" aria-labelledby="related-heading">\n' +
