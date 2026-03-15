@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       SEO
+  ============================================================ -->
+  <title>CSV Sorter Online (Free &amp; Private) – Sort CSV by Column</title>
+  <meta name="description" content="Sort CSV files online in your browser. Upload a CSV or paste data, choose a column and sort order, then copy or download the sorted result. Fast, free, and private." />
+  <link rel="canonical" href="https://tinydatatool.com/csv-sorter/" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="CSV Sorter Online (Free & Private)" />
+  <meta property="og:description" content="Sort CSV online in your browser. Paste or upload CSV, choose column and order, download sorted CSV. No signup required." />
+  <meta property="og:url"         content="https://tinydatatool.com/csv-sorter/" />
+  <meta property="og:site_name"   content="TinyTools" />
+
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="CSV Sorter Online (Free & Private)" />
+  <meta name="twitter:description" content="Sort CSV in your browser. Free, private, no signup." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CSV Sorter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","creator":{"@type":"Organization","name":"TinyTools"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"A free browser-based tool to sort CSV files by column. Paste or upload CSV, choose column and sort order, download sorted CSV. No upload required.","url":"https://tinydatatool.com/csv-sorter/"}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .sort-options { display: flex; flex-direction: column; gap: 20px; }
+    .sort-options.is-hidden { display: none; }
+    .sort-options__section { display: flex; flex-direction: column; gap: 6px; }
+    .sort-options__section-label { display: block; font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin: 0; }
+    .sort-options__row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+    .sort-options__select { min-width: 120px; max-width: 200px; padding: 6px 8px; font-size: var(--text-sm); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface) no-repeat right 8px center; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10' fill='none'%3E%3Cpath d='M2.5 4l2.5 2.5 2.5-2.5' stroke='%23767676' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-size: 10px; color: var(--text-primary); appearance: none; padding-right: 26px; }
+    .sort-options__select:focus { outline: none; border-color: var(--border-focus); }
+    .sort-options__radio-group { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+    .sort-options__radio { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
+    .sort-options__radio input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+    .sort-options__checkbox { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
+    .sort-options__checkbox input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+    .sort-options fieldset { border: none; margin: 0; padding: 0; min-width: 0; }
+    @media (max-width: 480px) {
+      .sort-options__row { gap: 6px 12px; }
+      .sort-options__select { min-width: 100px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="csv-sorter"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <span class="hero__eyebrow">Free CSV Sorter</span>
+        <h1 id="hero-heading">CSV Sorter</h1>
+        <p class="hero__sub">Sort CSV files online in your browser. Upload a CSV or paste data, choose a column and sort order, then copy or download the sorted result. Fast, free, and private.</p>
+      </div>
+    </section>
+
+    <section aria-label="CSV sorter" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="CSV sorter">
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="csvInput">Paste CSV or upload a file</label>
+              <a href="#" class="clear-link" id="clearLink" role="button">Clear</a>
+            </div>
+            <textarea id="csvInput" class="form-input" placeholder="name,email,phone&#10;value,value,value&#10;value,value,value" aria-describedby="csvInputHint" spellcheck="false"></textarea>
+            <p class="form-hint" id="csvInputHint">Paste CSV data with a header row, or upload a .csv or .txt file to sort by column.</p>
+          </div>
+
+          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
+            <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+            </svg>
+            <p class="drop-zone__label">Or upload a .csv or .txt file</p>
+            <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+            <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
+          </div>
+
+          <div class="sort-options is-hidden" id="sortOptions">
+            <div class="sort-options__section">
+              <p class="sort-options__section-label" id="sort-header-label">Header</p>
+              <div class="sort-options__row">
+                <label class="sort-options__checkbox" for="hasHeaderCheckbox">
+                  <input type="checkbox" id="hasHeaderCheckbox" checked />
+                  <span>First row is a header</span>
+                </label>
+              </div>
+            </div>
+            <div class="sort-options__section">
+              <p class="sort-options__section-label" id="sort-sort-label">Sort</p>
+              <div class="sort-options__row">
+                <select id="sortColumnSelect" class="sort-options__select" aria-labelledby="sort-sort-label">
+                  <option value="0">Column 1</option>
+                </select>
+                <fieldset class="sort-options__radio-group" aria-label="Sort order">
+                  <label class="sort-options__radio">
+                    <input type="radio" name="sortOrder" id="orderAsc" value="asc" checked />
+                    <span>Asc</span>
+                  </label>
+                  <label class="sort-options__radio">
+                    <input type="radio" name="sortOrder" id="orderDesc" value="desc" />
+                    <span>Desc</span>
+                  </label>
+                </fieldset>
+              </div>
+            </div>
+            <div class="sort-options__section" role="group" aria-labelledby="sort-type-label">
+              <p class="sort-options__section-label" id="sort-type-label">Type</p>
+              <div class="sort-options__row">
+                <div class="sort-options__radio-group">
+                  <label class="sort-options__radio">
+                    <input type="radio" name="valueType" id="typeAuto" value="auto" checked />
+                    <span>Auto</span>
+                  </label>
+                  <label class="sort-options__radio">
+                    <input type="radio" name="valueType" id="typeText" value="text" />
+                    <span>Text</span>
+                  </label>
+                  <label class="sort-options__radio">
+                    <input type="radio" name="valueType" id="typeNumber" value="number" />
+                    <span>Number</span>
+                  </label>
+                  <label class="sort-options__radio">
+                    <input type="radio" name="valueType" id="typeDate" value="date" />
+                    <span>Date</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="sort-options__section">
+              <p class="sort-options__section-label" id="sort-options-label">Options</p>
+              <div class="sort-options__row">
+                <label class="sort-options__checkbox">
+                  <input type="checkbox" id="caseInsensitiveCheckbox" />
+                  <span>Case-insensitive</span>
+                </label>
+                <label class="sort-options__checkbox">
+                  <input type="checkbox" id="emptyLastCheckbox" />
+                  <span>Empty values last</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="sortBtn" type="button" aria-label="Sort CSV" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            Sort CSV
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+              <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
+            </svg>
+          </button>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Sorted CSV output</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label" for="csvOutput">Preview</label>
+              <textarea id="csvOutput" class="form-input" readonly placeholder="Sorted CSV will appear here." aria-label="Sorted CSV preview" style="min-height: 120px;"></textarea>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+              <button class="btn-download" id="copyBtn" type="button" aria-label="Copy CSV to clipboard">
+                <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
+                </svg>
+                Copy CSV
+              </button>
+              <a class="btn-download" id="downloadLink" href="#" download="sorted.csv" aria-label="Download CSV file" style="display: none;">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                  <path d="M6.5 1.5v7M3.5 6l3 3 3-3M1.5 11.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Download CSV
+              </a>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Files are processed entirely in your browser and are never uploaded to any server.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" id="how-heading">How to Sort a CSV File</h2>
+        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste your CSV data or upload a file</p>
+            <p class="step__desc">Paste comma-separated data into the input box or upload a .csv or .txt file using the upload area.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Choose sort column and options</p>
+            <p class="step__desc">Select which column to sort by, ascending or descending, and whether to treat values as text, numbers, or dates.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Click Sort CSV</p>
+            <p class="step__desc">The tool sorts your data and keeps the header row at the top.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">4</span>
+            <p class="step__title">Copy or download the sorted CSV</p>
+            <p class="step__desc">Copy the result to your clipboard or download it as a .csv file.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Why Use a CSV Sorter?</h2>
+        <p class="section-body">Sorting CSV by column helps you organize exports, put names in order, or sort numbers and dates correctly. An online CSV sorter lets you do this without installing software or uploading files to a server.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 9h6M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Sort by any column</p>
+              <p class="benefit__desc">Choose which column to sort by—name, date, number, or any other field.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 14V4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Numbers and dates sorted correctly</p>
+              <p class="benefit__desc">Treat values as numbers or dates so 10 comes after 2 and dates sort chronologically.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Ready for Excel or Sheets</p>
+              <p class="benefit__desc">Download sorted CSV that opens correctly in spreadsheets and other tools.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Private and fast</p>
+              <p class="benefit__desc">Sorting runs in your browser; your data never leaves your device.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="secure-heading">
+      <div class="container--wide">
+        <p class="section-label">Privacy</p>
+        <h2 class="section-title" id="secure-heading">Private and Secure CSV Sorting</h2>
+        <p class="section-body">Your files and pasted data are never uploaded to a server. This CSV sorter runs entirely in your browser using client-side processing.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Data stays on your device</p>
+              <p class="benefit__desc">Your data never leaves your browser. No uploads, no cloud storage, no logs.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 7h6M6 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 4h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Nothing stored or sent</p>
+              <p class="benefit__desc">No files are stored or transmitted. Sorting happens only in memory.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Fast and private</p>
+              <p class="benefit__desc">Sorting is instant and runs locally at full browser speed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">What does this CSV sorter do?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">It sorts the rows of your CSV by a column you choose. You can sort ascending or descending and treat values as text, numbers, or dates. The header row stays at the top.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Can I sort by any column?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. After you paste or upload CSV, a dropdown lists all columns (from the header or as Column 1, Column 2, etc.). Choose the column you want to sort by.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Can I sort numbers correctly instead of alphabetically?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Choose “Number” under “Treat values as” to sort numerically (e.g. 2, 10, 100). Use “Date” for date strings, or “Auto-detect” to let the tool guess.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">Does this work with quoted CSV values?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The parser correctly handles values in double quotes, commas inside quotes, and escaped quotes, so your sorted output remains valid CSV.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">Are my files uploaded anywhere?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. Everything runs locally in your browser. Your CSV is never sent to a server.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">Is this tool free?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The CSV sorter is free to use with no signup required.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Can I use the output in Excel or Google Sheets?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The generated CSV works in Excel, Google Sheets, and other spreadsheet tools.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="csv-sorter"></div>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+
+  <script>
+    (function () {
+      const csvInput = document.getElementById('csvInput');
+      const fileInput = document.getElementById('fileInput');
+      const dropZone = document.getElementById('dropZone');
+      const sortOptions = document.getElementById('sortOptions');
+      const hasHeaderCheckbox = document.getElementById('hasHeaderCheckbox');
+      const sortColumnSelect = document.getElementById('sortColumnSelect');
+      const orderAsc = document.getElementById('orderAsc');
+      const orderDesc = document.getElementById('orderDesc');
+      const typeText = document.getElementById('typeText');
+      const typeNumber = document.getElementById('typeNumber');
+      const typeDate = document.getElementById('typeDate');
+      const typeAuto = document.getElementById('typeAuto');
+      const caseInsensitiveCheckbox = document.getElementById('caseInsensitiveCheckbox');
+      const emptyLastCheckbox = document.getElementById('emptyLastCheckbox');
+      const sortBtn = document.getElementById('sortBtn');
+      const clearLink = document.getElementById('clearLink');
+      const errorMsg = document.getElementById('errorMsg');
+      const errorText = document.getElementById('errorText');
+      const resultSection = document.getElementById('resultSection');
+      const resultMeta = document.getElementById('resultMeta');
+      const csvOutput = document.getElementById('csvOutput');
+      const copyBtn = document.getElementById('copyBtn');
+      const downloadLink = document.getElementById('downloadLink');
+
+      let csvBlobUrl = null;
+      let lastUploadFilename = '';
+      let parsedData = null;
+
+      function parseCSV(text) {
+        var normalized = (text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+        if (!normalized) return [];
+        var rows = [];
+        var row = [];
+        var cell = '';
+        var inQuotes = false;
+        for (var i = 0; i < normalized.length; i++) {
+          var ch = normalized[i];
+          if (ch === '"') {
+            if (inQuotes && normalized[i + 1] === '"') { cell += '"'; i++; } else { inQuotes = !inQuotes; }
+          } else if ((ch === ',' || ch === '\n') && !inQuotes) {
+            if (ch === ',') { row.push(cell); cell = ''; } else { row.push(cell); rows.push(row); row = []; cell = ''; }
+          } else { cell += ch; }
+        }
+        row.push(cell);
+        rows.push(row);
+        return rows;
+      }
+
+      function headerDisplayNames(headerCells) {
+        var counts = {};
+        return headerCells.map(function (name) {
+          var key = (name || '').trim();
+          counts[key] = (counts[key] || 0) + 1;
+          return counts[key] === 1 ? key : key + ' (' + counts[key] + ')';
+        });
+      }
+
+      function normalizeColumnCount(rows) {
+        var numCols = 0;
+        for (var r = 0; r < rows.length; r++) if (rows[r].length > numCols) numCols = rows[r].length;
+        for (var r = 0; r < rows.length; r++) while (rows[r].length < numCols) rows[r].push('');
+        return rows;
+      }
+
+      function escapeCsvCell(val) {
+        if (val === null || val === undefined) return '';
+        var str = String(val);
+        if (/[",\r\n]/.test(str)) return '"' + str.replace(/"/g, '""') + '"';
+        return str;
+      }
+
+      function rowsToCsv(rows) {
+        return rows.map(function (cells) { return cells.map(escapeCsvCell).join(','); }).join('\n');
+      }
+
+      function isEmpty(val) {
+        return (val === null || val === undefined || String(val).trim() === '');
+      }
+
+      function detectValueType(values) {
+        var numeric = 0, dateLike = 0, sample = 0;
+        for (var i = 0; i < values.length && sample < 100; i++) {
+          var v = (values[i] || '').trim();
+          if (v === '') continue;
+          sample++;
+          if (!isNaN(parseFloat(v)) && /^-?\d*\.?\d*$/.test(v.trim())) numeric++;
+          else if (/^\d{4}-\d{2}-\d{2}/.test(v) || /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(v)) dateLike++;
+        }
+        if (sample === 0) return 'text';
+        if (numeric / sample >= 0.8) return 'number';
+        if (dateLike / sample >= 0.6) return 'date';
+        return 'text';
+      }
+
+      function toSortKey(val, valueType, caseInsensitive) {
+        var s = (val === null || val === undefined) ? '' : String(val).trim();
+        if (valueType === 'number') {
+          var n = parseFloat(s);
+          return isNaN(n) ? null : n;
+        }
+        if (valueType === 'date') {
+          var d = Date.parse(s);
+          return (d !== d) ? null : d;
+        }
+        if (caseInsensitive) return s.toLowerCase();
+        return s;
+      }
+
+      function compareKeys(a, b, emptyLast) {
+        var aEmpty = a === null || a === undefined || a === '';
+        var bEmpty = b === null || b === undefined || b === '';
+        if (aEmpty && bEmpty) return 0;
+        if (emptyLast) {
+          if (aEmpty && !bEmpty) return 1;
+          if (!aEmpty && bEmpty) return -1;
+        }
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function clearError() { errorMsg.classList.remove('visible'); }
+
+      function clearResult() {
+        resultSection.classList.remove('visible');
+        csvOutput.value = '';
+        resultMeta.textContent = '';
+        if (csvBlobUrl) { URL.revokeObjectURL(csvBlobUrl); csvBlobUrl = null; }
+        downloadLink.style.display = 'none';
+      }
+
+      function getInputText() { return (csvInput.value || '').trim(); }
+
+      function setInputText(text, filename) {
+        csvInput.value = text;
+        lastUploadFilename = filename || '';
+        clearError();
+        clearResult();
+        parseAndUpdateColumns();
+        updateSortButtonState();
+      }
+
+      function parseAndUpdateColumns() {
+        var text = getInputText();
+        parsedData = null;
+        sortOptions.classList.add('is-hidden');
+        sortColumnSelect.innerHTML = '<option value="0">Column 1</option>';
+        sortBtn.disabled = true;
+
+        if (!text) { updateSortButtonState(); return; }
+
+        var rows = parseCSV(text);
+        if (!rows || rows.length === 0) { updateSortButtonState(); return; }
+
+        var hasHeader = hasHeaderCheckbox.checked;
+        var dataStart = hasHeader ? 1 : 0;
+        if (hasHeader && rows.length < 2) { updateSortButtonState(); return; }
+
+        var normalized = normalizeColumnCount(rows.map(function (r) { return r.slice(); }));
+        var numCols = normalized[0].length;
+        var headerRow = hasHeader ? normalized[0] : null;
+        var displayNames = headerRow ? headerDisplayNames(headerRow) : [];
+        for (var c = 0; c < numCols; c++) displayNames[c] = displayNames[c] || ('Column ' + (c + 1));
+
+        parsedData = { rows: normalized, hasHeader: hasHeader, dataStart: dataStart, numCols: numCols, displayNames: displayNames };
+
+        sortOptions.classList.remove('is-hidden');
+        sortColumnSelect.innerHTML = '';
+        for (var c = 0; c < numCols; c++) {
+          var opt = document.createElement('option');
+          opt.value = String(c);
+          opt.textContent = displayNames[c];
+          sortColumnSelect.appendChild(opt);
+        }
+        updateSortButtonState();
+      }
+
+      function updateSortButtonState() {
+        var hasInput = getInputText().length > 0;
+        if (!hasInput || !parsedData) { sortBtn.disabled = true; return; }
+        var colIdx = parseInt(sortColumnSelect.value, 10);
+        if (isNaN(colIdx) || colIdx < 0 || colIdx >= parsedData.numCols) { sortBtn.disabled = true; return; }
+        sortBtn.disabled = false;
+      }
+
+      function runSort() {
+        var text = getInputText();
+        if (!text) { showError('Please paste CSV data or upload a file.'); csvInput.focus(); return; }
+
+        var rows = parseCSV(text);
+        if (!rows || rows.length === 0) { showError('The CSV appears to be empty.'); return; }
+
+        var hasHeader = hasHeaderCheckbox.checked;
+        var dataStart = hasHeader ? 1 : 0;
+        var dataRows = rows.slice(dataStart);
+        if (dataRows.length === 0) { showError('No data rows to sort.'); return; }
+
+        var normalized = normalizeColumnCount(rows.map(function (r) { return r.slice(); }));
+        var header = hasHeader ? [normalized[0]] : [];
+        var data = normalized.slice(dataStart);
+
+        var colIdx = parseInt(sortColumnSelect.value, 10);
+        if (isNaN(colIdx) || colIdx < 0 || colIdx >= normalized[0].length) {
+          showError('Selected sort column is missing or invalid.'); return;
+        }
+
+        var ascending = orderAsc.checked;
+        var valueType = typeAuto.checked ? 'auto' : typeText.checked ? 'text' : typeNumber.checked ? 'number' : 'date';
+        var caseInsensitive = caseInsensitiveCheckbox.checked;
+        var emptyLast = emptyLastCheckbox.checked;
+
+        if (valueType === 'auto') {
+          var colValues = data.map(function (row) { return (row[colIdx] || '').trim(); }).filter(Boolean);
+          valueType = detectValueType(colValues);
+        }
+
+        var sorted = data.slice().sort(function (rowA, rowB) {
+          var a = rowA[colIdx];
+          var b = rowB[colIdx];
+          var keyA = toSortKey(a, valueType, caseInsensitive);
+          var keyB = toSortKey(b, valueType, caseInsensitive);
+          var cmp = compareKeys(keyA, keyB, emptyLast);
+          return ascending ? cmp : -cmp;
+        });
+
+        var outRows = header.concat(sorted);
+        var csvOut = rowsToCsv(outRows);
+
+        resultSection.classList.add('visible');
+        csvOutput.value = csvOut;
+        var total = sorted.length;
+        resultMeta.textContent = total + ' row' + (total !== 1 ? 's' : '') + ' sorted';
+        var blob = new Blob([csvOut], { type: 'text/csv;charset=utf-8' });
+        if (csvBlobUrl) URL.revokeObjectURL(csvBlobUrl);
+        csvBlobUrl = URL.createObjectURL(blob);
+        downloadLink.href = csvBlobUrl;
+        var baseName = lastUploadFilename ? lastUploadFilename.replace(/\.[^/.]+$/, '') : '';
+        downloadLink.download = baseName ? baseName + '-sorted.csv' : 'sorted.csv';
+        downloadLink.style.display = 'inline-flex';
+      }
+
+      hasHeaderCheckbox.addEventListener('change', function () { parseAndUpdateColumns(); });
+      sortColumnSelect.addEventListener('change', function () { updateSortButtonState(); });
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        csvInput.value = '';
+        lastUploadFilename = '';
+        clearError();
+        clearResult();
+        parseAndUpdateColumns();
+        csvInput.focus();
+      });
+
+      csvInput.addEventListener('input', function () {
+        lastUploadFilename = '';
+        clearError();
+        clearResult();
+        parseAndUpdateColumns();
+      });
+
+      dropZone.addEventListener('click', function (e) { if (e.target !== fileInput) fileInput.click(); });
+      dropZone.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+      fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) {
+          var file = fileInput.files[0];
+          readFileAsText(file).then(function (text) { setInputText(text, file.name); }).catch(function (err) { showError(err.message || 'Failed to read file.'); });
+          fileInput.value = '';
+        }
+      });
+      dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('drag-over'); });
+      dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('drag-over'); });
+      dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        var file = e.dataTransfer.files[0];
+        if (file && (file.name.toLowerCase().endsWith('.csv') || file.name.toLowerCase().endsWith('.txt') || file.type === 'text/csv' || file.type === 'text/plain')) {
+          readFileAsText(file).then(function (text) { setInputText(text, file.name); }).catch(function (err) { showError(err.message || 'Failed to read file.'); });
+        } else if (file) showError('Please drop a .csv or .txt file.');
+      });
+
+      sortBtn.addEventListener('click', function () {
+        clearError();
+        clearResult();
+        sortBtn.disabled = true;
+        sortBtn.classList.add('spinning');
+        sortBtn.setAttribute('aria-busy', 'true');
+        try { runSort(); } finally {
+          sortBtn.classList.remove('spinning');
+          sortBtn.removeAttribute('aria-busy');
+          updateSortButtonState();
+        }
+      });
+
+      copyBtn.addEventListener('click', function () {
+        var csv = csvOutput.value;
+        if (!csv) return;
+        navigator.clipboard.writeText(csv).then(function () {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(function () { copyBtn.textContent = 'Copy CSV'; }, 2000);
+        }).catch(function () { showError('Copy failed. You can select and copy the preview text manually.'); });
+      });
+    })();
+  </script>
+</body>
+</html>

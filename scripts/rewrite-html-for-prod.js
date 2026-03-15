@@ -10,11 +10,17 @@ const path = require("path");
 const htmlFiles = [
   "index.html",
   "404.html",
+  "tools/index.html",
   "split-csv/index.html",
   "merge-csv/index.html",
   "json-to-csv/index.html",
+  "json-formatter/index.html",
+  "csv-to-json/index.html",
   "csv-to-tsv/index.html",
   "tsv-to-csv/index.html",
+  "csv-column-remover/index.html",
+  "csv-deduplicator/index.html",
+  "csv-sorter/index.html",
 ];
 
 const root = path.resolve(__dirname, "..");

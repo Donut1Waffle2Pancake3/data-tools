@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>All Data Tools | TinyDataTool</title>
+  <meta name="description" content="Free online tools for CSV and JSON processing. Split CSV files, merge CSV files, remove columns, deduplicate data, convert CSV to JSON, format JSON, and more." />
+  <link rel="canonical" href="https://tinydatatool.com/tools/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="All Data Tools | TinyDataTool" />
+  <meta property="og:description" content="Free online tools for CSV and JSON processing. Split, merge, convert, and format data in your browser." />
+  <meta property="og:url" content="https://tinydatatool.com/tools/" />
+  <meta property="og:site_name" content="TinyTools" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="All Data Tools | TinyDataTool" />
+  <meta name="twitter:description" content="Free online tools for CSV and JSON processing. No uploads required." />
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .all-tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    @media (min-width: 769px) { .all-tools-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1024px) { .all-tools-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 768px) { .all-tools-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .all-tools-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="all-tools"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">All Data Tools</h1>
+        <p class="hero__sub">Free browser-based tools for working with CSV, JSON, and tabular data. No uploads required — everything runs locally in your browser.</p>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="tools-grid-heading">
+      <div class="container--wide">
+        <h2 id="tools-grid-heading" class="sr-only">Browse all tools</h2>
+        <div class="all-tools-grid" id="toolsGrid">
+          <a href="../split-csv/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">Split CSV</span>
+            <p class="home-tool-card__desc">Split a large CSV file into smaller files with a fixed number of rows.</p>
+          </a>
+          <a href="../merge-csv/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">Merge CSV</span>
+            <p class="home-tool-card__desc">Combine multiple CSV files into a single CSV.</p>
+          </a>
+          <a href="../csv-column-remover/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">CSV Column Remover</span>
+            <p class="home-tool-card__desc">Remove one or more columns from a CSV file.</p>
+          </a>
+          <a href="../csv-deduplicator/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">CSV Deduplicator</span>
+            <p class="home-tool-card__desc">Remove duplicate rows from a CSV file.</p>
+          </a>
+          <a href="../csv-sorter/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">CSV Sorter</span>
+            <p class="home-tool-card__desc">Sort CSV rows by one or more columns.</p>
+          </a>
+          <a href="../csv-to-tsv/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">CSV → TSV</span>
+            <p class="home-tool-card__desc">Convert comma-separated data into tab-separated format.</p>
+          </a>
+          <a href="../tsv-to-csv/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">TSV → CSV</span>
+            <p class="home-tool-card__desc">Convert tab-separated data into CSV format.</p>
+          </a>
+          <a href="../csv-to-json/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">CSV → JSON</span>
+            <p class="home-tool-card__desc">Convert CSV data into structured JSON.</p>
+          </a>
+          <a href="../json-to-csv/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">JSON → CSV</span>
+            <p class="home-tool-card__desc">Convert JSON data into CSV format.</p>
+          </a>
+          <a href="../json-formatter/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">JSON Formatter</span>
+            <p class="home-tool-card__desc">Format and validate JSON data for readability.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+</body>
+</html>

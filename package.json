@@ -4,7 +4,8 @@
   "scripts": {
     "generate-favicons": "node scripts/generate-favicons.js",
     "build": "cleancss -o css/global.min.css css/global.css",
-    "build:vercel": "npm run build && node scripts/rewrite-html-for-prod.js"
+    "build:vercel": "npm run build && node scripts/rewrite-html-for-prod.js",
+    "test": "node scripts/test-csv-column-remover.js && node scripts/test-csv-deduplicator.js && node scripts/test-csv-sorter.js"
   },
   "devDependencies": {
     "clean-css-cli": "^5.6.0",

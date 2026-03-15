@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       SEO
+  ============================================================ -->
+  <title>CSV Column Remover Online (Free &amp; Private)</title>
+  <meta name="description" content="Remove one or more columns from a CSV file instantly in your browser. Paste CSV or upload a file, select columns to delete, and download the cleaned CSV. Fast, free, and private." />
+  <link rel="canonical" href="https://tinydatatool.com/csv-column-remover/" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="CSV Column Remover Online (Free & Private)" />
+  <meta property="og:description" content="Remove columns from CSV instantly in your browser. Paste or upload CSV, select columns to remove, download cleaned CSV. No signup required." />
+  <meta property="og:url"         content="https://tinydatatool.com/csv-column-remover/" />
+  <meta property="og:site_name"   content="TinyTools" />
+
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="CSV Column Remover Online (Free & Private)" />
+  <meta name="twitter:description" content="Remove columns from CSV in your browser. Free, private, no signup." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CSV Column Remover","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","creator":{"@type":"Organization","name":"TinyTools"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"A free browser-based tool to remove columns from CSV files. Paste or upload CSV, select columns to remove, download cleaned CSV. No upload required.","url":"https://tinydatatool.com/csv-column-remover/"}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .column-selection { margin-top: 20px; }
+    .column-selection.is-hidden { display: none; }
+    .column-selection__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .column-selection__left { flex: 1; min-width: 0; }
+    .column-selection__left .form-label { margin-bottom: 4px; }
+    .column-selection__hint { font-size: var(--text-xs); color: var(--text-muted); margin: 0; }
+    .column-selection__links { display: flex; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
+    .column-checkbox-list { display: flex; flex-wrap: wrap; gap: 12px 20px; max-height: 200px; overflow-y: auto; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-secondary); }
+    .column-checkbox-list--empty { align-items: center; justify-content: center; color: var(--text-muted); font-size: var(--text-xs); }
+    .column-checkbox-item { display: flex; align-items: center; gap: 6px; }
+    .column-checkbox-item input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+    .column-checkbox-item label { cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="csv-column-remover"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <span class="hero__eyebrow">Free CSV Column Remover</span>
+        <h1 id="hero-heading">CSV Column Remover</h1>
+        <p class="hero__sub">Remove unwanted columns from CSV files in seconds. Paste CSV text or upload a .csv file, choose the columns to remove, and get a clean CSV instantly. Fast, free, and private.</p>
+      </div>
+    </section>
+
+    <section aria-label="CSV column remover" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="CSV column remover">
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="csvInput">Paste CSV or upload a file</label>
+              <a href="#" class="clear-link" id="clearLink" role="button">Clear</a>
+            </div>
+            <textarea id="csvInput" class="form-input" placeholder="name,email,phone&#10;value,value,value&#10;value,value,value" aria-describedby="csvInputHint" spellcheck="false"></textarea>
+            <p class="form-hint" id="csvInputHint">Paste CSV data with a header row, or upload a CSV file to remove selected columns.</p>
+          </div>
+
+          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
+            <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+            </svg>
+            <p class="drop-zone__label">Or upload a .csv file</p>
+            <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+            <input type="file" id="fileInput" accept=".csv,text/csv" aria-label="Select CSV file" />
+          </div>
+
+          <div class="column-selection is-hidden" id="columnSection">
+            <div class="column-selection__header">
+              <div class="column-selection__left">
+                <label class="form-label" id="columnSectionLabel">Columns to remove</label>
+                <p class="column-selection__hint" id="columnSectionHint">Select the columns you want to delete from the output</p>
+              </div>
+              <span class="column-selection__links">
+                <a href="#" class="clear-link" id="selectAllBtn" role="button">Select All</a>
+                <a href="#" class="clear-link" id="clearSelectionBtn" role="button">Clear</a>
+              </span>
+            </div>
+            <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel" aria-describedby="columnSectionHint">
+              <span class="column-checkbox-list--empty" id="columnPlaceholder">Column names will appear here after CSV is loaded.</span>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="removeBtn" type="button" aria-label="Remove selected columns" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            Remove selected columns
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+              <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
+            </svg>
+          </button>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">CSV output</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label" for="csvOutput">Preview</label>
+              <textarea id="csvOutput" class="form-input" readonly placeholder="Cleaned CSV output will appear here." aria-label="Cleaned CSV preview" style="min-height: 120px;"></textarea>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+              <button class="btn-download" id="copyBtn" type="button" aria-label="Copy CSV to clipboard">
+                <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
+                </svg>
+                Copy CSV
+              </button>
+              <a class="btn-download" id="downloadLink" href="#" download="cleaned.csv" aria-label="Download CSV file" style="display: none;">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                  <path d="M6.5 1.5v7M3.5 6l3 3 3-3M1.5 11.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Download CSV
+              </a>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Files are processed entirely in your browser and are never uploaded to any server.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" id="how-heading">How to Remove Columns from a CSV</h2>
+        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste CSV or upload a file</p>
+            <p class="step__desc">Paste comma-separated data into the input box or upload a .csv file using the upload area. The first row should be your header.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Select columns to remove</p>
+            <p class="step__desc">Check the columns you want to delete from the output. Use Select all or Clear selection to adjust your choice quickly.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Generate and review the cleaned CSV</p>
+            <p class="step__desc">Click Remove selected columns to produce the new CSV without the chosen columns. Review the preview to confirm.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">4</span>
+            <p class="step__title">Copy or download</p>
+            <p class="step__desc">Copy the cleaned CSV to your clipboard or download it as a .csv file.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Why Remove Columns from CSV Files?</h2>
+        <p class="section-body">Removing columns from a CSV helps you keep only the data you need. Whether you are preparing a smaller import, stripping internal fields before sharing, or cleaning exports for other tools, a column remover saves time and keeps formatting valid.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="2"/>
+                <path d="M6 7h6M6 10h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 4h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Prepare smaller imports</p>
+              <p class="benefit__desc">Drop unneeded columns before importing into databases or tools so you only load what you need.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Remove sensitive or internal fields</p>
+              <p class="benefit__desc">Strip out columns you do not want to share before sending data to clients or partners.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="2"/>
+                <path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Simplify spreadsheets before sharing</p>
+              <p class="benefit__desc">Reduce clutter by removing extra columns so recipients see only the relevant data.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <circle cx="12.5" cy="5.5" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Clean exports for tools and scripts</p>
+              <p class="benefit__desc">Remove ID columns, timestamps, or other fields that scripts or databases do not need.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="secure-heading">
+      <div class="container--wide">
+        <p class="section-label">Privacy</p>
+        <h2 class="section-title" id="secure-heading">Private and Secure CSV Processing</h2>
+        <p class="section-body">Your files and pasted data are never uploaded to a server. This CSV column remover runs entirely in your browser using client-side processing.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Data stays on your device</p>
+              <p class="benefit__desc">Your data never leaves your browser. No uploads, no cloud storage, no logs.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M184 64C135.4 64 96 103.4 96 152L96 496C96 540.2 131.8 576 176 576L520 576C533.3 576 544 565.3 544 552C544 538.7 533.3 528 520 528L512 528L512 451.9C531.3 439 544 417 544 392L544 136C544 96.2 511.8 64 472 64L184 64zM464 464L464 528L176 528C158.3 528 144 513.7 144 496C144 478.3 158.3 464 176 464L464 464zM176 416C164.6 416 153.8 418.4 144 422.7L144 152C144 129.9 161.9 112 184 112L472 112C485.3 112 496 122.7 496 136L496 392C496 405.3 485.3 416 472 416L176 416z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Nothing stored or sent</p>
+              <p class="benefit__desc">No files are stored or transmitted. Processing happens only in memory.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Fast and private</p>
+              <p class="benefit__desc">Column removal is instant and runs locally at full browser speed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">What does a CSV column remover do?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">It lets you select one or more columns from a CSV file and remove them from the output. You get a new CSV with only the columns you kept, so you can prepare smaller files, drop sensitive fields, or simplify data for sharing or importing elsewhere.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Can I remove multiple columns at once?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. After you load your CSV, you can select as many columns as you want to remove. At least one column must remain in the output.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Will my CSV formatting stay valid?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The tool keeps standard CSV rules: values that contain commas, quotes, or line breaks are wrapped in double quotes, and internal quotes are escaped by doubling them. The output is valid CSV that works in Excel, Google Sheets, and other tools.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">Are my files uploaded anywhere?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. Everything runs locally in your browser. Your CSV is never sent to a server.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">Can I use the cleaned CSV in Excel or Google Sheets?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The output is standard CSV. You can open it in Excel, Google Sheets, or any spreadsheet or data tool that accepts CSV.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What happens if a value contains commas or quotes?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The parser handles quoted fields correctly. Values that contain commas, double quotes, or newlines are read as single cells, and the output re-escapes them so the CSV stays valid.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Is this tool free?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The CSV column remover is free to use with no signup required.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="csv-column-remover"></div>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+
+  <script>
+    (function () {
+      const csvInput        = document.getElementById('csvInput');
+      const fileInput      = document.getElementById('fileInput');
+      const dropZone       = document.getElementById('dropZone');
+      const columnSection  = document.getElementById('columnSection');
+      const columnCheckboxList = document.getElementById('columnCheckboxList');
+      const columnPlaceholder  = document.getElementById('columnPlaceholder');
+      const selectAllBtn   = document.getElementById('selectAllBtn');
+      const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+      const removeBtn      = document.getElementById('removeBtn');
+      const clearLink      = document.getElementById('clearLink');
+      const errorMsg      = document.getElementById('errorMsg');
+      const errorText     = document.getElementById('errorText');
+      const resultSection = document.getElementById('resultSection');
+      const resultMeta    = document.getElementById('resultMeta');
+      const csvOutput     = document.getElementById('csvOutput');
+      const copyBtn       = document.getElementById('copyBtn');
+      const downloadLink  = document.getElementById('downloadLink');
+
+      let csvBlobUrl = null;
+      let lastUploadFilename = '';
+      // Parsed data: { rows: string[][], headerDisplayNames: string[] } (headerDisplayNames may have "name (2)" for duplicates)
+      let parsedData = null;
+
+      /**
+       * Parse CSV text into rows of cells. Handles quoted values, commas inside quotes,
+       * escaped double quotes (""), empty cells, \r\n and \r.
+       * @param {string} text
+       * @returns {string[][]|null} rows of cells, or null if malformed
+       */
+      function parseCSV(text) {
+        var normalized = (text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+        if (!normalized) return [];
+        var rows = [];
+        var row = [];
+        var cell = '';
+        var inQuotes = false;
+        for (var i = 0; i < normalized.length; i++) {
+          var ch = normalized[i];
+          if (ch === '"') {
+            if (inQuotes && normalized[i + 1] === '"') {
+              cell += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if ((ch === ',' || ch === '\n') && !inQuotes) {
+            if (ch === ',') {
+              row.push(cell);
+              cell = '';
+            } else {
+              row.push(cell);
+              rows.push(row);
+              row = [];
+              cell = '';
+            }
+          } else {
+            cell += ch;
+          }
+        }
+        row.push(cell);
+        rows.push(row);
+        return rows;
+      }
+
+      /**
+       * Build display names for header row, disambiguating duplicates: "a", "a (2)", "a (3)".
+       * @param {string[]} headerCells
+       * @returns {string[]}
+       */
+      function headerDisplayNames(headerCells) {
+        var counts = {};
+        return headerCells.map(function (name) {
+          var key = (name || '').trim();
+          counts[key] = (counts[key] || 0) + 1;
+          return counts[key] === 1 ? key : key + ' (' + counts[key] + ')';
+        });
+      }
+
+      /**
+       * Find first non-empty row (row with at least one non-whitespace cell). Skip fully blank rows.
+       * @param {string[][]} rows
+       * @returns {number} index of header row, or -1
+       */
+      function detectHeaderRow(rows) {
+        for (var r = 0; r < rows.length; r++) {
+          var row = rows[r];
+          for (var c = 0; c < row.length; c++) {
+            if ((row[c] || '').trim() !== '') return r;
+          }
+        }
+        return -1;
+      }
+
+      /**
+       * Escape a CSV cell for output: wrap in quotes if contains comma, quote, or newline; double internal quotes.
+       */
+      function escapeCsvCell(val) {
+        if (val === null || val === undefined) return '';
+        var str = String(val);
+        if (/[",\r\n]/.test(str)) return '"' + str.replace(/"/g, '""') + '"';
+        return str;
+      }
+
+      /**
+       * Serialize rows to CSV string.
+       * @param {string[][]} rows
+       * @returns {string}
+       */
+      function rowsToCsv(rows) {
+        return rows.map(function (cells) {
+          return cells.map(escapeCsvCell).join(',');
+        }).join('\n');
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function clearError() {
+        errorMsg.classList.remove('visible');
+      }
+
+      function clearResult() {
+        resultSection.classList.remove('visible');
+        csvOutput.value = '';
+        resultMeta.textContent = '';
+        if (csvBlobUrl) {
+          URL.revokeObjectURL(csvBlobUrl);
+          csvBlobUrl = null;
+        }
+        downloadLink.style.display = 'none';
+      }
+
+      function getInputText() {
+        return (csvInput.value || '').trim();
+      }
+
+      function setInputText(text, filename) {
+        csvInput.value = text;
+        lastUploadFilename = filename || '';
+        clearError();
+        clearResult();
+        parseAndUpdateColumns();
+        updateRemoveButtonState();
+      }
+
+      /**
+       * Parse input, detect header, populate column checkboxes. Sets parsedData or null.
+       */
+      function parseAndUpdateColumns() {
+        var text = getInputText();
+        parsedData = null;
+        columnSection.classList.add('is-hidden');
+        columnPlaceholder.style.display = '';
+        columnCheckboxList.classList.add('column-checkbox-list--empty');
+        while (columnCheckboxList.firstChild) columnCheckboxList.removeChild(columnCheckboxList.firstChild);
+        columnCheckboxList.appendChild(columnPlaceholder);
+
+        if (!text) {
+          updateRemoveButtonState();
+          return;
+        }
+
+        var rows = parseCSV(text);
+        if (!rows || rows.length === 0) {
+          clearError();
+          updateRemoveButtonState();
+          return;
+        }
+
+        var headerRowIndex = detectHeaderRow(rows);
+        if (headerRowIndex < 0) {
+          showError('We couldn\'t detect a valid header row.');
+          updateRemoveButtonState();
+          return;
+        }
+
+        var headerRow = rows[headerRowIndex];
+        if (!headerRow || headerRow.length === 0) {
+          showError('We couldn\'t detect a valid header row.');
+          updateRemoveButtonState();
+          return;
+        }
+
+        // Normalize column count: use max columns across all rows so ragged rows don't break indices
+        var numCols = 0;
+        for (var r = 0; r < rows.length; r++) {
+          if (rows[r].length > numCols) numCols = rows[r].length;
+        }
+        for (var r = 0; r < rows.length; r++) {
+          while (rows[r].length < numCols) rows[r].push('');
+        }
+        headerRow = rows[headerRowIndex];
+
+        var displayNames = headerDisplayNames(headerRow);
+        parsedData = { rows: rows, headerRowIndex: headerRowIndex, displayNames: displayNames, numCols: numCols };
+
+        columnSection.classList.remove('is-hidden');
+        columnCheckboxList.classList.remove('column-checkbox-list--empty');
+        columnPlaceholder.style.display = 'none';
+        for (var c = 0; c < numCols; c++) {
+          var name = displayNames[c] || ('Column ' + (c + 1));
+          var id = 'col-' + c;
+          var wrap = document.createElement('div');
+          wrap.className = 'column-checkbox-item';
+          var input = document.createElement('input');
+          input.type = 'checkbox';
+          input.id = id;
+          input.setAttribute('data-column-index', String(c));
+          input.addEventListener('change', function () { updateRemoveButtonState(); });
+          var label = document.createElement('label');
+          label.htmlFor = id;
+          label.textContent = name;
+          wrap.appendChild(input);
+          wrap.appendChild(label);
+          columnCheckboxList.appendChild(wrap);
+        }
+        updateRemoveButtonState();
+      }
+
+      function getSelectedColumnIndices() {
+        var inputs = columnCheckboxList.querySelectorAll('input[type="checkbox"][data-column-index]');
+        var indices = [];
+        for (var i = 0; i < inputs.length; i++) {
+          if (inputs[i].checked) indices.push(parseInt(inputs[i].getAttribute('data-column-index'), 10));
+        }
+        return indices;
+      }
+
+      function updateRemoveButtonState() {
+        var hasInput = getInputText().length > 0;
+        if (!hasInput || !parsedData) {
+          removeBtn.disabled = true;
+          return;
+        }
+        var toRemove = getSelectedColumnIndices();
+        var numCols = parsedData.numCols;
+        if (toRemove.length === 0) {
+          removeBtn.disabled = true;
+          return;
+        }
+        if (toRemove.length >= numCols) {
+          removeBtn.disabled = true;
+          return;
+        }
+        removeBtn.disabled = false;
+      }
+
+      selectAllBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!parsedData) return;
+        var inputs = columnCheckboxList.querySelectorAll('input[type="checkbox"][data-column-index]');
+        for (var i = 0; i < inputs.length; i++) inputs[i].checked = true;
+        updateRemoveButtonState();
+      });
+
+      clearSelectionBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var inputs = columnCheckboxList.querySelectorAll('input[type="checkbox"][data-column-index]');
+        for (var i = 0; i < inputs.length; i++) inputs[i].checked = false;
+        updateRemoveButtonState();
+      });
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        csvInput.value = '';
+        lastUploadFilename = '';
+        clearError();
+        clearResult();
+        parseAndUpdateColumns();
+        updateRemoveButtonState();
+        csvInput.focus();
+      });
+
+      csvInput.addEventListener('input', function () {
+        lastUploadFilename = '';
+        clearError();
+        clearResult();
+        parseAndUpdateColumns();
+        updateRemoveButtonState();
+      });
+
+      dropZone.addEventListener('click', function (e) {
+        if (e.target !== fileInput) fileInput.click();
+      });
+      dropZone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+      });
+      fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) {
+          var file = fileInput.files[0];
+          readFileAsText(file).then(function (text) {
+            setInputText(text, file.name);
+          }).catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          });
+          fileInput.value = '';
+        }
+      });
+      dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('drag-over'); });
+      dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('drag-over'); });
+      dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        var file = e.dataTransfer.files[0];
+        if (file && (file.name.toLowerCase().endsWith('.csv') || file.type === 'text/csv')) {
+          readFileAsText(file).then(function (text) {
+            setInputText(text, file.name);
+          }).catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          });
+        } else if (file) {
+          showError('Please drop a .csv file.');
+        }
+      });
+
+      removeBtn.addEventListener('click', function () {
+        clearError();
+        clearResult();
+        var text = getInputText();
+        if (!text) {
+          showError('Please paste CSV data or upload a file.');
+          csvInput.focus();
+          return;
+        }
+        if (!parsedData) {
+          var rows = parseCSV(text);
+          if (!rows || rows.length === 0) {
+            showError('This CSV appears to be malformed. Please check the formatting and try again.');
+            return;
+          }
+          var headerRowIndex = detectHeaderRow(rows);
+          if (headerRowIndex < 0) {
+            showError('We couldn\'t detect a valid header row.');
+            return;
+          }
+          showError('Please load your CSV again and select columns to remove.');
+          return;
+        }
+        var toRemove = getSelectedColumnIndices();
+        if (toRemove.length === 0) {
+          showError('Please select at least one column to remove.');
+          return;
+        }
+        if (toRemove.length >= parsedData.numCols) {
+          showError('You can\'t remove every column. Leave at least one column in the output.');
+          return;
+        }
+
+        var removeSet = {};
+        for (var i = 0; i < toRemove.length; i++) removeSet[toRemove[i]] = true;
+        var newRows = parsedData.rows.map(function (row) {
+          var out = [];
+          for (var c = 0; c < row.length; c++) {
+            if (!removeSet[c]) out.push(row[c]);
+          }
+          return out;
+        });
+
+        var csvOut = rowsToCsv(newRows);
+        resultSection.classList.add('visible');
+        csvOutput.value = csvOut;
+        var lineCount = newRows.length;
+        resultMeta.textContent = lineCount + ' row' + (lineCount !== 1 ? 's' : '') + ' (including header)';
+        var blob = new Blob([csvOut], { type: 'text/csv;charset=utf-8' });
+        if (csvBlobUrl) URL.revokeObjectURL(csvBlobUrl);
+        csvBlobUrl = URL.createObjectURL(blob);
+        downloadLink.href = csvBlobUrl;
+        var baseName = lastUploadFilename ? lastUploadFilename.replace(/\.[^/.]+$/, '') : 'cleaned';
+        downloadLink.download = baseName + '-columns-removed.csv';
+        downloadLink.style.display = 'inline-flex';
+      });
+
+      copyBtn.addEventListener('click', function () {
+        var csv = csvOutput.value;
+        if (!csv) return;
+        navigator.clipboard.writeText(csv).then(function () {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(function () { copyBtn.textContent = 'Copy CSV'; }, 2000);
+        }).catch(function () {
+          showError('Copy failed. You can select and copy the preview text manually.');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

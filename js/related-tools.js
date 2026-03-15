@@ -10,6 +10,8 @@
     { id: 'split-csv', href: 'split-csv/index.html', label: 'Split CSV' },
     { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
     { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON to CSV' },
+    { id: 'json-formatter', href: 'json-formatter/index.html', label: 'JSON Formatter' },
+    { id: 'csv-to-json', href: 'csv-to-json/index.html', label: 'CSV to JSON' },
     { id: 'csv-to-tsv', href: 'csv-to-tsv/index.html', label: 'CSV to TSV' },
     { id: 'tsv-to-csv', href: 'tsv-to-csv/index.html', label: 'TSV to CSV' },
   ];

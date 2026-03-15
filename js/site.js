@@ -1,37 +1,84 @@
 /* ============================================================
-   TinyTools — Global header module
-   Injects the site header into #site-header-root.
-   Set data-base (e.g. "../" for pages in a subfolder) and
-   data-active (e.g. "split-csv") on the placeholder.
+   TinyTools — Navigation config (shared by header and related tools)
+   Add or reorder tools in NAV_GROUPS; header dropdowns and
+   related-tools section stay in sync.
 ============================================================ */
-
-(function () {
-  const NAV_ITEMS = [
-    { id: 'split-csv', href: 'split-csv/index.html', label: 'Split CSV' },
-    { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
-    { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON to CSV' },
-    { id: 'csv-to-tsv', href: 'csv-to-tsv/index.html', label: 'CSV to TSV' },
-    { id: 'tsv-to-csv', href: 'tsv-to-csv/index.html', label: 'TSV to CSV' },
+const NAV_GROUPS = [
+    {
+      label: 'CSV',
+      id: 'csv',
+      items: [
+        { id: 'split-csv', href: 'split-csv/index.html', label: 'Split CSV' },
+        { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
+        { id: 'csv-column-remover', href: 'csv-column-remover/index.html', label: 'CSV Column Remover' },
+        { id: 'csv-deduplicator', href: 'csv-deduplicator/index.html', label: 'CSV Deduplicator' },
+        { id: 'csv-sorter', href: 'csv-sorter/index.html', label: 'CSV Sorter' },
+      ],
+    },
+    {
+      label: 'JSON',
+      id: 'json',
+      items: [
+        { id: 'json-formatter', href: 'json-formatter/index.html', label: 'JSON Formatter' },
+        { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON → CSV' },
+        { id: 'csv-to-json', href: 'csv-to-json/index.html', label: 'CSV → JSON' },
+      ],
+    },
+    {
+      label: 'Converters',
+      id: 'converters',
+      items: [
+        { id: 'csv-to-tsv', href: 'csv-to-tsv/index.html', label: 'CSV → TSV' },
+        { id: 'tsv-to-csv', href: 'tsv-to-csv/index.html', label: 'TSV → CSV' },
+      ],
+    },
   ];
 
+/* ============================================================
+   TinyTools — Global header module
+============================================================ */
+(function () {
   function getHeaderHtml(base, active) {
     const baseSlash = base ? base.replace(/\/?$/, '/') : '';
     const homeHref = baseSlash ? baseSlash + 'index.html' : 'index.html';
     const logoSrc = baseSlash + 'assets/Logo%20PNG%20Compressed.png';
 
-    const navItemsHtml = NAV_ITEMS.map(function (item) {
-      const isActive = item.id === active;
-      const activeClass = isActive ? ' nav-dropdown__item--active' : '';
-      const ariaCurrent = isActive ? ' aria-current="page"' : '';
-      return '<a href="' + baseSlash + item.href + '" class="nav-dropdown__item' + activeClass + '" role="menuitem"' + ariaCurrent + '>' + item.label + '</a>';
-    }).join('\n            ');
+    const dropdownsHtml = NAV_GROUPS.map(function (group) {
+      const triggerId = 'navDropdown' + group.id + 'Trigger';
+      const menuId = 'navDropdown' + group.id + 'Menu';
+      const itemsHtml = group.items.map(function (item) {
+        const isActive = item.id === active;
+        const activeClass = isActive ? ' nav-dropdown__item--active' : '';
+        const ariaCurrent = isActive ? ' aria-current="page"' : '';
+        return '<a href="' + baseSlash + item.href + '" class="nav-dropdown__item' + activeClass + '" role="menuitem"' + ariaCurrent + '>' + item.label + '</a>';
+      }).join('\n            ');
+      return (
+        '<div class="nav-dropdown" id="navDropdown' + group.id + '">\n' +
+        '        <button class="nav-dropdown__trigger" aria-haspopup="true" aria-expanded="false" aria-controls="' + menuId + '" id="' + triggerId + '">\n' +
+        '          ' + group.label + '\n' +
+        '          <svg class="nav-dropdown__chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">\n' +
+        '            <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>\n' +
+        '          </svg>\n' +
+        '        </button>\n' +
+        '        <div class="nav-dropdown__menu" id="' + menuId + '" role="menu" aria-labelledby="' + triggerId + '">\n' +
+        '            ' + itemsHtml + '\n' +
+        '        </div>\n' +
+        '      </div>'
+      );
+    }).join('\n      ');
 
-    const drawerItemsHtml = NAV_ITEMS.map(function (item) {
-      const isActive = item.id === active;
-      const activeClass = isActive ? ' nav-drawer__item--active' : '';
-      const ariaCurrent = isActive ? ' aria-current="page"' : '';
-      return '<a href="' + baseSlash + item.href + '" class="nav-drawer__item' + activeClass + '"' + ariaCurrent + '>' + item.label + '</a>';
-    }).join('\n            ');
+    const drawerParts = [];
+    drawerParts.push('<a href="' + baseSlash + 'tools/index.html" class="nav-drawer__item' + (active === 'all-tools' ? ' nav-drawer__item--active' : '') + '"' + (active === 'all-tools' ? ' aria-current="page"' : '') + '>All Tools</a>');
+    NAV_GROUPS.forEach(function (group, idx) {
+      drawerParts.push('<span class="nav-drawer__group-label">' + group.label + '</span>');
+      group.items.forEach(function (item) {
+        const isActive = item.id === active;
+        const activeClass = isActive ? ' nav-drawer__item--active' : '';
+        const ariaCurrent = isActive ? ' aria-current="page"' : '';
+        drawerParts.push('<a href="' + baseSlash + item.href + '" class="nav-drawer__item' + activeClass + '"' + ariaCurrent + '>' + item.label + '</a>');
+      });
+    });
+    const drawerItemsHtml = drawerParts.join('\n        ');
 
     return (
       '<header class="site-header" role="banner">\n' +
@@ -41,26 +88,9 @@
       '      <img src="' + logoSrc + '" alt="TinyTools" width="87" height="37" />\n' +
       '    </a>\n' +
       '\n' +
-      '    <span class="site-header__badge">Instant · Free · Private</span>\n' +
-      '\n' +
       '    <nav class="site-nav" aria-label="Main navigation">\n' +
-      '      <div class="nav-dropdown" id="csvDropdown">\n' +
-      '        <button\n' +
-      '          class="nav-dropdown__trigger"\n' +
-      '          aria-haspopup="true"\n' +
-      '          aria-expanded="false"\n' +
-      '          aria-controls="csvDropdownMenu"\n' +
-      '          id="csvDropdownTrigger"\n' +
-      '        >\n' +
-      '          Tools\n' +
-      '          <svg class="nav-dropdown__chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">\n' +
-      '            <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>\n' +
-      '          </svg>\n' +
-      '        </button>\n' +
-      '        <div class="nav-dropdown__menu" id="csvDropdownMenu" role="menu" aria-labelledby="csvDropdownTrigger">\n' +
-      '            ' + navItemsHtml + '\n' +
-      '        </div>\n' +
-      '      </div>\n' +
+      '      <a href="' + baseSlash + 'tools/index.html" class="site-nav__link' + (active === 'all-tools' ? ' site-nav__link--active' : '') + '"' + (active === 'all-tools' ? ' aria-current="page"' : '') + '>All Tools</a>\n' +
+      '      ' + dropdownsHtml + '\n' +
       '    </nav>\n' +
       '\n' +
       '    <button class="nav-burger" id="navBurger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">\n' +
@@ -147,19 +177,12 @@
 ============================================================ */
 
 (function () {
-  const CSV_RELATED_TOOLS = [
-    { id: 'split-csv', href: 'split-csv/index.html', label: 'Split CSV' },
-    { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
-    { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON to CSV' },
-    { id: 'csv-to-tsv', href: 'csv-to-tsv/index.html', label: 'CSV to TSV' },
-    { id: 'tsv-to-csv', href: 'tsv-to-csv/index.html', label: 'TSV to CSV' },
-  ];
-
   const INTRO = 'Need help with other file conversion tasks? Try these tools.';
 
   function getRelatedToolsHtml(base, currentId) {
     const baseSlash = base ? base.replace(/\/?$/, '/') : '';
-    const links = CSV_RELATED_TOOLS
+    const flatItems = NAV_GROUPS.reduce(function (acc, g) { return acc.concat(g.items); }, []);
+    const links = flatItems
       .filter(function (item) { return item.id !== currentId; })
       .map(function (item) {
         return '<a href="' + baseSlash + item.href + '" class="btn-secondary">' + item.label + '</a>';
@@ -203,62 +226,69 @@
 ============================================================ */
 
 /* ============================================================
-   NAV DROPDOWN
-   Expects the following IDs in the page HTML:
-     #csvDropdown        — the wrapper element
-     #csvDropdownTrigger — the <button> that opens/closes it
-     #csvDropdownMenu    — the <div> containing menu links
-   The active page sets .nav-dropdown__item--active in its HTML.
+   NAV DROPDOWN (multiple grouped dropdowns)
+   Each .nav-dropdown has .nav-dropdown__trigger and .nav-dropdown__menu.
+   Opening one closes the others. Same behavior as single dropdown.
 ============================================================ */
 function initNavDropdown() {
-  const dropdown = document.getElementById('csvDropdown');
-  const trigger  = document.getElementById('csvDropdownTrigger');
-  const menu     = document.getElementById('csvDropdownMenu');
+  const dropdowns = document.querySelectorAll('.nav-dropdown');
+  if (!dropdowns.length) return;
 
-  if (!dropdown || !trigger || !menu) return;
-
-  function open() {
-    dropdown.setAttribute('data-open', '');
-    trigger.setAttribute('aria-expanded', 'true');
+  function closeAll() {
+    dropdowns.forEach(function (d) {
+      d.removeAttribute('data-open');
+      const t = d.querySelector('.nav-dropdown__trigger');
+      if (t) t.setAttribute('aria-expanded', 'false');
+    });
   }
 
-  function close() {
-    dropdown.removeAttribute('data-open');
-    trigger.setAttribute('aria-expanded', 'false');
-  }
+  dropdowns.forEach(function (dropdown) {
+    const trigger = dropdown.querySelector('.nav-dropdown__trigger');
+    const menu = dropdown.querySelector('.nav-dropdown__menu');
+    if (!trigger || !menu) return;
 
-  function isOpen() {
-    return dropdown.hasAttribute('data-open');
-  }
-
-  // Toggle on trigger click
-  trigger.addEventListener('click', () => {
-    isOpen() ? close() : open();
-  });
-
-  // Close when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!dropdown.contains(e.target)) close();
-  });
-
-  // Keyboard navigation
-  dropdown.addEventListener('keydown', (e) => {
-    const items = Array.from(menu.querySelectorAll('.nav-dropdown__item'));
-    const idx   = items.indexOf(document.activeElement);
-
-    if (e.key === 'Escape') {
-      close();
-      trigger.focus();
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (!isOpen()) open();
-      const next = idx < items.length - 1 ? items[idx + 1] : items[0];
-      next.focus();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      const prev = idx > 0 ? items[idx - 1] : items[items.length - 1];
-      prev.focus();
+    function open() {
+      closeAll();
+      dropdown.setAttribute('data-open', '');
+      trigger.setAttribute('aria-expanded', 'true');
     }
+
+    function close() {
+      dropdown.removeAttribute('data-open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    function isOpen() {
+      return dropdown.hasAttribute('data-open');
+    }
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      isOpen() ? close() : open();
+    });
+
+    dropdown.addEventListener('keydown', function (e) {
+      const items = Array.from(menu.querySelectorAll('.nav-dropdown__item'));
+      const idx = items.indexOf(document.activeElement);
+
+      if (e.key === 'Escape') {
+        close();
+        trigger.focus();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (!isOpen()) open();
+        const next = idx < items.length - 1 ? items[idx + 1] : items[0];
+        if (next) next.focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = idx > 0 ? items[idx - 1] : items[items.length - 1];
+        if (prev) prev.focus();
+      }
+    });
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.nav-dropdown')) closeAll();
   });
 }
 
