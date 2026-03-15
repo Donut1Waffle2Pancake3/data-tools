@@ -1,5 +1,5 @@
 /* ============================================================
-   TinyTools — Related tools section (CSV / data tools)
+   TinyDataTool — Related tools section (CSV / data tools)
    Injects the Related tools block into #related-tools-root.
    Set data-base (e.g. "../") and data-current (e.g. "csv-to-tsv")
    so the current tool can be excluded from the list.

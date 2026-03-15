@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>All Data Tools | TinyDataTool</title>
-  <meta name="description" content="Free online tools for CSV and JSON processing. Split CSV files, merge CSV files, remove columns, deduplicate data, convert CSV to JSON, format JSON, and more." />
+  <meta name="description" content="Free browser-based tools for working with CSV and JSON data. Split CSV files, merge datasets, remove columns, deduplicate rows, convert CSV to JSON, format JSON, and more." />
   <link rel="canonical" href="https://tinydatatool.com/tools/" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="All Data Tools | TinyDataTool" />
-  <meta property="og:description" content="Free online tools for CSV and JSON processing. Split, merge, convert, and format data in your browser." />
+  <meta property="og:description" content="Free browser-based tools for working with CSV and JSON data. Split, merge, convert, and format data in your browser." />
   <meta property="og:url" content="https://tinydatatool.com/tools/" />
-  <meta property="og:site_name" content="TinyTools" />
+  <meta property="og:site_name" content="TinyDataTool" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="All Data Tools | TinyDataTool" />
-  <meta name="twitter:description" content="Free online tools for CSV and JSON processing. No uploads required." />
+  <meta name="twitter:description" content="Free browser-based tools for CSV and JSON. No uploads required." />
 
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="../assets/favicon.ico" sizes="any" />
@@ -28,6 +28,9 @@
     @media (min-width: 1024px) { .all-tools-grid { grid-template-columns: repeat(4, 1fr); } }
     @media (max-width: 768px) { .all-tools-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 480px) { .all-tools-grid { grid-template-columns: 1fr; } }
+    .tools-category { margin-top: 32px; }
+    .tools-category:first-of-type { margin-top: 0; }
+    .tools-category .section-title { margin-bottom: 16px; }
   </style>
 </head>
 <body>
@@ -39,14 +42,16 @@
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
         <h1 id="hero-heading">All Data Tools</h1>
-        <p class="hero__sub">Free browser-based tools for working with CSV, JSON, and tabular data. No uploads required — everything runs locally in your browser.</p>
+        <p class="hero__sub">TinyDataTool provides free browser-based utilities for working with CSV files, JSON data, and tabular datasets. These tools run entirely in your browser, so your data never leaves your device. You can split large CSV files, merge multiple datasets, remove columns, deduplicate rows, convert CSV to JSON, format JSON, and more.</p>
+        <p class="hero__sub" style="margin-top: 12px;">The tools are designed for developers, analysts, marketers, and anyone who works with spreadsheet or structured data. Each tool focuses on one task and can process data instantly without uploads or account registration.</p>
+        <p class="hero__sub" style="margin-top: 12px;">Use the directory below to quickly find the tool you need.</p>
       </div>
     </section>
 
-    <section class="content-section" aria-labelledby="tools-grid-heading">
+    <section class="content-section" aria-labelledby="csv-tools-heading">
       <div class="container--wide">
-        <h2 id="tools-grid-heading" class="sr-only">Browse all tools</h2>
-        <div class="all-tools-grid" id="toolsGrid">
+        <h2 id="csv-tools-heading" class="section-title">CSV Tools</h2>
+        <div class="all-tools-grid">
           <a href="../split-csv/index.html" class="home-tool-card">
             <span class="home-tool-card__label">Split CSV</span>
             <p class="home-tool-card__desc">Split a large CSV file into smaller files with a fixed number of rows.</p>
@@ -67,13 +72,17 @@
             <span class="home-tool-card__label">CSV Sorter</span>
             <p class="home-tool-card__desc">Sort CSV rows by one or more columns.</p>
           </a>
-          <a href="../csv-to-tsv/index.html" class="home-tool-card">
-            <span class="home-tool-card__label">CSV → TSV</span>
-            <p class="home-tool-card__desc">Convert comma-separated data into tab-separated format.</p>
-          </a>
-          <a href="../tsv-to-csv/index.html" class="home-tool-card">
-            <span class="home-tool-card__label">TSV → CSV</span>
-            <p class="home-tool-card__desc">Convert tab-separated data into CSV format.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section tools-category" aria-labelledby="json-tools-heading">
+      <div class="container--wide">
+        <h2 id="json-tools-heading" class="section-title">JSON Tools</h2>
+        <div class="all-tools-grid">
+          <a href="../json-formatter/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">JSON Formatter</span>
+            <p class="home-tool-card__desc">Format and validate JSON data for readability.</p>
           </a>
           <a href="../csv-to-json/index.html" class="home-tool-card">
             <span class="home-tool-card__label">CSV → JSON</span>
@@ -83,9 +92,21 @@
             <span class="home-tool-card__label">JSON → CSV</span>
             <p class="home-tool-card__desc">Convert JSON data into CSV format.</p>
           </a>
-          <a href="../json-formatter/index.html" class="home-tool-card">
-            <span class="home-tool-card__label">JSON Formatter</span>
-            <p class="home-tool-card__desc">Format and validate JSON data for readability.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section tools-category" aria-labelledby="converters-heading">
+      <div class="container--wide">
+        <h2 id="converters-heading" class="section-title">Converters</h2>
+        <div class="all-tools-grid">
+          <a href="../csv-to-tsv/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">CSV → TSV</span>
+            <p class="home-tool-card__desc">Convert comma-separated data into tab-separated format.</p>
+          </a>
+          <a href="../tsv-to-csv/index.html" class="home-tool-card">
+            <span class="home-tool-card__label">TSV → CSV</span>
+            <p class="home-tool-card__desc">Convert tab-separated data into CSV format.</p>
           </a>
         </div>
       </div>

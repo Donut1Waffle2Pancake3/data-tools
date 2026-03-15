@@ -1,5 +1,5 @@
 /* ============================================================
-   TinyTools — Navigation config (shared by header and related tools)
+   TinyDataTool — Navigation config (shared by header and related tools)
    Add or reorder tools in NAV_GROUPS; header dropdowns and
    related-tools section stay in sync.
 ============================================================ */
@@ -35,7 +35,7 @@ const NAV_GROUPS = [
   ];
 
 /* ============================================================
-   TinyTools — Global header module
+   TinyDataTool — Global header module
 ============================================================ */
 (function () {
   function getHeaderHtml(base, active) {
@@ -84,8 +84,8 @@ const NAV_GROUPS = [
       '<header class="site-header" role="banner">\n' +
       '  <div class="site-header__inner">\n' +
       '\n' +
-      '    <a href="' + homeHref + '" aria-label="TinyTools home" style="display:flex;align-items:center;line-height:1;flex-shrink:0">\n' +
-      '      <img src="' + logoSrc + '" alt="TinyTools" width="87" height="37" />\n' +
+      '    <a href="' + homeHref + '" aria-label="TinyDataTool home" style="display:flex;align-items:center;line-height:1;flex-shrink:0">\n' +
+      '      <img src="' + logoSrc + '" alt="TinyDataTool" width="87" height="37" />\n' +
       '    </a>\n' +
       '\n' +
       '    <nav class="site-nav" aria-label="Main navigation">\n' +
@@ -133,7 +133,7 @@ const NAV_GROUPS = [
 })();
 
 /* ============================================================
-   TinyTools — Global footer module
+   TinyDataTool — Global footer module
    Injects the site footer into #site-footer-root.
    Optional: set data-base (e.g. "../") on the placeholder if
    you add links that need to resolve relative to the page.
@@ -144,7 +144,7 @@ const NAV_GROUPS = [
     return (
       '<footer class="site-footer" role="contentinfo">\n' +
       '  <div class="site-footer__inner">\n' +
-      '    <p class="site-footer__copy">© 2026 TinyTools</p>\n' +
+      '    <p class="site-footer__copy">© 2026 TinyDataTool</p>\n' +
       '    <p class="site-footer__note">\n' +
       '      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">\n' +
       '        <path d="M6 1L2 2.8v3.5c0 2.3 1.7 4.3 4 4.7 2.3-.4 4-2.4 4-4.7V2.8L6 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>\n' +
@@ -170,7 +170,7 @@ const NAV_GROUPS = [
 })();
 
 /* ============================================================
-   TinyTools — Related tools section (CSV / data tools)
+   TinyDataTool — Related tools section (CSV / data tools)
    Injects the Related tools block into #related-tools-root.
    Set data-base (e.g. "../") and data-current (e.g. "csv-to-tsv")
    so the current tool can be excluded from the list.
@@ -219,7 +219,7 @@ const NAV_GROUPS = [
 })();
 
 /* ============================================================
-   TinyTools — Global JavaScript
+   TinyDataTool — Global JavaScript
    Shared utilities and UI behaviours used across all tool pages.
    Each page calls initNavDropdown() and initFaqAccordion() on load,
    then uses the utility functions directly in its own inline script.

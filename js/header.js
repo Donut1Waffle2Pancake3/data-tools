@@ -1,5 +1,5 @@
 /* ============================================================
-   TinyTools — Global header module
+   TinyDataTool — Global header module
    Injects the site header into #site-header-root.
    Set data-base (e.g. "../" for pages in a subfolder) and
    data-active (e.g. "split-csv") on the placeholder.
@@ -39,8 +39,8 @@
       '<header class="site-header" role="banner">\n' +
       '  <div class="site-header__inner">\n' +
       '\n' +
-      '    <a href="' + homeHref + '" aria-label="TinyTools home" style="display:flex;align-items:center;line-height:1;flex-shrink:0">\n' +
-      '      <img src="' + logoSrc + '" alt="TinyTools" width="87" height="37" />\n' +
+      '    <a href="' + homeHref + '" aria-label="TinyDataTool home" style="display:flex;align-items:center;line-height:1;flex-shrink:0">\n' +
+      '      <img src="' + logoSrc + '" alt="TinyDataTool" width="87" height="37" />\n' +
       '    </a>\n' +
       '\n' +
       '    <span class="site-header__badge">Instant · Free · Private</span>\n' +

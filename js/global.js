@@ -1,5 +1,5 @@
 /* ============================================================
-   TinyTools — Global JavaScript
+   TinyDataTool — Global JavaScript
    Shared utilities and UI behaviours used across all tool pages.
    Each page calls initNavDropdown() and initFaqAccordion() on load,
    then uses the utility functions directly in its own inline script.
