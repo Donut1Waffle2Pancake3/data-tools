@@ -1,5 +1,5 @@
 /**
- * Merge CSV tests — same logic as merge-csv.html (parseCSVLines + merge).
+ * Merge CSV tests — same logic as merge-csv/index.html (parseCSVLines + merge).
  * Run: node merge-test.js
  */
 const fs = require('fs');
@@ -39,7 +39,7 @@ function parseCSVLines(text) {
   return lines;
 }
 
-// Replicate merge logic from merge-csv.html
+// Replicate merge logic from merge-csv/index.html
 function mergeFiles(fileContents) {
   const parsed = [];
   for (let i = 0; i < fileContents.length; i++) {

@@ -7,8 +7,8 @@
 
 (function () {
   const NAV_ITEMS = [
-    { id: 'split-csv', href: 'split-csv/split-csv.html', label: 'Split CSV' },
-    { id: 'merge-csv', href: 'merge-csv/merge-csv.html', label: 'Merge CSV' },
+    { id: 'split-csv', href: 'split-csv/index.html', label: 'Split CSV' },
+    { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
     { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON to CSV' },
     { id: 'csv-to-tsv', href: 'csv-to-tsv/index.html', label: 'CSV to TSV' },
   ];

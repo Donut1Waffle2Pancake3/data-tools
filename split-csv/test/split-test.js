@@ -1,5 +1,5 @@
 /**
- * Split CSV tests — same logic as split-csv.html (parseCSVLines + split).
+ * Split CSV tests — same logic as split-csv/index.html (parseCSVLines + split).
  * Run: node split-test.js
  */
 const fs = require('fs');
@@ -39,7 +39,7 @@ function parseCSVLines(text) {
   return lines;
 }
 
-// Replicate split logic from split-csv.html (returns array of { name, content, rows })
+// Replicate split logic from split-csv/index.html (returns array of { name, content, rows })
 function splitCsv(content, fileName, rowsPerFile) {
   const lines = parseCSVLines(content);
 
