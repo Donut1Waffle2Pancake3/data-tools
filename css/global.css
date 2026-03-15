@@ -235,7 +235,146 @@ a:hover {
   height: 6px;
   border-radius: 50%;
   background: var(--accent);
-  flex-shrink: 0;
+}
+
+/* ---- Mobile: hamburger (hidden by default) ---- */
+.nav-burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text-primary);
+}
+
+.nav-burger:hover,
+.nav-burger:focus-visible {
+  background: var(--surface-secondary);
+  outline: none;
+}
+
+.nav-burger__line {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+/* ---- Mobile drawer overlay & panel ---- */
+.nav-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 150;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 280px;
+  max-width: 85vw;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08);
+  z-index: 160;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  overflow: auto;
+}
+
+.nav-drawer__inner {
+  padding: 24px;
+  padding-top: 56px;
+}
+
+.nav-drawer__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.nav-drawer__close:hover {
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+}
+
+.nav-drawer__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-drawer__item {
+  display: block;
+  padding: 12px 14px;
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: var(--radius);
+  transition: background var(--transition), color var(--transition);
+}
+
+.nav-drawer__item:hover {
+  background: var(--surface-secondary);
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.nav-drawer__item--active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Drawer open state (body class set by JS) */
+body.nav-drawer-open {
+  overflow: hidden;
+}
+
+body.nav-drawer-open .nav-drawer-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.nav-drawer-open .nav-drawer {
+  transform: translateX(0);
+}
+
+/* Mobile breakpoint: show hamburger, hide dropdown */
+@media (max-width: 640px) {
+  .site-nav {
+    display: none;
+  }
+
+  .nav-burger {
+    display: flex;
+  }
 }
 
 /* ============================================================
@@ -268,7 +407,6 @@ a:hover {
 .hero__sub {
   font-size: var(--text-md);
   color: var(--text-secondary);
-  max-width: 480px;
   margin: 0 auto 8px;
   line-height: 1.6;
 }
@@ -277,6 +415,9 @@ a:hover {
    TOOL CARD
 ============================================================ */
 .tool-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
@@ -525,6 +666,35 @@ a:hover {
   margin-top: 24px;
 }
 
+/* Tool card uses gap for spacing; form-groups inside it don't need top margin */
+.tool-card .form-group {
+  margin-top: 0;
+}
+
+.form-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.form-label-row .form-label {
+  margin-bottom: 0;
+}
+
+.clear-link {
+  font-size: var(--text-sm);
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.clear-link:hover {
+  text-decoration: underline;
+}
+
 .form-label {
   display: block;
   font-size: var(--text-sm);
@@ -534,6 +704,7 @@ a:hover {
   letter-spacing: -0.01em;
 }
 
+.form-hint,
 .form-label .form-hint {
   font-weight: 400;
   color: var(--text-muted);
@@ -568,6 +739,11 @@ a:hover {
   color: var(--text-muted);
 }
 
+textarea.form-input {
+  min-height: 160px;
+  resize: vertical;
+}
+
 /* ============================================================
    PRIMARY BUTTON
 ============================================================ */
@@ -577,7 +753,6 @@ a:hover {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  margin-top: 24px;
   padding: 14px 24px;
   font-size: var(--text-base);
   font-weight: 700;
@@ -637,7 +812,6 @@ a:hover {
   padding: 14px 16px;
   border-radius: var(--radius);
   font-size: var(--text-sm);
-  margin-top: 16px;
   line-height: 1.5;
 }
 
@@ -689,7 +863,6 @@ a:hover {
 ============================================================ */
 .result-section {
   display: none;
-  margin-top: 24px;
 }
 
 .result-section.visible {
@@ -859,6 +1032,31 @@ a:hover {
   text-decoration: none;
 }
 
+/* Secondary button (e.g. Clear) */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: #fff;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background: var(--surface-secondary);
+  border-color: var(--border);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
 /* ============================================================
    PRIVACY NOTE
 ============================================================ */
@@ -868,7 +1066,6 @@ a:hover {
   gap: 8px;
   font-size: var(--text-xs);
   color: var(--text-muted);
-  margin-top: 20px;
 }
 
 .privacy-note svg {
@@ -922,6 +1119,15 @@ a:hover {
   color: var(--text-secondary);
   max-width: 580px;
   line-height: 1.7;
+}
+
+.related-tools-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0;
 }
 
 /* ============================================================
@@ -1081,8 +1287,8 @@ a:hover {
 .site-footer {
   border-top: 1px solid var(--border);
   background: var(--surface);
-  padding: 20px 0;
-  margin-top: 56px;
+  padding-bottom: 20px;
+  padding-top: 20px;
 }
 
 .site-footer__inner {
@@ -1135,8 +1341,18 @@ a:hover {
 /* ============================================================
    RESPONSIVE
 ============================================================ */
+@media (max-width: 640px) {
+  .container,
+  .container--wide,
+  .site-header__inner,
+  .site-footer__inner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
 @media (max-width: 600px) {
-  .tool-card { padding: 28px 20px; }
+  .tool-card { padding: 16px; }
 }
 
 @media (max-width: 500px) {

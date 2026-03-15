@@ -1,0 +1,4 @@
+[
+  {"id":1,"meta":{"source":"api"}},
+  {"id":2,"meta":{"source":"upload"},"tags":["a","b"]}
+]

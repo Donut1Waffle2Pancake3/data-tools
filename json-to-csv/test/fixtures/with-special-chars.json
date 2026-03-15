@@ -1,0 +1,6 @@
+[
+  {"col1":"normal","col2":100},
+  {"col1":"has, comma","col2":200},
+  {"col1":"has \"quotes\"","col2":300},
+  {"col1":"line1\nline2","col2":400}
+]

@@ -66,6 +66,48 @@ function initNavDropdown() {
 }
 
 /* ============================================================
+   MOBILE NAV DRAWER (hamburger menu)
+   At viewports ≤640px the Tools dropdown is hidden and a
+   hamburger button is shown. Clicking it opens a slide-in
+   drawer with the same tool links.
+============================================================ */
+function initNavDrawer() {
+  const burger   = document.getElementById('navBurger');
+  const drawer   = document.getElementById('navDrawer');
+  const overlay  = document.getElementById('navDrawerOverlay');
+  const closeBtn = document.getElementById('navDrawerClose');
+
+  if (!burger || !drawer || !overlay) return;
+
+  function openDrawer() {
+    document.body.classList.add('nav-drawer-open');
+    burger.setAttribute('aria-expanded', 'true');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeDrawer() {
+    document.body.classList.remove('nav-drawer-open');
+    burger.setAttribute('aria-expanded', 'false');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+
+  burger.addEventListener('click', () => openDrawer());
+  overlay.addEventListener('click', () => closeDrawer());
+  if (closeBtn) closeBtn.addEventListener('click', () => closeDrawer());
+
+  drawer.querySelectorAll('.nav-drawer__item').forEach((link) => {
+    link.addEventListener('click', () => closeDrawer());
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.body.classList.contains('nav-drawer-open')) {
+      closeDrawer();
+      burger.focus();
+    }
+  });
+}
+
+/* ============================================================
    FAQ ACCORDION
    Works on any page that has .faq-question / .faq-answer markup.
 ============================================================ */
@@ -181,5 +223,6 @@ function parseCSVLines(text) {
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   initNavDropdown();
+  initNavDrawer();
   initFaqAccordion();
 });
