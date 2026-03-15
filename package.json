@@ -1,0 +1,11 @@
+{
+  "name": "data-tools",
+  "private": true,
+  "scripts": {
+    "generate-favicons": "node scripts/generate-favicons.js"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5",
+    "png-to-ico": "^2.1.0"
+  }
+}
