@@ -5,7 +5,7 @@
     {
       "source": "/(.*)",
       "destination": "https://tinydatatool.com/$1",
-      "status": 308,
+      "permanent": true,
       "has": [
         { "type": "host", "value": "data-tools-gold.vercel.app" }
       ]
