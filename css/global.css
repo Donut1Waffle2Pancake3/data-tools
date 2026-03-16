@@ -15,12 +15,14 @@
   /* Colors: borders */
   --border: #e6eaf0;
   --border-strong: #bbbbbb;
+  --border-control: #d0d4db; /* inputs, selects, secondary buttons — match */
   --border-focus: #2563eb;
 
   /* Colors: text */
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --text-muted: #767676; /* minimum grey for 4.5:1 on #fff (WCAG AA) */
+  --text-placeholder: #9ca3af;
   --text-muted-on-surface: #575757; /* for hint text on grey (e.g. drop zone) — 4.5:1 on #f8f8f8 */
 
   /* Colors: brand / accent */
@@ -40,6 +42,7 @@
   /* Type scale */
   --text-xs:   0.75rem;
   --text-sm:   0.875rem;
+  --form-option-font-size: 14px; /* form option values: selects, radio/checkbox labels, inline control labels */
   --text-base: 1rem;
   --text-md:   1.125rem;
   --text-lg:   1.25rem;
@@ -56,10 +59,11 @@
   --line-height-loose:  1.75;   /* long-form, lists, spacious layout */
 
   /* Radius */
-  --radius:    12px;
-  --radius-sm: 8px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  --radius:      12px;
+  --radius-sm:   8px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-pill: 9999px; /* fully rounded (buttons only) */
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -708,6 +712,12 @@ body.nav-drawer-open .nav-drawer {
   color: var(--accent-hover);
 }
 
+.file-list__label-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
 .file-list__label {
   font-size: var(--text-sm);
   font-weight: 600;
@@ -764,7 +774,7 @@ body.nav-drawer-open .nav-drawer {
   padding: 2px;
   display: flex;
   align-items: center;
-  border-radius: 4px;
+  border-radius: var(--radius-pill);
   transition: color var(--transition);
   flex-shrink: 0;
 }
@@ -800,13 +810,21 @@ body.nav-drawer-open .nav-drawer {
 
 .clear-link {
   font-size: var(--text-sm);
-  color: var(--accent);
+  color: var(--text-muted);
   font-weight: 500;
   text-decoration: none;
   flex-shrink: 0;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
-.clear-link:hover {
+.clear-link--enabled {
+  color: var(--accent);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.clear-link--enabled:hover {
   text-decoration: underline;
 }
 
@@ -833,14 +851,15 @@ body.nav-drawer-open .nav-drawer {
   font-family: var(--font-body);
   color: var(--text-primary);
   background: var(--bg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius);
   transition: border-color var(--transition), box-shadow var(--transition);
   appearance: none;
   -webkit-appearance: none;
 }
 
-.form-input:hover {
+/* Hover only for text-like inputs; checkboxes and radio buttons don't need hover states */
+.form-input:not([type="checkbox"]):not([type="radio"]):hover {
   border-color: var(--border-strong);
 }
 
@@ -851,7 +870,7 @@ body.nav-drawer-open .nav-drawer {
 }
 
 .form-input::placeholder {
-  color: var(--text-muted);
+  color: var(--text-placeholder);
 }
 
 textarea.form-input {
@@ -888,7 +907,7 @@ textarea.form-input {
   color: #fff;
   background: var(--accent);
   border: none;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   cursor: pointer;
   transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
 }
@@ -905,7 +924,7 @@ textarea.form-input {
 }
 
 .btn-primary:disabled {
-  background: #c5c9d0;
+  background: #d8dce0;
   box-shadow: none;
   cursor: not-allowed;
 }
@@ -1024,7 +1043,7 @@ textarea.form-input {
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  background: var(--surface-secondary);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   animation: slideIn 0.2s ease both;
@@ -1130,7 +1149,7 @@ textarea.form-input {
   color: var(--accent);
   background: var(--accent-light);
   border: none;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   cursor: pointer;
   transition: background var(--transition), color var(--transition);
 }
@@ -1153,7 +1172,7 @@ textarea.form-input {
   color: var(--text-primary);
   background: #e4effd;
   border: none;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   cursor: pointer;
   transition: background var(--transition), color var(--transition);
   text-decoration: none;
@@ -1176,18 +1195,132 @@ textarea.form-input {
   font-family: var(--font-body);
   color: var(--text-primary);
   background: #fff;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-pill);
   cursor: pointer;
   transition: background var(--transition), border-color var(--transition);
   text-decoration: none;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: var(--surface-secondary);
   border-color: var(--border);
   color: var(--text-primary);
   text-decoration: none;
+}
+
+.btn-secondary:disabled {
+  color: var(--text-placeholder);
+  background: var(--surface-secondary);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+
+/* Size modifiers for buttons */
+.btn--sm {
+  padding: 0 12px !important;
+  font-size: var(--text-sm) !important;
+  height: 32px !important;
+  line-height: 1.4 !important;
+}
+
+.btn--md {
+  padding: 0 12px !important;
+  font-size: var(--text-sm) !important;
+  height: 40px !important;
+  line-height: 1.4 !important;
+}
+
+.btn--lg {
+  padding: 0 16px !important;
+  font-size: var(--text-base) !important;
+  height: 48px !important;
+  line-height: 1.4 !important;
+}
+
+/* Size utilities for single-line inputs and selects */
+.field-sm {
+  height: 32px;
+  padding: 0 10px;
+  font-size: var(--form-option-font-size);
+  font-family: var(--font-body);
+}
+
+.field-md {
+  height: 40px;
+  padding: 0 12px;
+  font-size: var(--form-option-font-size);
+  font-family: var(--font-body);
+  border-radius: var(--radius-sm);
+}
+
+.field-lg {
+  height: 48px;
+  padding: 0 14px;
+  font-size: var(--form-option-font-size);
+  font-family: var(--font-body);
+}
+
+/* Standardized select: same look as form-input, with dropdown arrow (text-primary, slightly larger) */
+.tool-card select {
+  min-width: 120px;
+  max-width: 100%;
+  padding: 0 36px 0 12px;
+  font-size: var(--form-option-font-size);
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background-color: var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23111827' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.tool-card select.field-md {
+  border-radius: var(--radius-sm);
+}
+
+.tool-card select:hover {
+  border-color: var(--border-strong);
+}
+
+.tool-card select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background-color: var(--surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23111827' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+@media (max-width: 480px) {
+  .tool-card select {
+    min-width: 100px;
+  }
+}
+
+/* Form option values: 14px for option text, radio/checkbox labels, inline control labels (not section labels) */
+.tool-card select,
+.tool-card option,
+.form-option,
+.sort-options__radio,
+.sort-options__checkbox,
+.dedupe-mode__option,
+.dedupe-mode__option span,
+.column-checkbox-item label,
+.delimiter-group label {
+  font-size: var(--form-option-font-size);
+}
+
+.dedupe-mode__option {
+  cursor: pointer;
 }
 
 /* ============================================================
@@ -1257,7 +1390,7 @@ textarea.form-input {
 .related-tools-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
   list-style: none;
   padding: 0;
   margin: 20px 0 0;
@@ -1412,6 +1545,61 @@ textarea.form-input {
 }
 
 .faq-answer.open {
+  display: block;
+}
+
+/* FAQ accordion (BEM pattern: .faq, .faq__item) — match .faq-question look, not form controls */
+.faq {
+  margin-top: 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.faq__item {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
+  font-size: var(--text-base);
+  font-weight: 400;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: background var(--transition), color var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.faq__item:last-of-type {
+  border-bottom: none;
+}
+
+.faq__item:hover,
+.faq__item[aria-expanded="true"] {
+  background: var(--surface-secondary);
+}
+
+.faq__item[aria-expanded="true"] .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq__answer {
+  display: none;
+  padding: 0 20px 16px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.7;
+  background: var(--surface-secondary);
+}
+
+.faq__answer.open {
   display: block;
 }
 

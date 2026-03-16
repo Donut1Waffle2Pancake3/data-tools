@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       SEO
+  ============================================================ -->
+  <title>CSV Row Filter | Filter CSV Rows by Column Value Online | TinyDataTool</title>
+  <meta name="description" content="Filter CSV rows by column values or conditions online. Keep matching rows, remove unwanted data, and download the filtered CSV instantly." />
+  <link rel="canonical" href="https://tinydatatool.com/csv-row-filter/" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="CSV Row Filter | Filter CSV Rows by Column Value Online | TinyDataTool" />
+  <meta property="og:description" content="Filter CSV rows by column value, text match, or numeric conditions directly in your browser. No uploads, no accounts." />
+  <meta property="og:url"         content="https://tinydatatool.com/csv-row-filter/" />
+  <meta property="og:site_name"   content="TinyDataTool" />
+
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="CSV Row Filter | Filter CSV Rows by Column Value Online | TinyDataTool" />
+  <meta name="twitter:description" content="Filter CSV rows by column or value in your browser. Free, fast, and private." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CSV Row Filter","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/csv-row-filter/","description":"Filter CSV rows by column values and conditions directly in your browser. Free, private, and no uploads required."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .tool-form { display: flex; flex-direction: column; gap: 20px; }
+    .tool-form__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 8px; margin-bottom: 12px; }
+    .filter-row__select { min-width: 140px; max-width: 220px; border: 1px solid var(--border); border-radius: var(--radius); background-color: var(--surface); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23767676' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px; color: var(--text-primary); appearance: none; padding-right: 26px; }
+    .filter-row__select:hover { border-color: var(--border-strong); }
+    .filter-row__select:focus { outline: none; border-color: var(--border-focus); background-color: var(--surface); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23767676' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px; }
+    .filter-row__value-wrap { display: flex; align-items: center; gap: 8px; flex: 1 1 160px; min-width: 0; }
+    .filter-row__value { min-width: 0; flex: 1; }
+    .filter-row__remove { flex-shrink: 0; background: none; border: none; padding: 6px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+    .filter-row__remove svg { width: 20px; height: 20px; }
+    .filter-row__remove:hover { color: var(--text-primary); }
+    .form-option-group { border: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+    .form-option { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
+    .form-option input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+    .logic-toggle { display: inline-flex; border-radius: 999px; border: 1px solid var(--border); overflow: hidden; }
+    .logic-toggle__btn { padding: 4px 10px; font-size: var(--text-xs); background: transparent; border: none; cursor: pointer; color: var(--text-secondary); }
+    .logic-toggle__btn[aria-pressed="true"] { background: var(--accent-light); color: var(--accent); }
+    .mode-toggle { display: inline-flex; border-radius: 999px; border: 1px solid var(--border); overflow: hidden; }
+    .mode-toggle__btn { padding: 4px 10px; font-size: var(--text-xs); background: transparent; border: none; cursor: pointer; color: var(--text-secondary); }
+    .mode-toggle__btn[aria-pressed="true"] { background: var(--surface-secondary); color: var(--text-primary); }
+    .delimiter-group { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+    .delimiter-select { min-width: 120px; border: 1px solid var(--border); border-radius: var(--radius); background-color: var(--surface); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23767676' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px; color: var(--text-primary); appearance: none; padding-right: 26px; }
+    .delimiter-select:hover { border-color: var(--border-strong); }
+    .delimiter-select:focus { outline: none; border-color: var(--border-focus); background-color: var(--surface); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23767676' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px; }
+    .results-summary { display: flex; flex-wrap: wrap; gap: 12px 20px; font-size: var(--text-xs); color: var(--text-muted); margin-top: 8px; }
+    .results-summary span { white-space: nowrap; }
+    @media (max-width: 480px) {
+      .filter-row { flex-direction: column; align-items: stretch; }
+      .filter-row__value-wrap { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="csv-row-filter"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <span class="hero__eyebrow">Free CSV Row Filter</span>
+        <h1 id="hero-heading">CSV Row Filter</h1>
+        <p class="hero__sub">Filter rows in a CSV file by column value, text match, or numeric conditions. Paste CSV data or upload a file to keep only the rows you need.</p>
+      </div>
+    </section>
+
+    <section aria-label="CSV row filter" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="CSV row filter">
+
+          <div class="tool-form">
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="csvInput">Paste CSV or upload a file</label>
+                <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+              </div>
+              <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, columns separated by commas." aria-describedby="csvInputHint" spellcheck="false"></textarea>
+              <p class="form-hint" id="csvInputHint">Paste CSV data or upload a file, then add one or more filter conditions.</p>
+            </div>
+
+            <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
+              <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+              </svg>
+              <p class="drop-zone__label">Or upload a CSV file</p>
+              <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+              <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Options</label>
+              <div class="delimiter-group">
+                <label for="delimiterSelect">Delimiter</label>
+                <select id="delimiterSelect" class="delimiter-select field-md">
+                  <option value=",">Comma</option>
+                  <option value="tab">Tab</option>
+                  <option value=";">Semicolon</option>
+                  <option value="|">Pipe</option>
+                </select>
+                <label class="dedupe-mode__option" style="margin-left: 8px;">
+                  <input type="checkbox" id="hasHeaderCheckbox" checked />
+                  <span>First row is a header</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">Filters</label>
+                <a href="#" class="clear-link" id="resetFiltersLink" role="button" aria-disabled="true">Reset filters</a>
+              </div>
+              <div id="filterContainer"></div>
+              <button class="btn-secondary btn--sm" type="button" id="addFilterBtn" disabled>Add</button>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Match</label>
+              <fieldset class="form-option-group" aria-label="Filter logic">
+                <label class="form-option">
+                  <input type="radio" name="logicMode" id="logicAll" value="all" checked />
+                  <span>All conditions (AND)</span>
+                </label>
+                <label class="form-option">
+                  <input type="radio" name="logicMode" id="logicAny" value="any" />
+                  <span>Any condition (OR)</span>
+                </label>
+              </fieldset>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Mode</label>
+              <fieldset class="form-option-group" aria-label="Filter mode">
+                <label class="form-option">
+                  <input type="radio" name="filterMode" id="modeKeep" value="keep" checked />
+                  <span>Keep matching rows</span>
+                </label>
+                <label class="form-option">
+                  <input type="radio" name="filterMode" id="modeRemove" value="remove" />
+                  <span>Remove matching rows</span>
+                </label>
+              </fieldset>
+            </div>
+
+            <div class="tool-form__actions">
+              <button class="btn-primary" id="filterBtn" type="button" aria-label="Filter CSV rows" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              Filter Rows
+              <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
+              </svg>
+            </button>
+            </div>
+          </div>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Results</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="results-summary" id="resultsSummary" aria-label="Filter summary" hidden>
+              <span id="summaryProcessed"></span>
+              <span id="summaryKept"></span>
+              <span id="summaryRemoved"></span>
+            </div>
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label" for="csvOutput">Filtered CSV output</label>
+              <textarea id="csvOutput" class="form-input" readonly placeholder="Filtered CSV will appear here." aria-label="Filtered CSV preview" style="min-height: 120px;"></textarea>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+              <button class="btn-download" id="copyBtn" type="button" aria-label="Copy CSV to clipboard">
+                <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
+                </svg>
+                Copy CSV
+              </button>
+              <a class="btn-download" id="downloadLink" href="#" download="filtered.csv" aria-label="Download CSV file" style="display: none;">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                  <path d="M6.5 1.5v7M3.5 6l3 3 3-3M1.5 11.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Download CSV
+              </a>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Files are processed entirely in your browser and are never uploaded to any server.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" id="how-heading">How to Filter Rows in a CSV</h2>
+        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste CSV data or upload a file</p>
+            <p class="step__desc">Paste comma-separated data into the input box or upload a CSV file using the upload area.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Choose header and delimiter</p>
+            <p class="step__desc">Tell the tool whether the first row is a header and choose the delimiter if your CSV uses tabs, semicolons, or pipes.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Add one or more filter conditions</p>
+            <p class="step__desc">Pick a column, an operator, and a value. You can add multiple conditions and choose whether to match all of them or any of them.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">4</span>
+            <p class="step__title">Filter rows and download the result</p>
+            <p class="step__desc">Click Filter Rows to generate a filtered CSV, then copy the output or download it as a file.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Why Use a CSV Row Filter?</h2>
+        <p class="section-body">A CSV row filter helps you pull out just the records you care about without touching the rest of the file. Instead of manually scanning and deleting rows in a spreadsheet, you can keep matching rows or remove unwanted ones in a single step.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M5 9h8M7 6h6M5 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Filter by any column</p>
+              <p class="benefit__desc">Use header names or generic column labels to filter rows by city, status, ID, or any other field.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M3 4h12M5 2h8M7 8l2 2 4-4M4 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Combine multiple conditions</p>
+              <p class="benefit__desc">Match all conditions (AND) or any condition (OR) and quickly narrow down large datasets.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="3" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 1.5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 6h2M6 9h2M6 12h2M10 6h2.5M10 9h2.5M10 12h2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Keep or remove matches</p>
+              <p class="benefit__desc">Choose whether to keep rows that match your filters or remove them from the output.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">CSV Row Filter Questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">What does a CSV Row Filter do?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">A CSV row filter takes tabular data and keeps only the rows that match your conditions. You can filter by text, such as a city or status, or by numeric values like amounts or counts. The result is a smaller CSV that contains just the records you care about.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Can I filter by multiple columns?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. You can add multiple filter conditions and choose whether rows must match all of them (AND) or any of them (OR). Each condition can target a different column, so you can filter by city and status at the same time.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Does this tool work entirely in my browser?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. CSV Row Filter runs completely in your browser using JavaScript. Your files are never uploaded to a server, which makes it safe to use with exports that contain sensitive or internal data.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">Can I upload a CSV instead of pasting data?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. You can drag and drop a CSV file or use the upload button. The tool reads the file in your browser, populates the input area, and lets you build filters the same way as if you pasted the data.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="seo-heading">
+      <div class="container--wide">
+        <p class="section-label">About this tool</p>
+        <h2 class="section-title" id="seo-heading">Filter CSV Rows by Column Value</h2>
+        <p class="section-body">
+          CSV Row Filter is designed for quick, one-off filtering tasks that would be tedious in a spreadsheet. You can use it to keep only paid orders, active users, rows from a specific city, or values above a numeric threshold. Common examples include filtering leads by status, transactions by amount, or rows where a column is empty.
+        </p>
+        <p class="section-body">
+          Because everything runs in your browser, you can safely use exports from CRM systems, analytics tools, or databases without sending data to a third party. Paste or upload your CSV, apply conditions, and download a clean, filtered file in seconds.
+        </p>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="csv-row-filter"></div>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+
+  <script>
+    (function () {
+      const csvInput = document.getElementById('csvInput');
+      const fileInput = document.getElementById('fileInput');
+      const dropZone = document.getElementById('dropZone');
+      const clearLink = document.getElementById('clearLink');
+      const delimiterSelect = document.getElementById('delimiterSelect');
+      const hasHeaderCheckbox = document.getElementById('hasHeaderCheckbox');
+      const filterContainer = document.getElementById('filterContainer');
+      const addFilterBtn = document.getElementById('addFilterBtn');
+      const logicAllRadio = document.getElementById('logicAll');
+      const logicAnyRadio = document.getElementById('logicAny');
+      const modeKeepRadio = document.getElementById('modeKeep');
+      const modeRemoveRadio = document.getElementById('modeRemove');
+      const filterBtn = document.getElementById('filterBtn');
+      const resetFiltersLink = document.getElementById('resetFiltersLink');
+      const errorMsg = document.getElementById('errorMsg');
+      const errorText = document.getElementById('errorText');
+      const resultSection = document.getElementById('resultSection');
+      const resultMeta = document.getElementById('resultMeta');
+      const resultsSummary = document.getElementById('resultsSummary');
+      const summaryProcessed = document.getElementById('summaryProcessed');
+      const summaryKept = document.getElementById('summaryKept');
+      const summaryRemoved = document.getElementById('summaryRemoved');
+      const csvOutput = document.getElementById('csvOutput');
+      const copyBtn = document.getElementById('copyBtn');
+      const downloadLink = document.getElementById('downloadLink');
+
+      let csvBlobUrl = null;
+      let lastUploadFilename = '';
+      let parsedRows = null; // normalized rows including header (if any)
+
+      function formatNum(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+      function getDelimiterChar() {
+        const val = delimiterSelect.value;
+        if (val === 'tab') return '\t';
+        return val || ',';
+      }
+
+      function parseCSV(text, delimiter) {
+        const normalized = (text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+        if (!normalized) return [];
+        const rows = [];
+        let row = [];
+        let cell = '';
+        let inQuotes = false;
+        for (let i = 0; i < normalized.length; i++) {
+          const ch = normalized[i];
+          if (ch === '"') {
+            if (inQuotes && normalized[i + 1] === '"') {
+              cell += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if ((ch === delimiter || ch === '\n') && !inQuotes) {
+            if (ch === delimiter) {
+              row.push(cell);
+              cell = '';
+            } else {
+              row.push(cell);
+              rows.push(row);
+              row = [];
+              cell = '';
+            }
+          } else {
+            cell += ch;
+          }
+        }
+        row.push(cell);
+        rows.push(row);
+        return rows;
+      }
+
+      function normalizeColumnCount(rows) {
+        let numCols = 0;
+        for (let r = 0; r < rows.length; r++) {
+          if (rows[r].length > numCols) numCols = rows[r].length;
+        }
+        for (let r = 0; r < rows.length; r++) {
+          while (rows[r].length < numCols) rows[r].push('');
+        }
+        return rows;
+      }
+
+      function escapeCsvCell(val, delimiter) {
+        if (val === null || val === undefined) return '';
+        const str = String(val);
+        const delim = delimiter || ',';
+        const needsQuotes = new RegExp('["' + (delim === '\t' ? '\\t' : delim.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')) + '\\r\\n]').test(str);
+        if (needsQuotes) return '"' + str.replace(/"/g, '""') + '"';
+        return str;
+      }
+
+      function rowsToDelimited(rows, delimiter) {
+        const delim = delimiter || ',';
+        return rows.map(function (cells) {
+          return cells.map(function (cell) { return escapeCsvCell(cell, delim); }).join(delim);
+        }).join('\n');
+      }
+
+      function headerDisplayNames(headerCells) {
+        const counts = {};
+        return headerCells.map(function (name, idx) {
+          const base = (name || '').trim() || ('Column ' + (idx + 1));
+          counts[base] = (counts[base] || 0) + 1;
+          return counts[base] === 1 ? base : base + ' (' + counts[base] + ')';
+        });
+      }
+
+      function clearError() {
+        errorMsg.classList.remove('visible');
+        errorText.textContent = '';
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function clearResult() {
+        resultSection.classList.remove('visible');
+        csvOutput.value = '';
+        resultMeta.textContent = '';
+        resultsSummary.hidden = true;
+        summaryProcessed.textContent = '';
+        summaryKept.textContent = '';
+        summaryRemoved.textContent = '';
+        if (csvBlobUrl) {
+          URL.revokeObjectURL(csvBlobUrl);
+          csvBlobUrl = null;
+        }
+        downloadLink.style.display = 'none';
+      }
+
+      function getInputText() {
+        return (csvInput.value || '').trim();
+      }
+
+      function setInputText(text, filename) {
+        csvInput.value = text;
+        lastUploadFilename = filename || '';
+        clearError();
+        clearResult();
+        parseAndUpdateFilterUi();
+        updateFilterButtonState();
+      }
+
+      function updateFilterButtonState() {
+        const hasText = getInputText().length > 0;
+        filterBtn.disabled = !hasText;
+        addFilterBtn.disabled = !hasText;
+        clearLink.classList.toggle('clear-link--enabled', hasText);
+        clearLink.setAttribute('aria-disabled', hasText ? 'false' : 'true');
+      }
+
+      function updateResetFiltersLinkState() {
+        const hasFilters = filterContainer.children.length > 0;
+        resetFiltersLink.classList.toggle('clear-link--enabled', hasFilters);
+        resetFiltersLink.setAttribute('aria-disabled', hasFilters ? 'false' : 'true');
+      }
+
+      function clearFilters() {
+        while (filterContainer.firstChild) filterContainer.removeChild(filterContainer.firstChild);
+        updateResetFiltersLinkState();
+      }
+
+      function createFilterRow(columnOptions) {
+        const row = document.createElement('div');
+        row.className = 'filter-row';
+        row.innerHTML = ''
+          + '<select class="filter-row__select field-md filter-column" aria-label="Column"></select>'
+          + '<select class="filter-row__select field-md filter-operator" aria-label="Operator">'
+          + '  <option value="eq">equals</option>'
+          + '  <option value="neq">does not equal</option>'
+          + '  <option value="contains">contains</option>'
+          + '  <option value="not_contains">does not contain</option>'
+          + '  <option value="starts_with">starts with</option>'
+          + '  <option value="ends_with">ends with</option>'
+          + '  <option value="empty">is empty</option>'
+          + '  <option value="not_empty">is not empty</option>'
+          + '  <option value="gt">greater than</option>'
+          + '  <option value="lt">less than</option>'
+          + '  <option value="gte">greater than or equal</option>'
+          + '  <option value="lte">less than or equal</option>'
+          + '</select>'
+          + '<div class="filter-row__value-wrap">'
+          + '<input type="text" class="form-input field-md filter-row__value filter-value" placeholder="Value" />'
+          + '<button type="button" class="filter-row__remove" aria-label="Remove condition">'
+          + '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">'
+          + '<path d="M14.793 6.27L11.043 10.02L14.762 13.738C15.074 14.02 15.074 14.488 14.762 14.77C14.48 15.082 14.012 15.082 13.73 14.77L9.98 11.05L6.262 14.77C5.98 15.082 5.512 15.082 5.23 14.77C4.918 14.488 4.918 14.02 5.23 13.707L8.949 9.988L5.23 6.27C4.918 5.988 4.918 5.52 5.23 5.207C5.512 4.926 5.98 4.926 6.293 5.207L10.012 8.957L13.73 5.238C14.012 4.926 14.48 4.926 14.793 5.238C15.074 5.52 15.074 5.988 14.793 6.27Z" fill="currentColor"/>'
+          + '</svg>'
+          + '</button>'
+          + '</div>';
+
+        const columnSelect = row.querySelector('.filter-column');
+        const operatorSelect = row.querySelector('.filter-operator');
+        const valueInput = row.querySelector('.filter-value');
+        const removeBtn = row.querySelector('.filter-row__remove');
+
+        columnOptions.forEach(function (opt, idx) {
+          const option = document.createElement('option');
+          option.value = String(idx);
+          option.textContent = opt;
+          columnSelect.appendChild(option);
+        });
+
+        operatorSelect.addEventListener('change', function () {
+          const op = operatorSelect.value;
+          const needsValue = ['eq','neq','contains','not_contains','starts_with','ends_with','gt','lt','gte','lte'].indexOf(op) !== -1;
+          valueInput.disabled = !needsValue;
+          if (!needsValue) valueInput.value = '';
+        });
+
+        removeBtn.addEventListener('click', function () {
+          filterContainer.removeChild(row);
+          updateResetFiltersLinkState();
+        });
+
+        filterContainer.appendChild(row);
+        updateResetFiltersLinkState();
+      }
+
+      function parseAndUpdateFilterUi() {
+        parsedRows = null;
+        clearFilters();
+
+        const text = getInputText();
+        if (!text) return;
+
+        const delim = getDelimiterChar();
+        let rows;
+        try {
+          rows = parseCSV(text, delim);
+        } catch (err) {
+          showError('Could not parse CSV. Please check the delimiter and structure.');
+          return;
+        }
+        if (!rows || !rows.length) {
+          showError('No rows found. Please check your CSV input.');
+          return;
+        }
+
+        rows = normalizeColumnCount(rows);
+        parsedRows = rows;
+
+        const hasHeader = hasHeaderCheckbox.checked;
+        const headerRow = hasHeader ? rows[0] : rows[0].map(function (_, idx) { return 'Column ' + (idx + 1); });
+        const displayNames = headerDisplayNames(headerRow);
+
+        addFilterBtn.disabled = false;
+        createFilterRow(displayNames);
+      }
+
+      function getFiltersFromUi() {
+        const rows = filterContainer.querySelectorAll('.filter-row');
+        const filters = [];
+        rows.forEach(function (row) {
+          const colSelect = row.querySelector('.filter-column');
+          const opSelect = row.querySelector('.filter-operator');
+          const valueInput = row.querySelector('.filter-value');
+          if (!colSelect || !opSelect) return;
+          const colIndex = parseInt(colSelect.value, 10);
+          const op = opSelect.value;
+          const value = (valueInput.value || '').trim();
+          filters.push({ colIndex: colIndex, op: op, value: value });
+        });
+        return filters;
+      }
+
+      function applyFilters() {
+        clearError();
+        clearResult();
+
+        const text = getInputText();
+        if (!text) {
+          showError('Paste CSV data or upload a file before filtering.');
+          return;
+        }
+        if (!parsedRows || !parsedRows.length) {
+          parseAndUpdateFilterUi();
+          if (!parsedRows || !parsedRows.length) return;
+        }
+
+        const filters = getFiltersFromUi().filter(function (f) { return !isNaN(f.colIndex); });
+        if (!filters.length) {
+          showError('Add at least one filter condition.');
+          return;
+        }
+
+        // Validate values for operators that require them
+        for (let i = 0; i < filters.length; i++) {
+          const f = filters[i];
+          const needsValue = ['eq','neq','contains','not_contains','starts_with','ends_with','gt','lt','gte','lte'].indexOf(f.op) !== -1;
+          if (needsValue && !f.value) {
+            showError('Some conditions are missing a value. Please fill in all required values.');
+            return;
+          }
+        }
+
+        const logic = logicAllRadio.checked ? 'all' : 'any';
+        const mode = modeKeepRadio.checked ? 'keep' : 'remove';
+        const delim = getDelimiterChar();
+
+        const rows = normalizeColumnCount(parsedRows.slice());
+        const hasHeader = hasHeaderCheckbox.checked;
+        const header = hasHeader ? rows[0] : null;
+        const dataRows = hasHeader ? rows.slice(1) : rows.slice(0);
+
+        function rowMatches(cells) {
+          return filters[logic === 'all' ? 'every' : 'some'](function (f) {
+            const raw = (cells[f.colIndex] || '');
+            const cell = raw.trim();
+            const value = f.value.trim();
+            const cellLower = cell.toLowerCase();
+            const valueLower = value.toLowerCase();
+
+            switch (f.op) {
+              case 'eq': return cellLower === valueLower;
+              case 'neq': return cellLower !== valueLower;
+              case 'contains': return cellLower.indexOf(valueLower) !== -1;
+              case 'not_contains': return cellLower.indexOf(valueLower) === -1;
+              case 'starts_with': return cellLower.startsWith(valueLower);
+              case 'ends_with': return cellLower.endsWith(valueLower);
+              case 'empty': return cell === '';
+              case 'not_empty': return cell !== '';
+              case 'gt':
+              case 'lt':
+              case 'gte':
+              case 'lte': {
+                const numCell = parseFloat(cell);
+                const numVal = parseFloat(value);
+                if (!isFinite(numCell) || !isFinite(numVal)) return false;
+                if (f.op === 'gt') return numCell > numVal;
+                if (f.op === 'lt') return numCell < numVal;
+                if (f.op === 'gte') return numCell >= numVal;
+                return numCell <= numVal;
+              }
+              default:
+                return false;
+            }
+          });
+        }
+
+        const kept = [];
+        const removed = [];
+        for (let i = 0; i < dataRows.length; i++) {
+          const cells = dataRows[i];
+          const matches = rowMatches(cells);
+          const keep = mode === 'keep' ? matches : !matches;
+          (keep ? kept : removed).push(cells);
+        }
+
+        const outputRows = [];
+        if (header) outputRows.push(header);
+        Array.prototype.push.apply(outputRows, kept);
+
+        if (!outputRows.length) {
+          showError('No rows matched the filters.');
+          return;
+        }
+
+        const csvText = rowsToDelimited(outputRows, delim);
+        csvOutput.value = csvText;
+        resultSection.classList.add('visible');
+
+        const processedCount = dataRows.length;
+        const keptCount = kept.length;
+        const removedCount = removed.length;
+
+        resultMeta.textContent = keptCount === 0
+          ? 'No matching rows. Header only.'
+          : (hasHeader
+            ? formatNum(keptCount) + ' data rows kept'
+            : formatNum(keptCount) + ' rows kept');
+
+        resultsSummary.hidden = false;
+        summaryProcessed.textContent = 'Rows processed: ' + formatNum(processedCount);
+        summaryKept.textContent = 'Rows kept: ' + formatNum(keptCount);
+        summaryRemoved.textContent = 'Rows removed: ' + formatNum(removedCount);
+
+        if (csvBlobUrl) {
+          URL.revokeObjectURL(csvBlobUrl);
+          csvBlobUrl = null;
+        }
+        const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
+        csvBlobUrl = URL.createObjectURL(blob);
+        downloadLink.href = csvBlobUrl;
+        downloadLink.style.display = 'inline-flex';
+
+        const baseName = (lastUploadFilename || 'filtered').replace(/\.csv$/i, '') || 'filtered';
+        downloadLink.download = baseName + '.csv';
+      }
+
+      function handleFileSelect(file) {
+        if (!file) return;
+        clearError();
+        clearResult();
+        readFileAsText(file).then(function (text) {
+          setInputText(text, file.name);
+        }).catch(function (err) {
+          showError(err.message || 'Failed to read file. Please try again.');
+        }).finally(function () {
+          if (fileInput) fileInput.value = '';
+        });
+      }
+
+      csvInput.addEventListener('input', function () {
+        clearError();
+        clearResult();
+        parsedRows = null;
+        updateFilterButtonState();
+      });
+
+      delimiterSelect.addEventListener('change', function () {
+        if (!getInputText()) return;
+        parseAndUpdateFilterUi();
+      });
+
+      hasHeaderCheckbox.addEventListener('change', function () {
+        if (!parsedRows || !parsedRows.length) return;
+        // Rebuild filters with new header assumption
+        parseAndUpdateFilterUi();
+      });
+
+      addFilterBtn.addEventListener('click', function () {
+        if (addFilterBtn.disabled) return;
+        if (!parsedRows || !parsedRows.length) {
+          parseAndUpdateFilterUi();
+          if (!parsedRows || !parsedRows.length) return;
+        } else if (!filterContainer.children.length) {
+          parseAndUpdateFilterUi();
+        } else {
+          const hasHeader = hasHeaderCheckbox.checked;
+          const headerRow = hasHeader ? parsedRows[0] : parsedRows[0].map(function (_, idx) { return 'Column ' + (idx + 1); });
+          const displayNames = headerDisplayNames(headerRow);
+          createFilterRow(displayNames);
+        }
+      });
+
+      filterBtn.addEventListener('click', applyFilters);
+      
+      resetFiltersLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (resetFiltersLink.getAttribute('aria-disabled') === 'true') return;
+        clearError();
+        clearResult();
+        clearFilters();
+        parsedRows = null;
+        if (logicAllRadio) logicAllRadio.checked = true;
+        if (logicAnyRadio) logicAnyRadio.checked = false;
+        if (modeKeepRadio) modeKeepRadio.checked = true;
+        if (modeRemoveRadio) modeRemoveRadio.checked = false;
+      });
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!getInputText().length) return;
+        csvInput.value = '';
+        lastUploadFilename = '';
+        parsedRows = null;
+        clearError();
+        clearResult();
+        clearFilters();
+        updateFilterButtonState();
+      });
+
+      if (fileInput) {
+        fileInput.addEventListener('change', function (e) {
+          const file = e.target.files && e.target.files[0];
+          handleFileSelect(file);
+        });
+      }
+
+      if (dropZone && fileInput) {
+        dropZone.addEventListener('click', function (e) {
+          if (e.target !== fileInput) fileInput.click();
+        });
+        dropZone.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInput.click();
+          }
+        });
+        dropZone.addEventListener('dragover', function (e) {
+          e.preventDefault();
+          dropZone.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', function (e) {
+          if (e.target === dropZone) dropZone.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', function (e) {
+          e.preventDefault();
+          dropZone.classList.remove('drag-over');
+          const file = e.dataTransfer.files && e.dataTransfer.files[0];
+          handleFileSelect(file);
+        });
+      }
+
+      copyBtn.addEventListener('click', function () {
+        if (!csvOutput.value) return;
+        navigator.clipboard.writeText(csvOutput.value).then(function () {
+          copyBtn.textContent = 'Copied';
+          setTimeout(function () {
+            copyBtn.textContent = 'Copy CSV';
+          }, 1200);
+        }).catch(function () {
+          showError('Could not copy to clipboard. Please select and copy manually.');
+        });
+      });
+
+      function readFileAsText(file) {
+        return new Promise(function (resolve, reject) {
+          const reader = new FileReader();
+          reader.onload = function (e) { resolve(e.target.result); };
+          reader.onerror = function () { reject(new Error('Failed to read file.')); };
+          reader.readAsText(file, 'UTF-8');
+        });
+      }
+    })();
+  </script>
+
+</body>
+</html>
+

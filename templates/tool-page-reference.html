@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+  TINY DATA TOOL – TOOL PAGE TEMPLATE CHECKLIST
+
+  When creating a new tool page:
+
+  1. Copy this template into /tool-name/index.html
+  2. Replace placeholders:
+     - TOOL_NAME
+     - META_TITLE
+     - META_DESCRIPTION
+     - H1
+     - SHORT_DESCRIPTION
+     - INPUT_LABEL
+     - INPUT_PLACEHOLDER (use plain-language text, e.g. "Paste CSV here — one row per line, columns separated by commas.")
+     - PRIMARY_ACTION_LABEL
+     - OUTPUT_LABEL
+  3. Add tool-specific JS logic
+  4. Update FAQ section
+  5. Update related tools links
+  6. Update canonical URL
+  7. Keep layout, spacing, and section order unchanged
+
+  Rules:
+  - Do NOT redesign layout
+  - Do NOT modify global CSS from tool pages
+  - Prefer shared styles and small local scripts
+  -->
+
+  <!-- ============================================================
+       SEO METADATA
+       1. Update META_TITLE, META_DESCRIPTION, canonical URL, and JSON-LD.
+       2. Keep structure consistent with other tools.
+  ============================================================ -->
+  <title>{{META_TITLE}}</title>
+  <meta name="description" content="{{META_DESCRIPTION}}" />
+  <link rel="canonical" href="https://tinydatatool.com/{{TOOL_NAME}}/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="{{META_TITLE}}" />
+  <meta property="og:description" content="{{META_DESCRIPTION}}" />
+  <meta property="og:url"         content="https://tinydatatool.com/{{TOOL_NAME}}/" />
+  <meta property="og:site_name"   content="TinyDataTool" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="{{META_TITLE}}" />
+  <meta name="twitter:description" content="{{META_DESCRIPTION}}" />
+
+  <!-- JSON-LD SoftwareApplication schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "{{TOOL_NAME}}",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "TinyDataTool",
+      "url": "https://tinydatatool.com/"
+    },
+    "url": "https://tinydatatool.com/{{TOOL_NAME}}/",
+    "description": "{{META_DESCRIPTION}}"
+  }
+  </script>
+
+  <!-- Favicon & Global Styles -->
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       SITE HEADER / NAVIGATION
+       Injected by js/site.js using NAV_GROUPS.
+       Set data-base to "../" for tools in subfolders.
+  ============================================================ -->
+  <div id="site-header-root" data-base="../" data-active="{{TOOL_NAME}}"></div>
+
+  <!-- ============================================================
+       MAIN CONTENT WRAPPER
+  ============================================================ -->
+  <main id="main-content">
+
+    <!-- ==========================================================
+         TOOL HERO
+         - One main H1
+         - SHORT_DESCRIPTION as concise supporting copy
+    =========================================================== -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <!-- Optional eyebrow label: update or remove per tool -->
+        <span class="hero__eyebrow">{{TOOL_NAME}} Tool</span>
+        <h1 id="hero-heading">{{H1}}</h1>
+        <p class="hero__sub">{{SHORT_DESCRIPTION}}</p>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         TOOL INTERFACE CONTAINER
+         - Input area
+         - Controls / primary action
+         - Output section
+         - Status messages
+    =========================================================== -->
+    <!-- Tool card region -->
+    <section aria-label="{{TOOL_NAME}} tool" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="{{TOOL_NAME}} tool interface">
+
+          <!-- ================================
+               INPUT AREA
+               Replace INPUT_LABEL / INPUT_PLACEHOLDER as needed. Use plain-language placeholders (no col/table example data).
+          ================================= -->
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="toolInput">{{INPUT_LABEL}}</label>
+              <!-- Optional secondary action, e.g. Clear -->
+              <a href="#" class="clear-link" id="clearInputLink" role="button" aria-disabled="true">Clear</a>
+            </div>
+            <textarea
+              id="toolInput"
+              class="form-input"
+              placeholder="{{INPUT_PLACEHOLDER}}"
+              aria-describedby="toolInputHint"
+              spellcheck="false"
+            ></textarea>
+            <p class="form-hint" id="toolInputHint">
+              <!-- Optional hint text: update per tool -->
+              Enter or paste your data, then run the tool.
+            </p>
+          </div>
+
+          <!-- ================================
+               OPTIONAL FILE UPLOAD / DROP ZONE
+               Keep markup and roles consistent when used.
+               Remove or adapt if the tool is text-only.
+          ================================= -->
+          <div
+            class="drop-zone"
+            id="dropZone"
+            role="button"
+            tabindex="0"
+            aria-label="Upload file. Click or drag and drop."
+            aria-describedby="drop-hint"
+          >
+            <svg
+              class="upload-icon"
+              width="28"
+              height="28"
+              viewBox="0 0 28 28"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z"
+                fill="currentColor"
+              />
+            </svg>
+            <p class="drop-zone__label">Or upload a file</p>
+            <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+            <input
+              type="file"
+              id="fileInput"
+              aria-label="Select file"
+            />
+          </div>
+
+          <!-- ================================
+               PRIMARY ACTION BUTTON
+               - PRIMARY_ACTION_LABEL appears as visible text.
+               - aria-label mirrors it for screen readers.
+          ================================= -->
+          <button
+            class="btn-primary"
+            id="primaryActionBtn"
+            type="button"
+            aria-label="{{PRIMARY_ACTION_LABEL}}"
+            disabled
+          >
+            <span class="spinner" aria-hidden="true"></span>
+            <span id="primaryActionLabel">{{PRIMARY_ACTION_LABEL}}</span>
+            <svg
+              class="btn-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 640 640"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"
+              />
+            </svg>
+          </button>
+
+          <!-- ================================
+               STATUS / SUMMARY AREA
+               - Reuse for success and error messages.
+               - Toggle via JS (add/remove .visible).
+          ================================= -->
+          <div
+            class="status-message status-message--success"
+            id="successMsg"
+            role="status"
+            aria-atomic="true"
+          >
+            <svg
+              class="status-message__icon"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" />
+              <path
+                d="M5 8l2 2 4-4"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span id="successText"></span>
+          </div>
+
+          <div
+            class="status-message status-message--error"
+            id="errorMsg"
+            role="alert"
+            aria-atomic="true"
+          >
+            <svg
+              class="status-message__icon"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" />
+              <path
+                d="M8 5v4M8 11v.5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <!-- ================================
+               OUTPUT / RESULT SECTION
+               - OUTPUT_LABEL used for heading and aria-label.
+               - This pattern works for text output; adapt for downloads/multi-files.
+          ================================= -->
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">{{OUTPUT_LABEL}}</p>
+              <p class="result-section__meta" id="resultMeta"><!-- e.g. "N rows processed" --></p>
+            </div>
+
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label" for="toolOutput">Preview</label>
+              <textarea
+                id="toolOutput"
+                class="form-input"
+                readonly
+                placeholder="Results will appear here after you run {{PRIMARY_ACTION_LABEL}}."
+                aria-label="{{OUTPUT_LABEL}} preview"
+                style="min-height: 120px;"
+              ></textarea>
+            </div>
+
+            <!-- Optional secondary actions: copy / download / clear output -->
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+              <button
+                class="btn-download"
+                id="copyOutputBtn"
+                type="button"
+                aria-label="Copy output to clipboard"
+              >
+                Copy
+              </button>
+              <a
+                class="btn-download"
+                id="downloadOutputLink"
+                href="#"
+                download="output.txt"
+                aria-label="Download output"
+                style="display: none;"
+              >
+                Download
+              </a>
+              <button
+                class="btn-download"
+                id="clearOutputBtn"
+                type="button"
+                aria-label="Clear output"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- ================================
+               PRIVACY NOTE
+               - Standard copy; adjust per tool only if needed.
+          ================================= -->
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z"
+                stroke="currentColor"
+                stroke-width="1.3"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M5 7l1.5 1.5L9 5.5"
+                stroke="currentColor"
+                stroke-width="1.3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            Data is processed entirely in your browser and never uploaded to any server.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         SEO EXPLANATORY CONTENT — HOW TO USE
+         - First major content block after the tool UI.
+         - Short, scannable copy explaining how to use the tool.
+    =========================================================== -->
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" id="how-heading">How to Use {{TOOL_NAME}}</h2>
+        <p class="section-body">
+          Everything runs in your browser. No account, no software install, and no data leaving your device.
+        </p>
+
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Add your input</p>
+            <p class="step__desc">
+              Paste data into the input area or upload a file (if this tool supports files). Keep this step description specific to the tool.
+            </p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Run {{PRIMARY_ACTION_LABEL}}</p>
+            <p class="step__desc">
+              Click the primary action button to process your data. The tool runs instantly using client-side JavaScript.
+            </p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Review and use the output</p>
+            <p class="step__desc">
+              Check the output preview, then copy or download it for use in scripts, APIs, spreadsheets, or other tools.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         SEO EXPLANATORY CONTENT — WHY USE THIS TOOL
+         - Second major content block after the tool UI.
+         - Explain when and why to use the tool.
+    =========================================================== -->
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Why {{TOOL_NAME}}?</h2>
+        <p class="section-body">
+          Use this section to describe when and why someone should use {{TOOL_NAME}}.
+          Focus on concrete use cases and benefits in 2–4 short paragraphs.
+        </p>
+        <p class="section-body" style="margin-top: 12px;">
+          Common TinyDataTool themes: browser-based, fast, private, and focused on a single task.
+          Tailor the bullet points below to the specific value this tool provides.
+        </p>
+
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Private by design</p>
+              <p class="benefit__desc">
+                All processing happens on your device. Your data is never sent to a server, making {{TOOL_NAME}} suitable for sensitive inputs.
+              </p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5" />
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Fast and lightweight</p>
+              <p class="benefit__desc">
+                No heavy frameworks or back-end round trips. The page uses a single global stylesheet and a small local script.
+              </p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5" />
+                <path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5" />
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Simple, focused UI</p>
+              <p class="benefit__desc">
+                One tool, one job. The layout stays clean and uncluttered so you can focus on the task at hand.
+              </p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                <circle cx="12.5" cy="5.5" r="1" fill="currentColor" />
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Works anywhere the web does</p>
+              <p class="benefit__desc">
+                Use {{TOOL_NAME}} from any modern browser without installing extra software or extensions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         FAQ SECTION
+         - Third major content block after the tool UI.
+         - Reusable FAQ pattern with schema.org markup.
+         - Replace questions/answers for each tool.
+    =========================================================== -->
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+
+          <!-- FAQ item 1 -->
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">What does this tool do?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">
+                {{TOOL_NAME}} is a lightweight browser-based utility that helps you perform a single data task quickly and privately.
+                Replace this text with a tool-specific explanation of what it does.
+              </span>
+            </div>
+          </div>
+
+          <!-- FAQ item 2 -->
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Is my data uploaded or stored anywhere?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">
+                No. Like other TinyDataTool utilities, all processing happens in your browser. Files and pasted data are never uploaded
+                to a server or stored on TinyDataTool.
+              </span>
+            </div>
+          </div>
+
+          <!-- FAQ item 3 -->
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Who is this tool for?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">
+                TinyDataTool is designed for developers, analysts, marketers, and anyone who works with CSV, JSON, or tabular data.
+                Update this answer to describe the primary audience for this specific tool.
+              </span>
+            </div>
+          </div>
+
+          <!-- FAQ item 4 -->
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">Is this tool free to use?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">
+                Yes. {{TOOL_NAME}} is free to use with no signup or account required.
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         RELATED TOOLS BLOCK
+         - Final major content block.
+         - Implemented via shared js/site.js.
+         - Set data-current to the active tool id (must match NAV_GROUPS).
+    =========================================================== -->
+    <div id="related-tools-root" data-base="../" data-current="{{TOOL_NAME}}"></div>
+
+  </main>
+
+  <!-- ============================================================
+       SITE FOOTER
+       Injected by js/site.js.
+  ============================================================ -->
+  <div id="site-footer-root"></div>
+
+  <!-- ============================================================
+       SHARED GLOBAL JS
+       - Provides header, footer, related tools, nav, FAQ, and utilities.
+  ============================================================ -->
+  <script src="../js/site.js" defer></script>
+
+  <!-- ============================================================
+       TOOL-SPECIFIC LOGIC (LOCAL SCRIPT)
+       - Replace this block with the minimal JS needed for the tool.
+       - Use shared utilities from js/site.js (readFileAsText, etc.).
+       - Keep logic small, focused, and framework-free.
+  ============================================================ -->
+  <script>
+    (function () {
+      // Basic wiring to demonstrate template behaviour.
+      // Future tools should replace this with real logic.
+
+      const inputEl          = document.getElementById('toolInput');
+      const primaryActionBtn = document.getElementById('primaryActionBtn');
+      const clearInputLink   = document.getElementById('clearInputLink');
+      const dropZone         = document.getElementById('dropZone');
+      const fileInput        = document.getElementById('fileInput');
+      const successMsg       = document.getElementById('successMsg');
+      const successText      = document.getElementById('successText');
+      const errorMsg         = document.getElementById('errorMsg');
+      const errorText        = document.getElementById('errorText');
+      const resultSection    = document.getElementById('resultSection');
+      const resultMeta       = document.getElementById('resultMeta');
+      const outputEl         = document.getElementById('toolOutput');
+      const copyOutputBtn    = document.getElementById('copyOutputBtn');
+      const downloadLink     = document.getElementById('downloadOutputLink');
+      const clearOutputBtn   = document.getElementById('clearOutputBtn');
+
+      let outputBlobUrl = null;
+
+      function hasInput() {
+        return (inputEl.value || '').trim().length > 0;
+      }
+
+      function updatePrimaryState() {
+        primaryActionBtn.disabled = !hasInput();
+        var hasContent = hasInput();
+        clearInputLink.classList.toggle('clear-link--enabled', hasContent);
+        clearInputLink.setAttribute('aria-disabled', hasContent ? 'false' : 'true');
+      }
+
+      function showError(message) {
+        errorText.textContent = message;
+        errorMsg.classList.add('visible');
+        successMsg.classList.remove('visible');
+      }
+
+      function showSuccess(message) {
+        successText.textContent = message;
+        successMsg.classList.add('visible');
+        errorMsg.classList.remove('visible');
+      }
+
+      function clearMessages() {
+        successMsg.classList.remove('visible');
+        errorMsg.classList.remove('visible');
+      }
+
+      function clearResult() {
+        resultSection.classList.remove('visible');
+        outputEl.value = '';
+        resultMeta.textContent = '';
+        if (outputBlobUrl) {
+          URL.revokeObjectURL(outputBlobUrl);
+          outputBlobUrl = null;
+        }
+        downloadLink.style.display = 'none';
+      }
+
+      function setOutput(text, meta) {
+        resultSection.classList.add('visible');
+        outputEl.value = text;
+        resultMeta.textContent = meta || '';
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        if (outputBlobUrl) URL.revokeObjectURL(outputBlobUrl);
+        outputBlobUrl = URL.createObjectURL(blob);
+        downloadLink.href = outputBlobUrl;
+        downloadLink.style.display = 'inline-flex';
+      }
+
+      // Input events
+      inputEl.addEventListener('input', function () {
+        clearMessages();
+        clearResult();
+        updatePrimaryState();
+      });
+
+      clearInputLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!hasInput()) return;
+        inputEl.value = '';
+        clearMessages();
+        clearResult();
+        updatePrimaryState();
+        inputEl.focus();
+      });
+
+      // Drop zone / file input (optional)
+      dropZone.addEventListener('click', function (e) {
+        if (e.target !== fileInput) fileInput.click();
+      });
+
+      dropZone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+
+      dropZone.addEventListener('dragleave', function () {
+        dropZone.classList.remove('drag-over');
+      });
+
+      dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+        // Future tools: adjust accept logic as needed.
+        readFileAsText(file)
+          .then(function (text) {
+            inputEl.value = text;
+            clearMessages();
+            clearResult();
+            updatePrimaryState();
+          })
+          .catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          });
+      });
+
+      fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          readFileAsText(file)
+            .then(function (text) {
+              inputEl.value = text;
+              clearMessages();
+              clearResult();
+              updatePrimaryState();
+            })
+            .catch(function (err) {
+              showError(err.message || 'Failed to read file.');
+            });
+          fileInput.value = '';
+        }
+      });
+
+      // Primary action: demo is a no-op transform (echo input).
+      primaryActionBtn.addEventListener('click', function () {
+        clearMessages();
+        clearResult();
+        if (!hasInput()) {
+          showError('Please add input before running the tool.');
+          inputEl.focus();
+          return;
+        }
+        primaryActionBtn.disabled = true;
+        primaryActionBtn.classList.add('spinning');
+        primaryActionBtn.setAttribute('aria-busy', 'true');
+        try {
+          // Replace this with real transformation logic for each tool.
+          const input = (inputEl.value || '').trim();
+          const output = input; // Example: identity transform
+          setOutput(output, 'Output generated from your input.');
+          showSuccess('{{TOOL_NAME}} ran successfully.');
+        } catch (err) {
+          showError(err.message || 'Something went wrong while processing your input.');
+        } finally {
+          primaryActionBtn.classList.remove('spinning');
+          primaryActionBtn.removeAttribute('aria-busy');
+          updatePrimaryState();
+        }
+      });
+
+      // Output controls
+      copyOutputBtn.addEventListener('click', function () {
+        const text = outputEl.value;
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(function () {
+          const original = copyOutputBtn.textContent;
+          copyOutputBtn.textContent = 'Copied!';
+          setTimeout(function () {
+            copyOutputBtn.textContent = original;
+          }, 2000);
+        }).catch(function () {
+          showError('Copy failed. You can select and copy the output manually.');
+        });
+      });
+
+      clearOutputBtn.addEventListener('click', function () {
+        clearResult();
+      });
+
+      // Initial state
+      updatePrimaryState();
+    })();
+  </script>
+</body>
+</html>
+

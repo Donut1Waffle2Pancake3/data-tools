@@ -35,8 +35,6 @@
     .sort-options__section { display: flex; flex-direction: column; gap: 6px; }
     .sort-options__section-label { display: block; font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin: 0; }
     .sort-options__row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
-    .sort-options__select { min-width: 120px; max-width: 200px; padding: 6px 8px; font-size: var(--text-sm); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface) no-repeat right 8px center; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10' fill='none'%3E%3Cpath d='M2.5 4l2.5 2.5 2.5-2.5' stroke='%23767676' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-size: 10px; color: var(--text-primary); appearance: none; padding-right: 26px; }
-    .sort-options__select:focus { outline: none; border-color: var(--border-focus); }
     .sort-options__radio-group { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
     .sort-options__radio { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
     .sort-options__radio input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
@@ -45,7 +43,6 @@
     .sort-options fieldset { border: none; margin: 0; padding: 0; min-width: 0; }
     @media (max-width: 480px) {
       .sort-options__row { gap: 6px 12px; }
-      .sort-options__select { min-width: 100px; }
     }
   </style>
 </head>
@@ -70,17 +67,17 @@
           <div class="form-group">
             <div class="form-label-row">
               <label class="form-label" for="csvInput">Paste CSV or upload a file</label>
-              <a href="#" class="clear-link" id="clearLink" role="button">Clear</a>
+              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
             </div>
-            <textarea id="csvInput" class="form-input" placeholder="name,email,phone&#10;value,value,value&#10;value,value,value" aria-describedby="csvInputHint" spellcheck="false"></textarea>
-            <p class="form-hint" id="csvInputHint">Paste CSV data with a header row, or upload a .csv or .txt file to sort by column.</p>
+            <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, columns separated by commas." aria-describedby="csvInputHint" spellcheck="false"></textarea>
+            <p class="form-hint" id="csvInputHint">Paste CSV data with a header row, or upload a CSV or text file to sort by column.</p>
           </div>
 
           <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
             <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
             </svg>
-            <p class="drop-zone__label">Or upload a .csv or .txt file</p>
+            <p class="drop-zone__label">Or upload a CSV or text file</p>
             <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
             <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
           </div>
@@ -98,7 +95,7 @@
             <div class="sort-options__section">
               <p class="sort-options__section-label" id="sort-sort-label">Sort</p>
               <div class="sort-options__row">
-                <select id="sortColumnSelect" class="sort-options__select" aria-labelledby="sort-sort-label">
+                <select id="sortColumnSelect" class="field-md" aria-labelledby="sort-sort-label">
                   <option value="0">Column 1</option>
                 </select>
                 <fieldset class="sort-options__radio-group" aria-label="Sort order">
@@ -169,7 +166,7 @@
 
           <div class="result-section" id="resultSection" aria-live="polite">
             <div class="result-section__heading">
-              <p class="result-section__title">Sorted CSV output</p>
+              <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
             <div class="form-group" style="margin-top: 12px;">
@@ -213,7 +210,7 @@
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
             <p class="step__title">Paste your CSV data or upload a file</p>
-            <p class="step__desc">Paste comma-separated data into the input box or upload a .csv or .txt file using the upload area.</p>
+            <p class="step__desc">Paste comma-separated data into the input box or upload a CSV or text file using the upload area.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
@@ -228,7 +225,7 @@
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">4</span>
             <p class="step__title">Copy or download the sorted CSV</p>
-            <p class="step__desc">Copy the result to your clipboard or download it as a .csv file.</p>
+            <p class="step__desc">Copy the result to your clipboard or download it as a CSV file.</p>
           </article>
         </div>
       </div>
@@ -606,6 +603,8 @@
 
       function updateSortButtonState() {
         var hasInput = getInputText().length > 0;
+        clearLink.classList.toggle('clear-link--enabled', hasInput);
+        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
         if (!hasInput || !parsedData) { sortBtn.disabled = true; return; }
         var colIdx = parseInt(sortColumnSelect.value, 10);
         if (isNaN(colIdx) || colIdx < 0 || colIdx >= parsedData.numCols) { sortBtn.disabled = true; return; }
@@ -658,7 +657,7 @@
         resultSection.classList.add('visible');
         csvOutput.value = csvOut;
         var total = sorted.length;
-        resultMeta.textContent = total + ' row' + (total !== 1 ? 's' : '') + ' sorted';
+        resultMeta.textContent = total.toLocaleString() + ' row' + (total !== 1 ? 's' : '') + ' sorted';
         var blob = new Blob([csvOut], { type: 'text/csv;charset=utf-8' });
         if (csvBlobUrl) URL.revokeObjectURL(csvBlobUrl);
         csvBlobUrl = URL.createObjectURL(blob);
@@ -673,6 +672,7 @@
 
       clearLink.addEventListener('click', function (e) {
         e.preventDefault();
+        if (!getInputText().length) return;
         csvInput.value = '';
         lastUploadFilename = '';
         clearError();
@@ -705,7 +705,7 @@
         var file = e.dataTransfer.files[0];
         if (file && (file.name.toLowerCase().endsWith('.csv') || file.name.toLowerCase().endsWith('.txt') || file.type === 'text/csv' || file.type === 'text/plain')) {
           readFileAsText(file).then(function (text) { setInputText(text, file.name); }).catch(function (err) { showError(err.message || 'Failed to read file.'); });
-        } else if (file) showError('Please drop a .csv or .txt file.');
+        } else if (file) showError('Please drop a CSV or text file.');
       });
 
       sortBtn.addEventListener('click', function () {

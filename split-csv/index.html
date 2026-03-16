@@ -104,7 +104,7 @@
               class="form-input"
               min="1"
               step="1"
-              placeholder="e.g. 100"
+              placeholder="e.g. 100 rows per file"
               aria-describedby="rowCountHint"
             />
           </div>
@@ -392,7 +392,7 @@
 
     function handleFileSelect(file) {
       if (!file.name.toLowerCase().endsWith('.csv') && file.type !== 'text/csv') {
-        showError('Please select a valid CSV file (.csv).');
+        showError('Please select a valid CSV file.');
         return;
       }
       selectedFile = file;
@@ -478,7 +478,7 @@
 
         renderDownloadList(generatedParts);
         resultsMeta.textContent =
-          `${generatedParts.length} total file${generatedParts.length !== 1 ? 's' : ''}, ${rowsPerFile} row${rowsPerFile !== 1 ? 's' : ''} each`;
+          `${generatedParts.length.toLocaleString()} total file${generatedParts.length !== 1 ? 's' : ''}, ${rowsPerFile.toLocaleString()} row${rowsPerFile !== 1 ? 's' : ''} each`;
 
         if (generatedParts.length > 1) downloadAllBtn.style.display = 'flex';
 

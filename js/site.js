@@ -12,6 +12,7 @@ const NAV_GROUPS = [
         { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
         { id: 'csv-column-remover', href: 'csv-column-remover/index.html', label: 'CSV Column Remover' },
         { id: 'csv-deduplicator', href: 'csv-deduplicator/index.html', label: 'CSV Deduplicator' },
+        { id: 'csv-row-filter', href: 'csv-row-filter/index.html', label: 'CSV Row Filter' },
         { id: 'csv-sorter', href: 'csv-sorter/index.html', label: 'CSV Sorter' },
       ],
     },
@@ -198,13 +199,13 @@ const NAV_GROUPS = [
         '    <h2 class="section-title" id="related-heading">Related tools</h2>\n' +
         '    <p class="section-body">' + INTRO + '</p>\n' +
         '    <div class="related-tools-list">\n' +
-        '      <a href="' + baseSlash + 'tools/index.html" class="btn-secondary">Browse all tools</a>\n' +
+        '      <a href="' + baseSlash + 'tools/index.html" class="btn-secondary btn--sm">Browse all tools</a>\n' +
         '    </div>\n' +
         '  </div>\n' +
         '</section>';
     }
     var links = relatedItems.map(function (item) {
-      return '<a href="' + baseSlash + item.href + '" class="btn-secondary">' + item.label + '</a>';
+      return '<a href="' + baseSlash + item.href + '" class="btn-secondary btn--sm">' + item.label + '</a>';
     }).join('\n          ');
 
     return (

@@ -34,7 +34,6 @@
     .column-selection.is-hidden { display: none; }
     .column-selection__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
     .column-selection__left { flex: 1; min-width: 0; }
-    .column-selection__left .form-label { margin-bottom: 4px; }
     .column-selection__hint { font-size: var(--text-xs); color: var(--text-muted); margin: 0; }
     .column-selection__links { display: flex; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
     .column-checkbox-list { display: flex; flex-wrap: wrap; gap: 12px 20px; max-height: 200px; overflow-y: auto; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-secondary); }
@@ -54,7 +53,7 @@
       <div class="container">
         <span class="hero__eyebrow">Free CSV Column Remover</span>
         <h1 id="hero-heading">CSV Column Remover</h1>
-        <p class="hero__sub">Remove unwanted columns from CSV files in seconds. Paste CSV text or upload a .csv file, choose the columns to remove, and get a clean CSV instantly. Fast, free, and private.</p>
+        <p class="hero__sub">Remove unwanted columns from CSV files in seconds. Paste CSV text or upload a CSV file, choose the columns to remove, and get a clean CSV instantly. Fast, free, and private.</p>
       </div>
     </section>
 
@@ -65,9 +64,9 @@
           <div class="form-group">
             <div class="form-label-row">
               <label class="form-label" for="csvInput">Paste CSV or upload a file</label>
-              <a href="#" class="clear-link" id="clearLink" role="button">Clear</a>
+              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
             </div>
-            <textarea id="csvInput" class="form-input" placeholder="name,email,phone&#10;value,value,value&#10;value,value,value" aria-describedby="csvInputHint" spellcheck="false"></textarea>
+            <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, columns separated by commas." aria-describedby="csvInputHint" spellcheck="false"></textarea>
             <p class="form-hint" id="csvInputHint">Paste CSV data with a header row, or upload a CSV file to remove selected columns.</p>
           </div>
 
@@ -75,7 +74,7 @@
             <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
             </svg>
-            <p class="drop-zone__label">Or upload a .csv file</p>
+            <p class="drop-zone__label">Or upload a CSV file</p>
             <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
             <input type="file" id="fileInput" accept=".csv,text/csv" aria-label="Select CSV file" />
           </div>
@@ -84,14 +83,13 @@
             <div class="column-selection__header">
               <div class="column-selection__left">
                 <label class="form-label" id="columnSectionLabel">Columns to remove</label>
-                <p class="column-selection__hint" id="columnSectionHint">Select the columns you want to delete from the output</p>
               </div>
               <span class="column-selection__links">
-                <a href="#" class="clear-link" id="selectAllBtn" role="button">Select All</a>
-                <a href="#" class="clear-link" id="clearSelectionBtn" role="button">Clear</a>
+                <a href="#" class="clear-link" id="selectAllBtn" role="button" aria-disabled="true">Select All</a>
+                <a href="#" class="clear-link" id="clearSelectionBtn" role="button" aria-disabled="true">Clear</a>
               </span>
             </div>
-            <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel" aria-describedby="columnSectionHint">
+            <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel">
               <span class="column-checkbox-list--empty" id="columnPlaceholder">Column names will appear here after CSV is loaded.</span>
             </div>
           </div>
@@ -114,7 +112,7 @@
 
           <div class="result-section" id="resultSection" aria-live="polite">
             <div class="result-section__heading">
-              <p class="result-section__title">CSV output</p>
+              <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
             <div class="form-group" style="margin-top: 12px;">
@@ -158,7 +156,7 @@
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
             <p class="step__title">Paste CSV or upload a file</p>
-            <p class="step__desc">Paste comma-separated data into the input box or upload a .csv file using the upload area. The first row should be your header.</p>
+            <p class="step__desc">Paste comma-separated data into the input box or upload a CSV file using the upload area. The first row should be your header.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
@@ -173,7 +171,7 @@
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">4</span>
             <p class="step__title">Copy or download</p>
-            <p class="step__desc">Copy the cleaned CSV to your clipboard or download it as a .csv file.</p>
+            <p class="step__desc">Copy the cleaned CSV to your clipboard or download it as a CSV file.</p>
           </article>
         </div>
       </div>
@@ -597,6 +595,13 @@
 
       function updateRemoveButtonState() {
         var hasInput = getInputText().length > 0;
+        var selectedCount = parsedData ? getSelectedColumnIndices().length : 0;
+        clearLink.classList.toggle('clear-link--enabled', hasInput);
+        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+        selectAllBtn.classList.toggle('clear-link--enabled', !!parsedData);
+        selectAllBtn.setAttribute('aria-disabled', parsedData ? 'false' : 'true');
+        clearSelectionBtn.classList.toggle('clear-link--enabled', selectedCount > 0);
+        clearSelectionBtn.setAttribute('aria-disabled', selectedCount > 0 ? 'false' : 'true');
         if (!hasInput || !parsedData) {
           removeBtn.disabled = true;
           return;
@@ -624,6 +629,7 @@
 
       clearSelectionBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        if (getSelectedColumnIndices().length === 0) return;
         var inputs = columnCheckboxList.querySelectorAll('input[type="checkbox"][data-column-index]');
         for (var i = 0; i < inputs.length; i++) inputs[i].checked = false;
         updateRemoveButtonState();
@@ -631,6 +637,7 @@
 
       clearLink.addEventListener('click', function (e) {
         e.preventDefault();
+        if (!getInputText().length) return;
         csvInput.value = '';
         lastUploadFilename = '';
         clearError();
@@ -678,7 +685,7 @@
             showError(err.message || 'Failed to read file.');
           });
         } else if (file) {
-          showError('Please drop a .csv file.');
+          showError('Please drop a CSV file.');
         }
       });
 
@@ -729,7 +736,7 @@
         resultSection.classList.add('visible');
         csvOutput.value = csvOut;
         var lineCount = newRows.length;
-        resultMeta.textContent = lineCount + ' row' + (lineCount !== 1 ? 's' : '') + ' (including header)';
+        resultMeta.textContent = lineCount.toLocaleString() + ' row' + (lineCount !== 1 ? 's' : '') + ' (including header)';
         var blob = new Blob([csvOut], { type: 'text/csv;charset=utf-8' });
         if (csvBlobUrl) URL.revokeObjectURL(csvBlobUrl);
         csvBlobUrl = URL.createObjectURL(blob);
