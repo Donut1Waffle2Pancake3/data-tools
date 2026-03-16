@@ -85,7 +85,7 @@ const NAV_GROUPS = [
       '  <div class="site-header__inner">\n' +
       '\n' +
       '    <a href="' + homeHref + '" aria-label="TinyDataTool home" style="display:flex;align-items:center;line-height:1;flex-shrink:0">\n' +
-      '      <img class="site-header__logo" src="' + logoSrc + '" alt="TinyDataTool" />\n' +
+      '      <img class="site-header__logo" src="' + logoSrc + '" alt="TinyDataTool" width="82" height="41" />\n' +
       '    </a>\n' +
       '\n' +
       '    <nav class="site-nav" aria-label="Main navigation">\n' +
