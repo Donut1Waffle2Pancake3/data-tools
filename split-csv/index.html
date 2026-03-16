@@ -53,7 +53,7 @@
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
         <span class="hero__eyebrow">CSV Splitter Tool</span>
-        <h1 id="hero-heading">Split a CSV File<br>Into Smaller Files</h1>
+        <h1 id="hero-heading">Split a CSV File Into Smaller Files</h1>
         <p class="hero__sub">Upload any CSV, choose how many rows per file, and download your split files instantly — right in your browser.</p>
       </div>
     </section>
@@ -104,7 +104,7 @@
               class="form-input"
               min="1"
               step="1"
-              placeholder="e.g. 100 rows per file"
+              placeholder="e.g. 100"
               aria-describedby="rowCountHint"
             />
           </div>
@@ -137,7 +137,7 @@
               <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
                 <path d="M7.5 2v8M4 7l3.5 3.5L11 7M2 13h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              Download All Files
+              <span id="downloadAllBtnLabel">Download as ZIP</span>
             </button>
             <ul class="download-list" id="downloadList"></ul>
           </div>
@@ -175,7 +175,7 @@
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
             <p class="step__title">Download your files</p>
-            <p class="step__desc">Click Split File, then download each part individually — or grab them all with one click.</p>
+            <p class="step__desc">Click Split File, then download each part individually — or download all parts as one ZIP file.</p>
           </article>
         </div>
       </div>
@@ -325,6 +325,9 @@
        Global JS (header, footer, nav dropdown, FAQ accordion)
   ============================================================ -->
   <script src="../js/site.js" defer></script>
+
+  <!-- JSZip for bundling 2+ split files into one ZIP download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
 
   <!-- ============================================================
        Split CSV — Tool Logic
@@ -524,18 +527,36 @@
       });
     }
 
-    downloadAllBtn.addEventListener('click', () => {
-      generatedParts.forEach((part, idx) => {
-        setTimeout(() => {
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(part.blob);
-          a.download = part.name;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          Analytics.downloadClicked(part.name, idx + 1);
-        }, idx * 150);
-      });
+    downloadAllBtn.addEventListener('click', async () => {
+      if (generatedParts.length === 0) return;
+      if (typeof JSZip === 'undefined') {
+        generatedParts.forEach((part, idx) => {
+          setTimeout(() => {
+            const a = document.createElement('a');
+            a.href = part.url || URL.createObjectURL(part.blob);
+            a.download = part.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            Analytics.downloadClicked(part.name, idx + 1);
+          }, idx * 150);
+        });
+        return;
+      }
+      const zip = new JSZip();
+      generatedParts.forEach((part) => zip.file(part.name, part.blob));
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const baseName = selectedFile.name.replace(/\.[^/.]+$/, '') || 'split';
+      const zipName = baseName + '-split.zip';
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = zipName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      generatedParts.forEach((part, idx) => Analytics.downloadClicked(part.name, idx + 1));
     });
 
     // ============================================================

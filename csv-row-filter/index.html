@@ -43,7 +43,7 @@
     .filter-row__remove:hover { color: var(--text-primary); }
     .form-option-group { border: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
     .form-option { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
-    .form-option input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+    .form-option input { cursor: pointer; }
     .logic-toggle { display: inline-flex; border-radius: 999px; border: 1px solid var(--border); overflow: hidden; }
     .logic-toggle__btn { padding: 4px 10px; font-size: var(--text-xs); background: transparent; border: none; cursor: pointer; color: var(--text-secondary); }
     .logic-toggle__btn[aria-pressed="true"] { background: var(--accent-light); color: var(--accent); }
@@ -329,6 +329,42 @@
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
               <span itemprop="text">Yes. You can drag and drop a CSV file or use the upload button. The tool reads the file in your browser, populates the input area, and lets you build filters the same way as if you pasted the data.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">How do I filter CSV rows by column value?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste your CSV or upload a file, then add a filter: choose the column, the condition (equals, contains, greater than, less than, etc.), and the value. Rows that match are kept; the rest are excluded. You can add multiple filters and combine them with AND or OR.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">Can I remove rows from a CSV file online?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. This tool lets you remove rows by defining conditions: only rows that match your filters are kept in the result. So you can effectively delete rows where a column is empty, equals a certain value, or doesn’t meet a number threshold, then download the filtered CSV.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Is the CSV row filter free?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. CSV Row Filter is free to use. There are no signups, subscriptions, or limits. Everything runs in your browser, so your data never leaves your device.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
+              <span itemprop="name">Can I filter CSV by numbers (greater than, less than)?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Besides text conditions (equals, contains, starts with), you can use numeric conditions: greater than, less than, greater than or equal, and less than or equal. Pick the column, choose the condition, and enter the number. Rows that meet the condition are kept in the output.</span>
             </div>
           </div>
         </div>
