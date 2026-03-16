@@ -21,6 +21,7 @@ const htmlFiles = [
   "csv-column-remover/index.html",
   "csv-deduplicator/index.html",
   "csv-sorter/index.html",
+  "csv-row-filter/index.html",
 ];
 
 const root = path.resolve(__dirname, "..");
