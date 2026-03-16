@@ -3,8 +3,9 @@
   "private": true,
   "scripts": {
     "generate-favicons": "node scripts/generate-favicons.js",
+    "generate-header-logo": "node scripts/generate-header-logo.js",
     "build": "cleancss -o css/global.min.css css/global.css",
-    "build:vercel": "npm run build && node scripts/rewrite-html-for-prod.js",
+    "build:vercel": "npm run generate-header-logo && npm run build && node scripts/rewrite-html-for-prod.js",
     "test": "node scripts/test-csv-column-remover.js && node scripts/test-csv-deduplicator.js && node scripts/test-csv-sorter.js && node scripts/test-csv-row-filter.js"
   },
   "devDependencies": {

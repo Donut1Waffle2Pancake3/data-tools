@@ -42,7 +42,7 @@ const NAV_GROUPS = [
   function getHeaderHtml(base, active) {
     const baseSlash = base ? base.replace(/\/?$/, '/') : '';
     const homeHref = baseSlash ? baseSlash + 'index.html' : 'index.html';
-    const logoSrc = baseSlash + 'assets/Logo%20-%20TinyDataTool.png';
+    const logoSrc = baseSlash + 'assets/logo-header.png';
 
     const dropdownsHtml = NAV_GROUPS.map(function (group) {
       const triggerId = 'navDropdown' + group.id + 'Trigger';
