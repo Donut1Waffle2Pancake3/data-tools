@@ -144,7 +144,7 @@ a:hover {
 
 .site-header__logo {
   width: 80px;
-  height: 40px;
+  height: 41px;
   display: block;
   vertical-align: middle;
   object-fit: contain;
@@ -811,6 +811,14 @@ body.nav-drawer-open .nav-drawer {
   margin-bottom: 0;
 }
 
+/* Tool card: row of primary/secondary buttons (e.g. Validate + Load Example) */
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
 .clear-link {
   font-size: var(--text-sm);
   color: var(--text-muted);
@@ -997,6 +1005,29 @@ textarea.form-input {
 .status-message__icon {
   flex-shrink: 0;
   margin-top: 1px;
+}
+
+/* Optional error details (e.g. line/column/snippet) under the main error text */
+.status-message__details {
+  margin-top: 10px;
+  font-size: var(--text-sm);
+}
+.status-message__details p {
+  margin: 4px 0;
+}
+.status-message__snippet {
+  margin-top: 8px;
+  padding: 12px;
+  background: var(--surface-secondary);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+}
+.status-message__snippet pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: ui-monospace, monospace;
+  font-size: var(--text-sm);
+  line-height: 1.5;
 }
 
 /* ============================================================
@@ -1281,6 +1312,26 @@ textarea.form-input {
   font-family: var(--font-body);
 }
 
+/* Single-line form-input with field size: same height as selects/buttons (sm/md/lg) */
+.tool-card .form-input.field-sm:not(textarea) {
+  height: 32px;
+  padding: 0 10px;
+  font-size: var(--form-option-font-size);
+  box-sizing: border-box;
+}
+.tool-card .form-input.field-md:not(textarea) {
+  height: 40px;
+  padding: 0 12px;
+  font-size: var(--form-option-font-size);
+  box-sizing: border-box;
+}
+.tool-card .form-input.field-lg:not(textarea) {
+  height: 48px;
+  padding: 0 14px;
+  font-size: var(--form-option-font-size);
+  box-sizing: border-box;
+}
+
 /* Standardized select: same look as form-input, with dropdown arrow (text-primary, slightly larger) */
 .tool-card select {
   min-width: 120px;
@@ -1346,7 +1397,11 @@ textarea.form-input {
 }
 
 .dedupe-mode__option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
+  color: var(--text-primary);
 }
 
 /* ============================================================

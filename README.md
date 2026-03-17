@@ -45,7 +45,6 @@ This updates `assets/favicon.ico` and `assets/apple-touch-icon.png`. Commit the 
 - `tools/index.html` — All Tools listing
 - `css/global.css` — Shared styles
 - `js/site.js` — Header, nav, and related-tools (injected into each page)
-- `js/global.js` — Shared utilities
 - `assets/` — Logo, favicon SVG
 - `sitemap.xml`, `robots.txt` — SEO
 

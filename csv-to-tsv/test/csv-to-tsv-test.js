@@ -7,7 +7,7 @@ const path = require('path');
 
 const FIXTURES = path.join(__dirname, 'fixtures');
 
-// Replicate parseCSVLines from js/global.js
+// Replicate parseCSVLines from js/site.js
 function parseCSVLines(text) {
   const lines = [];
   const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();

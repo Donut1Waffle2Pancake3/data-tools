@@ -12,6 +12,7 @@ const NAV_GROUPS = [
         { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
         { id: 'csv-column-remover', href: 'csv-column-remover/index.html', label: 'CSV Column Remover' },
         { id: 'csv-column-splitter', href: 'csv-column-splitter/index.html', label: 'CSV Column Splitter' },
+        { id: 'csv-column-joiner', href: 'csv-column-joiner/index.html', label: 'CSV Column Joiner' },
         { id: 'csv-deduplicator', href: 'csv-deduplicator/index.html', label: 'CSV Deduplicator' },
         { id: 'csv-row-filter', href: 'csv-row-filter/index.html', label: 'CSV Row Filter' },
         { id: 'csv-sorter', href: 'csv-sorter/index.html', label: 'CSV Sorter' },
@@ -21,8 +22,10 @@ const NAV_GROUPS = [
       label: 'JSON',
       id: 'json',
       items: [
+        { id: 'json-validator', href: 'json-validator/index.html', label: 'JSON Validator' },
         { id: 'json-formatter', href: 'json-formatter/index.html', label: 'JSON Formatter' },
         { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON → CSV' },
+        { id: 'json-to-tsv', href: 'json-to-tsv/index.html', label: 'JSON → TSV' },
         { id: 'csv-to-json', href: 'csv-to-json/index.html', label: 'CSV → JSON' },
       ],
     },
@@ -87,7 +90,7 @@ const NAV_GROUPS = [
       '  <div class="site-header__inner">\n' +
       '\n' +
       '    <a href="' + homeHref + '" aria-label="TinyDataTool home" style="display:flex;align-items:center;line-height:1;flex-shrink:0">\n' +
-      '      <img class="site-header__logo" src="' + logoSrc + '" alt="TinyDataTool" width="80" height="40" />\n' +
+      '      <img class="site-header__logo" src="' + logoSrc + '" alt="TinyDataTool" width="80" height="41" />\n' +
       '    </a>\n' +
       '\n' +
       '    <nav class="site-nav" aria-label="Main navigation">\n' +
@@ -422,6 +425,102 @@ function readFileAsText(file) {
     reader.onload  = (e) => resolve(e.target.result);
     reader.onerror = ()  => reject(new Error(`Failed to read "${file.name}". Please try again.`));
     reader.readAsText(file, 'UTF-8');
+  });
+}
+
+/**
+ * Show a tool error message (sets text and makes container visible).
+ * @param {HTMLElement} containerEl - .status-message element
+ * @param {HTMLElement} textEl - element that holds the message (e.g. #errorText)
+ * @param {string} msg
+ */
+function showToolError(containerEl, textEl, msg) {
+  if (textEl) textEl.textContent = msg;
+  if (containerEl) containerEl.classList.add('visible');
+}
+
+/**
+ * Hide a tool error message.
+ * @param {HTMLElement} containerEl - .status-message element
+ */
+function clearToolError(containerEl) {
+  if (containerEl) containerEl.classList.remove('visible');
+}
+
+/**
+ * Clear the tool result section (output, meta, download link, revoke blob).
+ * @param {Object} opts - { resultSection, outputEl, metaEl, revokeBlob, downloadLink }
+ */
+function clearToolResult(opts) {
+  if (opts.resultSection) opts.resultSection.classList.remove('visible');
+  if (opts.outputEl) opts.outputEl.value = '';
+  if (opts.metaEl) opts.metaEl.textContent = '';
+  if (typeof opts.revokeBlob === 'function') opts.revokeBlob();
+  if (opts.downloadLink) opts.downloadLink.style.display = 'none';
+}
+
+/**
+ * Copy text to clipboard and show "Copied!" on a button, then revert after 2s.
+ * Use for buttons whose content is a single label (no icon). On fail calls onFail().
+ * @param {string} text
+ * @param {HTMLElement} buttonEl
+ * @param {string} fallbackLabel
+ * @param {function} [onFail]
+ */
+function copyWithFeedback(text, buttonEl, fallbackLabel, onFail) {
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(function () {
+    buttonEl.textContent = 'Copied!';
+    setTimeout(function () { buttonEl.textContent = fallbackLabel; }, 2000);
+  }).catch(function () {
+    if (typeof onFail === 'function') onFail();
+  });
+}
+
+/**
+ * Wire a drop zone to a file input: click/keydown, change, dragover, dragleave, drop.
+ * @param {Object} options - { dropZoneId, fileInputId, accept(file), setContent(text, filename), showError(msg) }
+ */
+function initDropZone(options) {
+  var dropZone = document.getElementById(options.dropZoneId);
+  var fileInput = document.getElementById(options.fileInputId);
+  if (!dropZone || !fileInput) return;
+  var setContent = options.setContent;
+  var showError = options.showError;
+  var accept = options.accept;
+
+  dropZone.addEventListener('click', function (e) {
+    if (e.target !== fileInput) fileInput.click();
+  });
+  dropZone.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+  });
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files && fileInput.files[0]) {
+      var file = fileInput.files[0];
+      readFileAsText(file).then(function (text) {
+        if (setContent) setContent(text, file.name);
+      }).catch(function (err) {
+        if (showError) showError(err.message || 'Failed to read file.');
+      });
+      fileInput.value = '';
+    }
+  });
+  dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('drag-over'); });
+  dropZone.addEventListener('drop', function (e) {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    var file = e.dataTransfer.files[0];
+    if (file && accept && accept(file)) {
+      readFileAsText(file).then(function (text) {
+        if (setContent) setContent(text, file.name);
+      }).catch(function (err) {
+        if (showError) showError(err.message || 'Failed to read file.');
+      });
+    } else if (file && showError) {
+      showError(options.dropErrorMsg || 'Please drop a valid file.');
+    }
   });
 }
 
