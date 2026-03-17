@@ -66,11 +66,10 @@
 
           <div class="form-group">
             <div class="form-label-row">
-              <label class="form-label" for="csvInput">Paste CSV or upload a file</label>
+              <label class="form-label" for="csvInput">Paste CSV</label>
               <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
             </div>
-            <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, columns separated by commas." aria-describedby="csvInputHint" spellcheck="false"></textarea>
-            <p class="form-hint" id="csvInputHint">Paste CSV data with a header row, or upload a CSV or text file to sort by column.</p>
+            <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, columns separated by commas." spellcheck="false"></textarea>
           </div>
 
           <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
@@ -173,7 +172,7 @@
               <label class="form-label" for="csvOutput">Preview</label>
               <textarea id="csvOutput" class="form-input" readonly placeholder="Sorted CSV will appear here." aria-label="Sorted CSV preview" style="min-height: 120px;"></textarea>
             </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+            <div class="result-actions">
               <button class="btn-download" id="copyBtn" type="button" aria-label="Copy CSV to clipboard">
                 <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
                   <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
@@ -344,65 +343,47 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
-              <span itemprop="name">What does this CSV sorter do?</span>
+              <span itemprop="name">How do I sort a CSV by column?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">It sorts the rows of your CSV by a column you choose. You can sort ascending or descending and treat values as text, numbers, or dates. The header row stays at the top.</span>
+              <span itemprop="text">Paste or upload your CSV, pick the column from the dropdown, choose ascending or descending and how to treat values (text, number, date), then sort. The header row stays at the top. Download or copy the result.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">Can I sort by any column?</span>
+              <span itemprop="name">Can I sort CSV without Excel?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. After you paste or upload CSV, a dropdown lists all columns (from the header or as Column 1, Column 2, etc.). Choose the column you want to sort by.</span>
+              <span itemprop="text">Yes. Sorting runs in your browser. The output is standard CSV and works in Excel, Google Sheets, and other spreadsheet tools.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
-              <span itemprop="name">Can I sort numbers correctly instead of alphabetically?</span>
+              <span itemprop="name">What happens with numbers—do they sort correctly?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Choose “Number” under “Treat values as” to sort numerically (e.g. 2, 10, 100). Use “Date” for date strings, or “Auto-detect” to let the tool guess.</span>
+              <span itemprop="text">Choose “Number” under “Treat values as” to sort numerically (e.g. 2, 10, 100). Use “Date” for date strings, or “Auto-detect” to let the tool guess.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
-              <span itemprop="name">Does this work with quoted CSV values?</span>
+              <span itemprop="name">Does this tool keep my data private?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The parser correctly handles values in double quotes, commas inside quotes, and escaped quotes, so your sorted output remains valid CSV.</span>
+              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
-              <span itemprop="name">Are my files uploaded anywhere?</span>
+              <span itemprop="name">Does it work with quoted values and commas inside cells?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">No. Everything runs locally in your browser. Your CSV is never sent to a server.</span>
-            </div>
-          </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
-              <span itemprop="name">Is this tool free?</span>
-              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The CSV sorter is free to use with no signup required.</span>
-            </div>
-          </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
-              <span itemprop="name">Can I use the output in Excel or Google Sheets?</span>
-              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The generated CSV works in Excel, Google Sheets, and other spreadsheet tools.</span>
+              <span itemprop="text">Yes. The parser handles double-quoted fields, commas inside quotes, and escaped quotes. The sorted output stays valid CSV.</span>
             </div>
           </div>
         </div>

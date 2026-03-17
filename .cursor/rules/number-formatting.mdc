@@ -1,0 +1,22 @@
+---
+description: Format displayed numbers with commas for quantities; never for years or IDs
+globs: "**/*.html,**/js/*.js"
+alwaysApply: false
+---
+
+# Number formatting in the UI
+
+## When to use comma formatting
+
+- **Counts and quantities** shown to users: row counts, column counts, file counts, object counts, etc.
+- Use `Number.prototype.toLocaleString()` or the project’s `formatNum(n)` helper so values like 1955 display as **1,955** (e.g. “1,955 rows”).
+
+## When NOT to use comma formatting
+
+- **Years** (e.g. 1955, 2024) — leave as plain digits.
+- **Version numbers, IDs, or other non-quantity numbers** — no commas.
+
+## In code
+
+- For dynamic counts in HTML/JS: `count.toLocaleString()` or `formatNum(count)`.
+- Never pass years or identifiers through `toLocaleString()` / `formatNum()`.

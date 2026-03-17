@@ -19,6 +19,7 @@ const htmlFiles = [
   "csv-to-tsv/index.html",
   "tsv-to-csv/index.html",
   "csv-column-remover/index.html",
+  "csv-column-splitter/index.html",
   "csv-deduplicator/index.html",
   "csv-sorter/index.html",
   "csv-row-filter/index.html",

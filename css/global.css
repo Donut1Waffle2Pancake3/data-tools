@@ -143,10 +143,11 @@ a:hover {
 }
 
 .site-header__logo {
+  width: 80px;
   height: 40px;
-  width: auto;
   display: block;
   vertical-align: middle;
+  object-fit: contain;
 }
 
 .site-header__badge {
@@ -870,8 +871,9 @@ input[type="radio"] {
   flex-shrink: 0;
 }
 
-/* Hover only for text-like inputs; checkboxes and radio buttons don't need hover states */
-.form-input:not([type="checkbox"]):not([type="radio"]):hover {
+/* Hover only for text-like inputs; checkboxes and radio buttons don't need hover states.
+   When focused (cursor in field), keep the focus/selected state — no hover override. */
+.form-input:not([type="checkbox"]):not([type="radio"]):hover:not(:focus) {
   border-color: var(--border-strong);
 }
 
@@ -912,7 +914,8 @@ textarea.form-input {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 14px 24px;
+  height: 48px;
+  padding: 0 24px;
   font-size: var(--text-base);
   font-weight: 700;
   font-family: var(--font-body);
@@ -1096,13 +1099,7 @@ textarea.form-input {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  transition: border-color var(--transition), background var(--transition);
   animation: slideIn 0.2s ease both;
-}
-
-.download-item:hover {
-  border-color: var(--accent);
-  background: var(--accent-light);
 }
 
 .download-item__filename {
@@ -1145,6 +1142,8 @@ textarea.form-input {
   transition: background var(--transition), color var(--transition);
   text-decoration: none;
   flex-shrink: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .btn-secondary-blue:hover,
@@ -1160,13 +1159,15 @@ textarea.form-input {
 .btn-download-all {
   width: 100%;
   margin-bottom: 14px;
-  padding: 12px 20px;
+  height: 44px;
+  padding: 0 20px;
   font-size: var(--text-sm);
   font-weight: 700;
 }
 
 .download-link {
-  padding: 5px 10px;
+  height: 28px;
+  padding: 0 10px;
   font-size: var(--text-xs);
   gap: 5px;
 }
@@ -1184,8 +1185,21 @@ textarea.form-input {
 }
 
 .btn-download {
-  padding: 8px 16px;
+  height: 40px;
+  padding: 0 16px;
   font-size: var(--text-sm);
+}
+
+/* Preview/result action row: buttons share available width (1 = 100%, 2 = 50% each) */
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+.result-actions > * {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 /* Secondary button (e.g. Clear) */
@@ -1193,7 +1207,8 @@ textarea.form-input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 20px;
+  height: 40px;
+  padding: 0 20px;
   font-size: var(--text-sm);
   font-weight: 600;
   font-family: var(--font-body);
@@ -1289,6 +1304,12 @@ textarea.form-input {
 
 .tool-card select.field-md {
   border-radius: var(--radius-sm);
+}
+
+#sortColumnSelect {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tool-card select:hover {

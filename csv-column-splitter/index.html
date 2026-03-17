@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       SEO
+  ============================================================ -->
+  <title>CSV Column Splitter | Free &amp; Private | TinyDataTool</title>
+  <meta name="description" content="Split one CSV into two CSV files by selected columns. Paste or upload CSV, choose which columns go to which output, then copy or download both. Free, browser-based, and private." />
+  <link rel="canonical" href="https://tinydatatool.com/csv-column-splitter/" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="CSV Column Splitter | Free &amp; Private | TinyDataTool" />
+  <meta property="og:description" content="Split a CSV into two files by selected columns. Paste or upload CSV, choose columns, download both. No signup required." />
+  <meta property="og:url"         content="https://tinydatatool.com/csv-column-splitter/" />
+  <meta property="og:site_name"   content="TinyDataTool" />
+
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="CSV Column Splitter | Free &amp; Private | TinyDataTool" />
+  <meta name="twitter:description" content="Split CSV by columns in your browser. Free, private, no signup." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CSV Column Splitter","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/csv-column-splitter/","description":"Split one CSV into two CSV files by selected columns directly in your browser. Free, private, and no uploads required."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .column-selection { }
+    .column-selection.is-hidden { display: none; }
+    .column-selection__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .column-selection__left { flex: 1; min-width: 0; }
+    .column-selection__hint { font-size: var(--text-xs); color: var(--text-muted); margin: 0; }
+    .column-selection__links { display: flex; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
+    .column-checkbox-list { display: flex; flex-wrap: wrap; gap: 12px 20px; max-height: 200px; overflow-y: auto; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-secondary); }
+    .column-checkbox-list--empty { align-items: center; justify-content: center; color: var(--text-muted); font-size: var(--text-xs); }
+    .column-checkbox-item { display: flex; align-items: center; gap: 6px; }
+    .column-checkbox-item input { cursor: pointer; }
+    .column-checkbox-item label { cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
+    .output-placement { margin-top: 16px; }
+    .output-placement fieldset { border: none; margin: 0; padding: 0; }
+    .output-placement legend { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+    .output-placement label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); margin-bottom: 6px; }
+    .output-placement input { cursor: pointer; }
+    .split-outputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0; }
+    @media (max-width: 640px) { .split-outputs { grid-template-columns: 1fr; } }
+    .split-output { display: flex; flex-direction: column; gap: 6px; }
+    .split-output .form-label { margin-bottom: 0; }
+    .split-output__meta { font-size: var(--text-xs); color: var(--text-muted); margin-top: 0; }
+    .split-output__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="csv-column-splitter"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <span class="hero__eyebrow">Free CSV Column Splitter</span>
+        <h1 id="hero-heading">CSV Column Splitter</h1>
+        <p class="hero__sub">Split one CSV into two CSV files by choosing which columns go to which output. Paste or upload CSV, select columns, then copy or download both results. Fast, free, and runs entirely in your browser.</p>
+      </div>
+    </section>
+
+    <section aria-label="CSV column splitter" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="CSV column splitter">
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="csvInput">Paste CSV</label>
+              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+            </div>
+            <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, columns separated by commas." spellcheck="false"></textarea>
+          </div>
+
+          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
+            <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+            </svg>
+            <p class="drop-zone__label">Or upload a CSV file</p>
+            <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+            <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Options</label>
+            <label class="dedupe-mode__option" style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary);">
+              <input type="checkbox" id="hasHeaderCheckbox" checked />
+              <span>First row is a header</span>
+            </label>
+          </div>
+
+          <div class="column-selection is-hidden" id="columnSection">
+            <div class="column-selection__header">
+              <div class="column-selection__left">
+                <label class="form-label" id="columnSectionLabel">Columns for selected output</label>
+                <p class="column-selection__hint" id="columnCountHint">0 columns, 0 selected</p>
+              </div>
+              <span class="column-selection__links">
+                <a href="#" class="clear-link" id="selectAllBtn" role="button" aria-disabled="true">Select All</a>
+                <a href="#" class="clear-link" id="clearSelectionBtn" role="button" aria-disabled="true">Clear</a>
+              </span>
+            </div>
+            <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel">
+              <span class="column-checkbox-list--empty" id="columnPlaceholder">Column names will appear here after CSV is loaded.</span>
+            </div>
+            <div class="output-placement">
+              <fieldset>
+                <legend>Where do selected columns go?</legend>
+                <label>
+                  <input type="radio" name="placement" value="a" id="placementA" checked />
+                  <span>A</span>
+                </label>
+                <label>
+                  <input type="radio" name="placement" value="b" id="placementB" />
+                  <span>B</span>
+                </label>
+              </fieldset>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="splitBtn" type="button" aria-label="Split columns" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            Split Columns
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+              <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
+            </svg>
+          </button>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite" style="display: none;">
+            <div class="result-section__heading">
+              <p class="result-section__title">Results</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="split-outputs">
+              <div class="split-output">
+                <label class="form-label" for="outputA">Output A</label>
+                <p class="split-output__meta" id="outputAMeta"></p>
+                <textarea id="outputA" class="form-input" readonly placeholder="Selected or remaining columns" aria-label="Output A CSV" style="min-height: 120px;"></textarea>
+                <div class="split-output__actions">
+                  <button class="btn-download" id="copyABtn" type="button" aria-label="Copy Output A to clipboard">Copy</button>
+                  <a class="btn-download" id="downloadALink" href="#" download="split-selected.csv" aria-label="Download Output A">Download CSV</a>
+                </div>
+              </div>
+              <div class="split-output">
+                <label class="form-label" for="outputB">Output B</label>
+                <p class="split-output__meta" id="outputBMeta"></p>
+                <textarea id="outputB" class="form-input" readonly placeholder="Remaining or selected columns" aria-label="Output B CSV" style="min-height: 120px;"></textarea>
+                <div class="split-output__actions">
+                  <button class="btn-download" id="copyBBtn" type="button" aria-label="Copy Output B to clipboard">Copy</button>
+                  <a class="btn-download" id="downloadBLink" href="#" download="split-remaining.csv" aria-label="Download Output B">Download CSV</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Files are processed entirely in your browser and are never uploaded to any server.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" id="how-heading">How to Split a CSV by Columns</h2>
+        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste CSV or upload a file</p>
+            <p class="step__desc">Paste comma-separated data into the input box or upload a CSV file. Choose whether the first row is a header.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Select columns for one output</p>
+            <p class="step__desc">Check the columns that should go into Output A (or Output B if you change the option). Use Select all or Clear to adjust quickly.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Split and review</p>
+            <p class="step__desc">Click Split Columns. Output A and Output B show the two CSVs. Row order and header (if enabled) are preserved.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">4</span>
+            <p class="step__title">Copy or download both</p>
+            <p class="step__desc">Copy or download each output as a separate CSV file.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">CSV Column Splitter Questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">How do I split specific columns from a CSV file?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste your CSV or upload a file, enable “header row” if your file has column names, then select the columns you want to extract. Click “Split Columns” to generate two outputs: one with your selected columns and one with the remaining data.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Can I extract columns from a CSV without Excel?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. This tool runs entirely in your browser and lets you split columns instantly without Excel, Google Sheets, or any software installation.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">What happens to the header row when splitting?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">If “First row is a header” is enabled, the selected columns keep their original column names in the output. The remaining columns also retain their headers. If disabled, columns are treated by position (Column 1, Column 2, etc.).</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">Does this tool keep my data private?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. All processing happens locally in your browser. Your CSV data is not uploaded or stored anywhere.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">Can I download both split CSV files separately?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Each result (selected columns and remaining columns) has its own download button, so you can save them as separate CSV files.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What if I select all or none of the columns?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">If you select all columns, one output will contain the full dataset and the other will be empty. If you select none, the opposite occurs. The tool will still generate valid CSV outputs in both cases.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Will this work with large CSV files?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">It supports moderately large files in the browser. Performance depends on your device and browser, but typical datasets (thousands of rows) work smoothly.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
+              <span itemprop="name">Does it handle commas inside quoted values correctly?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The parser respects standard CSV formatting, including quoted values, commas inside quotes, and escaped characters.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="csv-column-splitter"></div>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+
+  <script>
+    (function () {
+      const csvInput = document.getElementById('csvInput');
+      const fileInput = document.getElementById('fileInput');
+      const dropZone = document.getElementById('dropZone');
+      const hasHeaderCheckbox = document.getElementById('hasHeaderCheckbox');
+      const columnSection = document.getElementById('columnSection');
+      const columnCheckboxList = document.getElementById('columnCheckboxList');
+      const columnPlaceholder = document.getElementById('columnPlaceholder');
+      const columnCountHint = document.getElementById('columnCountHint');
+      const selectAllBtn = document.getElementById('selectAllBtn');
+      const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+      const placementA = document.getElementById('placementA');
+      const placementB = document.getElementById('placementB');
+      const splitBtn = document.getElementById('splitBtn');
+      const clearLink = document.getElementById('clearLink');
+      const errorMsg = document.getElementById('errorMsg');
+      const errorText = document.getElementById('errorText');
+      const resultSection = document.getElementById('resultSection');
+      const resultMeta = document.getElementById('resultMeta');
+      const outputA = document.getElementById('outputA');
+      const outputB = document.getElementById('outputB');
+      const outputAMeta = document.getElementById('outputAMeta');
+      const outputBMeta = document.getElementById('outputBMeta');
+      const copyABtn = document.getElementById('copyABtn');
+      const copyBBtn = document.getElementById('copyBBtn');
+      const downloadALink = document.getElementById('downloadALink');
+      const downloadBLink = document.getElementById('downloadBLink');
+
+      let blobUrlA = null;
+      let blobUrlB = null;
+      let lastUploadFilename = '';
+      let parsedData = null;
+
+      function parseCSV(text) {
+        var normalized = (text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+        if (!normalized) return [];
+        var rows = [];
+        var row = [];
+        var cell = '';
+        var inQuotes = false;
+        for (var i = 0; i < normalized.length; i++) {
+          var ch = normalized[i];
+          if (ch === '"') {
+            if (inQuotes && normalized[i + 1] === '"') {
+              cell += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if ((ch === ',' || ch === '\n') && !inQuotes) {
+            if (ch === ',') {
+              row.push(cell);
+              cell = '';
+            } else {
+              row.push(cell);
+              rows.push(row);
+              row = [];
+              cell = '';
+            }
+          } else {
+            cell += ch;
+          }
+        }
+        row.push(cell);
+        rows.push(row);
+        return rows;
+      }
+
+      function headerDisplayNames(headerCells) {
+        var counts = {};
+        return headerCells.map(function (name) {
+          var key = (name || '').trim();
+          counts[key] = (counts[key] || 0) + 1;
+          return counts[key] === 1 ? key : key + ' (' + counts[key] + ')';
+        });
+      }
+
+      function escapeCsvCell(val) {
+        if (val === null || val === undefined) return '';
+        var str = String(val);
+        if (/[",\r\n]/.test(str)) return '"' + str.replace(/"/g, '""') + '"';
+        return str;
+      }
+
+      function rowsToCsv(rows) {
+        return rows.map(function (cells) {
+          return cells.map(escapeCsvCell).join(',');
+        }).join('\n');
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function clearError() {
+        errorMsg.classList.remove('visible');
+      }
+
+      function clearResult() {
+        resultSection.style.display = 'none';
+        resultSection.classList.remove('visible');
+        outputA.value = '';
+        outputB.value = '';
+        outputAMeta.textContent = '';
+        outputBMeta.textContent = '';
+        resultMeta.textContent = '';
+        if (blobUrlA) { URL.revokeObjectURL(blobUrlA); blobUrlA = null; }
+        if (blobUrlB) { URL.revokeObjectURL(blobUrlB); blobUrlB = null; }
+        downloadALink.style.display = 'none';
+        downloadBLink.style.display = 'none';
+      }
+
+      function getInputText() {
+        return (csvInput.value || '').trim();
+      }
+
+      function setInputText(text, filename) {
+        csvInput.value = text;
+        lastUploadFilename = filename || '';
+        clearError();
+        clearResult();
+        parseAndUpdateColumns();
+        updateSplitButtonState();
+      }
+
+      function parseAndUpdateColumns() {
+        var text = getInputText();
+        parsedData = null;
+        columnSection.classList.add('is-hidden');
+        columnPlaceholder.style.display = '';
+        columnCheckboxList.classList.add('column-checkbox-list--empty');
+        while (columnCheckboxList.firstChild) columnCheckboxList.removeChild(columnCheckboxList.firstChild);
+        columnCheckboxList.appendChild(columnPlaceholder);
+
+        if (!text) {
+          updateSplitButtonState();
+          return;
+        }
+
+        var rows = parseCSV(text);
+        if (!rows || rows.length === 0) {
+          showError('The CSV appears to be empty or malformed.');
+          updateSplitButtonState();
+          return;
+        }
+
+        var numCols = 0;
+        for (var r = 0; r < rows.length; r++) {
+          if (rows[r].length > numCols) numCols = rows[r].length;
+        }
+        for (var r = 0; r < rows.length; r++) {
+          while (rows[r].length < numCols) rows[r].push('');
+        }
+
+        var hasHeader = hasHeaderCheckbox.checked;
+        var displayNames;
+        if (hasHeader && rows.length > 0) {
+          displayNames = headerDisplayNames(rows[0]);
+        } else {
+          displayNames = [];
+          for (var c = 0; c < numCols; c++) displayNames.push('Column ' + (c + 1));
+        }
+
+        parsedData = { rows: rows, hasHeader: hasHeader, displayNames: displayNames, numCols: numCols };
+        columnSection.classList.remove('is-hidden');
+        columnCheckboxList.classList.remove('column-checkbox-list--empty');
+        columnPlaceholder.style.display = 'none';
+
+        for (var c = 0; c < numCols; c++) {
+          var name = displayNames[c] || ('Column ' + (c + 1));
+          var id = 'col-' + c;
+          var wrap = document.createElement('div');
+          wrap.className = 'column-checkbox-item';
+          var input = document.createElement('input');
+          input.type = 'checkbox';
+          input.id = id;
+          input.setAttribute('data-column-index', String(c));
+          input.addEventListener('change', function () {
+            updateSplitButtonState();
+            updateColumnCountHint();
+          });
+          var label = document.createElement('label');
+          label.htmlFor = id;
+          label.textContent = name;
+          wrap.appendChild(input);
+          wrap.appendChild(label);
+          columnCheckboxList.appendChild(wrap);
+        }
+        updateSplitButtonState();
+        updateColumnCountHint();
+      }
+
+      function updateColumnCountHint() {
+        if (!parsedData) return;
+        var total = parsedData.numCols;
+        var selected = getSelectedColumnIndices().length;
+        columnCountHint.textContent = total.toLocaleString() + ' column' + (total !== 1 ? 's' : '') + ', ' + selected.toLocaleString() + ' selected';
+      }
+
+      function getSelectedColumnIndices() {
+        var inputs = columnCheckboxList.querySelectorAll('input[type="checkbox"][data-column-index]');
+        var indices = [];
+        for (var i = 0; i < inputs.length; i++) {
+          if (inputs[i].checked) indices.push(parseInt(inputs[i].getAttribute('data-column-index'), 10));
+        }
+        return indices;
+      }
+
+      function updateSplitButtonState() {
+        var hasInput = getInputText().length > 0;
+        clearLink.classList.toggle('clear-link--enabled', hasInput);
+        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+        selectAllBtn.classList.toggle('clear-link--enabled', !!parsedData);
+        selectAllBtn.setAttribute('aria-disabled', parsedData ? 'false' : 'true');
+        var selectedCount = parsedData ? getSelectedColumnIndices().length : 0;
+        clearSelectionBtn.classList.toggle('clear-link--enabled', selectedCount > 0);
+        clearSelectionBtn.setAttribute('aria-disabled', selectedCount > 0 ? 'false' : 'true');
+        splitBtn.disabled = !hasInput || !parsedData;
+      }
+
+      selectAllBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!parsedData) return;
+        var inputs = columnCheckboxList.querySelectorAll('input[type="checkbox"][data-column-index]');
+        for (var i = 0; i < inputs.length; i++) inputs[i].checked = true;
+        updateSplitButtonState();
+        updateColumnCountHint();
+      });
+
+      clearSelectionBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var inputs = columnCheckboxList.querySelectorAll('input[type="checkbox"][data-column-index]');
+        for (var i = 0; i < inputs.length; i++) inputs[i].checked = false;
+        updateSplitButtonState();
+        updateColumnCountHint();
+      });
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!getInputText().length) return;
+        csvInput.value = '';
+        lastUploadFilename = '';
+        clearError();
+        clearResult();
+        parseAndUpdateColumns();
+        updateSplitButtonState();
+        csvInput.focus();
+      });
+
+      csvInput.addEventListener('input', function () {
+        lastUploadFilename = '';
+        clearError();
+        clearResult();
+        parseAndUpdateColumns();
+        updateSplitButtonState();
+      });
+
+      hasHeaderCheckbox.addEventListener('change', function () {
+        if (getInputText().length && parsedData) {
+          parsedData.hasHeader = hasHeaderCheckbox.checked;
+          if (hasHeaderCheckbox.checked && parsedData.rows.length > 0) {
+            parsedData.displayNames = headerDisplayNames(parsedData.rows[0]);
+          } else {
+            parsedData.displayNames = [];
+            for (var c = 0; c < parsedData.numCols; c++) parsedData.displayNames.push('Column ' + (c + 1));
+          }
+          var inputs = columnCheckboxList.querySelectorAll('input[type="checkbox"][data-column-index]');
+          for (var c = 0; c < inputs.length; c++) {
+            var label = inputs[c].nextElementSibling;
+            if (label) label.textContent = parsedData.displayNames[c] || ('Column ' + (c + 1));
+          }
+        }
+      });
+
+      dropZone.addEventListener('click', function (e) {
+        if (e.target !== fileInput) fileInput.click();
+      });
+      dropZone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+      });
+      fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) {
+          var file = fileInput.files[0];
+          readFileAsText(file).then(function (text) {
+            setInputText(text, file.name);
+          }).catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          });
+          fileInput.value = '';
+        }
+      });
+      dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('drag-over'); });
+      dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('drag-over'); });
+      dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        var file = e.dataTransfer.files[0];
+        if (file && (file.name.toLowerCase().endsWith('.csv') || file.name.toLowerCase().endsWith('.txt') || file.type === 'text/csv' || file.type === 'text/plain')) {
+          readFileAsText(file).then(function (text) {
+            setInputText(text, file.name);
+          }).catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          });
+        } else if (file) {
+          showError('Please drop a CSV or text file.');
+        }
+      });
+
+      splitBtn.addEventListener('click', function () {
+        clearError();
+        clearResult();
+        var text = getInputText();
+        if (!text) {
+          showError('Please paste CSV data or upload a file.');
+          csvInput.focus();
+          return;
+        }
+        if (!parsedData) {
+          var rows = parseCSV(text);
+          if (!rows || rows.length === 0) {
+            showError('The CSV appears to be empty or malformed.');
+            return;
+          }
+          showError('Please wait for columns to load, then select columns and click Split Columns.');
+          return;
+        }
+
+        var selected = getSelectedColumnIndices();
+        var selectedSet = {};
+        for (var i = 0; i < selected.length; i++) selectedSet[selected[i]] = true;
+
+        var rowsA = [];
+        var rowsB = [];
+        for (var r = 0; r < parsedData.rows.length; r++) {
+          var row = parsedData.rows[r];
+          var cellsA = [];
+          var cellsB = [];
+          for (var c = 0; c < row.length; c++) {
+            if (selectedSet[c]) cellsA.push(row[c]);
+            else cellsB.push(row[c]);
+          }
+          if (cellsA.length) rowsA.push(cellsA);
+          if (cellsB.length) rowsB.push(cellsB);
+        }
+
+        var selectedFirst = placementA.checked;
+        var outFirst = selectedFirst ? rowsA : rowsB;
+        var outSecond = selectedFirst ? rowsB : rowsA;
+
+        var csvFirst = rowsToCsv(outFirst);
+        var csvSecond = rowsToCsv(outSecond);
+
+        resultSection.style.display = 'block';
+        resultSection.classList.add('visible');
+        outputA.value = csvFirst;
+        outputB.value = csvSecond;
+
+        resultMeta.textContent = parsedData.rows.length.toLocaleString() + ' row' + (parsedData.rows.length !== 1 ? 's' : '') + ', ' + parsedData.numCols.toLocaleString() + ' column' + (parsedData.numCols !== 1 ? 's' : '') + ', ' + selected.length.toLocaleString() + ' selected';
+        outputAMeta.textContent = outFirst.length.toLocaleString() + ' row' + (outFirst.length !== 1 ? 's' : '');
+        outputBMeta.textContent = outSecond.length.toLocaleString() + ' row' + (outSecond.length !== 1 ? 's' : '');
+
+        var baseName = lastUploadFilename ? lastUploadFilename.replace(/\.[^/.]+$/, '') : 'split';
+        if (blobUrlA) URL.revokeObjectURL(blobUrlA);
+        if (blobUrlB) URL.revokeObjectURL(blobUrlB);
+        var blobA = new Blob([csvFirst], { type: 'text/csv;charset=utf-8' });
+        var blobB = new Blob([csvSecond], { type: 'text/csv;charset=utf-8' });
+        blobUrlA = URL.createObjectURL(blobA);
+        blobUrlB = URL.createObjectURL(blobB);
+        downloadALink.href = blobUrlA;
+        downloadBLink.href = blobUrlB;
+        downloadALink.download = selectedFirst ? baseName + '-selected.csv' : baseName + '-remaining.csv';
+        downloadBLink.download = selectedFirst ? baseName + '-remaining.csv' : baseName + '-selected.csv';
+        downloadALink.style.display = 'inline-flex';
+        downloadBLink.style.display = 'inline-flex';
+
+        var actionsA = copyABtn.parentElement;
+        var actionsB = copyBBtn.parentElement;
+        actionsA.style.display = outFirst.length > 0 ? 'flex' : 'none';
+        actionsB.style.display = outSecond.length > 0 ? 'flex' : 'none';
+      });
+
+      function copyToClipboard(text, btn, label) {
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = 'Copied!';
+          setTimeout(function () { btn.textContent = label; }, 2000);
+        }).catch(function () {
+          showError('Copy failed. You can select and copy the text manually.');
+        });
+      }
+      copyABtn.addEventListener('click', function () {
+        copyToClipboard(outputA.value, copyABtn, 'Copy');
+      });
+      copyBBtn.addEventListener('click', function () {
+        copyToClipboard(outputB.value, copyBBtn, 'Copy');
+      });
+    })();
+  </script>
+</body>
+</html>

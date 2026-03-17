@@ -243,67 +243,60 @@
         <p class="section-label">FAQ</p>
         <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
               <span itemprop="name">How do I merge CSV files into one file?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Upload two or more CSV files using the tool above. Once your files are selected, click "Merge Files." The tool combines all the data rows into a single CSV, preserving just one header row, and gives you a download link for the result.</span>
+              <span itemprop="text">Upload two or more CSV files, then click Merge Files. The tool combines all data rows into one CSV with a single header row and gives you a download link.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">Is this CSV merger free to use?</span>
+              <span itemprop="name">Can I merge CSV without Excel or other software?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes, completely free. No account, no subscription, no file size paywall. The tool runs entirely in your browser, which is why there are no server costs to pass on.</span>
+              <span itemprop="text">Yes. Merging runs in your browser. The result is standard CSV and works in Excel, Google Sheets, and other tools.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
-              <span itemprop="name">Are my files uploaded to a server?</span>
-              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">No. All processing is handled locally in your browser using the Web File API. Nothing is sent to any server, and there are no logs of your files or their contents. This makes the tool safe for sensitive or confidential data.</span>
-            </div>
-          </div>
-
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
               <span itemprop="name">What happens if my CSV headers don't match?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">The tool compares the header row of every file before merging. If any file has different column names or a different column order, it will show a clear error message telling you which file doesn't match. All headers must be identical for the merge to proceed.</span>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The tool checks headers before merging. If any file has different column names or order, it shows an error and which file failed. All headers must match to proceed.</span>
             </div>
           </div>
-
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">Does this tool keep my data private?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+            </div>
+          </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
               <span itemprop="name">Does this work on large CSV files?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The tool processes files in-browser and handles most typical CSV sizes well. Very large files may take a moment depending on your device, but there is no server-side size limit. Performance depends on the total combined size of your input files.</span>
+              <span itemprop="text">Yes. Files are processed in-browser. Very large combined size may take longer; there is no server-side limit. Performance depends on your device and total data size.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
-              <span itemprop="name">What will the merged file be named?</span>
+              <span itemprop="name">How is the merged file named?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">The output file is named based on how many files you merged. For example, merging three files produces <code>merged-3-files.csv</code>. You can rename the file after downloading it.</span>
+              <span itemprop="text">By number of files merged: e.g. <code>merged-3-files.csv</code>. You can rename after downloading.</span>
             </div>
           </div>
-
         </div>
       </div>
     </section>

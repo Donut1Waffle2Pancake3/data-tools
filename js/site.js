@@ -11,6 +11,7 @@ const NAV_GROUPS = [
         { id: 'split-csv', href: 'split-csv/index.html', label: 'Split CSV' },
         { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
         { id: 'csv-column-remover', href: 'csv-column-remover/index.html', label: 'CSV Column Remover' },
+        { id: 'csv-column-splitter', href: 'csv-column-splitter/index.html', label: 'CSV Column Splitter' },
         { id: 'csv-deduplicator', href: 'csv-deduplicator/index.html', label: 'CSV Deduplicator' },
         { id: 'csv-row-filter', href: 'csv-row-filter/index.html', label: 'CSV Row Filter' },
         { id: 'csv-sorter', href: 'csv-sorter/index.html', label: 'CSV Sorter' },
@@ -42,7 +43,7 @@ const NAV_GROUPS = [
   function getHeaderHtml(base, active) {
     const baseSlash = base ? base.replace(/\/?$/, '/') : '';
     const homeHref = baseSlash ? baseSlash + 'index.html' : 'index.html';
-    const logoSrc = baseSlash + 'assets/logo-header.png';
+    const logoSrc = baseSlash + 'assets/TinyDataTool Logo@2x.png';
 
     const dropdownsHtml = NAV_GROUPS.map(function (group) {
       const triggerId = 'navDropdown' + group.id + 'Trigger';
@@ -86,7 +87,7 @@ const NAV_GROUPS = [
       '  <div class="site-header__inner">\n' +
       '\n' +
       '    <a href="' + homeHref + '" aria-label="TinyDataTool home" style="display:flex;align-items:center;line-height:1;flex-shrink:0">\n' +
-      '      <img class="site-header__logo" src="' + logoSrc + '" alt="TinyDataTool" width="82" height="41" />\n' +
+      '      <img class="site-header__logo" src="' + logoSrc + '" alt="TinyDataTool" width="80" height="40" />\n' +
       '    </a>\n' +
       '\n' +
       '    <nav class="site-nav" aria-label="Main navigation">\n' +

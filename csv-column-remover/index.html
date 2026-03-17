@@ -30,7 +30,7 @@
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
   <style>
-    .column-selection { margin-top: 20px; }
+    .column-selection { }
     .column-selection.is-hidden { display: none; }
     .column-selection__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
     .column-selection__left { flex: 1; min-width: 0; }
@@ -63,11 +63,10 @@
 
           <div class="form-group">
             <div class="form-label-row">
-              <label class="form-label" for="csvInput">Paste CSV or upload a file</label>
+              <label class="form-label" for="csvInput">Paste CSV</label>
               <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
             </div>
-            <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, columns separated by commas." aria-describedby="csvInputHint" spellcheck="false"></textarea>
-            <p class="form-hint" id="csvInputHint">Paste CSV data with a header row, or upload a CSV file to remove selected columns.</p>
+            <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, columns separated by commas." spellcheck="false"></textarea>
           </div>
 
           <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
@@ -119,7 +118,7 @@
               <label class="form-label" for="csvOutput">Preview</label>
               <textarea id="csvOutput" class="form-input" readonly placeholder="Cleaned CSV output will appear here." aria-label="Cleaned CSV preview" style="min-height: 120px;"></textarea>
             </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+            <div class="result-actions">
               <button class="btn-download" id="copyBtn" type="button" aria-label="Copy CSV to clipboard">
                 <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
                   <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
@@ -288,65 +287,47 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
-              <span itemprop="name">What does a CSV column remover do?</span>
+              <span itemprop="name">How do I remove columns from a CSV?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">It lets you select one or more columns from a CSV file and remove them from the output. You get a new CSV with only the columns you kept, so you can prepare smaller files, drop sensitive fields, or simplify data for sharing or importing elsewhere.</span>
+              <span itemprop="text">Paste or upload your CSV, then select the columns you want to remove. At least one column must remain. The tool outputs a new CSV with only the columns you kept. Download or copy the result.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">Can I remove multiple columns at once?</span>
+              <span itemprop="name">Can I remove columns without Excel or other software?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. After you load your CSV, you can select as many columns as you want to remove. At least one column must remain in the output.</span>
+              <span itemprop="text">Yes. Processing runs in your browser. The output is standard CSV and works in Excel, Google Sheets, and other tools.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
-              <span itemprop="name">Will my CSV formatting stay valid?</span>
+              <span itemprop="name">What happens if a value contains commas or quotes?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The tool keeps standard CSV rules: values that contain commas, quotes, or line breaks are wrapped in double quotes, and internal quotes are escaped by doubling them. The output is valid CSV that works in Excel, Google Sheets, and other tools.</span>
+              <span itemprop="text">The parser handles quoted fields correctly. Values with commas, quotes, or newlines are read as single cells and re-escaped in the output so the CSV stays valid.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
-              <span itemprop="name">Are my files uploaded anywhere?</span>
+              <span itemprop="name">Does this tool keep my data private?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">No. Everything runs locally in your browser. Your CSV is never sent to a server.</span>
+              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
-              <span itemprop="name">Can I use the cleaned CSV in Excel or Google Sheets?</span>
+              <span itemprop="name">Can I remove multiple columns at once?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The output is standard CSV. You can open it in Excel, Google Sheets, or any spreadsheet or data tool that accepts CSV.</span>
-            </div>
-          </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
-              <span itemprop="name">What happens if a value contains commas or quotes?</span>
-              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">The parser handles quoted fields correctly. Values that contain commas, double quotes, or newlines are read as single cells, and the output re-escapes them so the CSV stays valid.</span>
-            </div>
-          </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
-              <span itemprop="name">Is this tool free?</span>
-              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The CSV column remover is free to use with no signup required.</span>
+              <span itemprop="text">Yes. Select as many columns as you want to remove. At least one column must remain in the output.</span>
             </div>
           </div>
         </div>

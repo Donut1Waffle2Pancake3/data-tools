@@ -247,67 +247,60 @@
         <p class="section-label">FAQ</p>
         <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
               <span itemprop="name">How do I split a CSV file into smaller files?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Upload your CSV file using the tool above, enter the number of rows you want in each output file, then click "Split File." The tool will generate individual CSV files which you can download directly from the results section. Each file will include the original header row plus its chunk of data rows.</span>
+              <span itemprop="text">Upload your CSV, enter the number of rows per file, then click Split File. Each output file includes the header row plus its chunk of data. Download the parts from the results section.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">Is this CSV splitter free to use?</span>
+              <span itemprop="name">Can I split CSV without Excel or other software?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes — completely free. There are no subscription plans, no file size paywalls, and no sign-up required. The tool runs entirely in your browser with no backend costs, which is why it can be offered for free without limitations.</span>
+              <span itemprop="text">Yes. Splitting runs in your browser. No server uploads; each part is standard CSV and works in Excel, Google Sheets, and other tools.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
-              <span itemprop="name">Are my files uploaded to a server?</span>
+              <span itemprop="name">What happens to the header row when splitting?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">No. Your files never leave your device. All processing is handled locally using JavaScript in your browser via the Web File API. Nothing is sent to any server, and there are no logs of your file or its contents. This makes the tool safe to use with sensitive or confidential data.</span>
+              <span itemprop="text">The first row is treated as the header and is copied to the top of every split file. Each part is usable on its own.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
-              <span itemprop="name">Does each split file include the header row?</span>
+              <span itemprop="name">Does this tool keep my data private?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The tool assumes your CSV file has a header row and automatically includes it at the top of every output file. This means each split file is immediately usable in Excel, Google Sheets, or any data tool without needing to manually add the header back.</span>
+              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
               <span itemprop="name">Can I split large CSV files?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The tool processes files in-browser and handles most typical CSV file sizes well. Very large files may take a moment depending on your device's memory and CPU, but there is no server-side size limit. For extremely large files, using a larger row count per part will reduce the number of output files and improve performance.</span>
+              <span itemprop="text">Yes. Files are processed in-browser. Very large files may take longer depending on device memory; there is no server-side size limit. Using more rows per part reduces the number of output files.</span>
             </div>
           </div>
-
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
-              <span itemprop="name">What is the output file naming convention?</span>
+              <span itemprop="name">How are the output files named?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Output files are named based on your original filename. For example, if you upload <code>customers.csv</code> and split it into 3 parts, the output files will be named <code>customers-part-1.csv</code>, <code>customers-part-2.csv</code>, and <code>customers-part-3.csv</code>.</span>
+              <span itemprop="text">Based on your filename: e.g. <code>data.csv</code> split into 3 parts becomes <code>data-part-1.csv</code>, <code>data-part-2.csv</code>, <code>data-part-3.csv</code>.</span>
             </div>
           </div>
-
         </div>
       </div>
     </section>

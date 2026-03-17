@@ -56,11 +56,10 @@
 
           <div class="form-group" id="panel-input" role="tabpanel" aria-labelledby="tab-format">
             <div class="form-label-row">
-              <label class="form-label" for="jsonInput">Paste JSON or upload a file</label>
+              <label class="form-label" for="jsonInput">Paste JSON</label>
               <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
             </div>
-            <textarea id="jsonInput" class="form-input" placeholder="Paste JSON here — e.g. objects with key-value pairs." aria-describedby="jsonInputHint" spellcheck="false"></textarea>
-            <p class="form-hint" id="jsonInputHint">Valid JSON only. The tool will validate and then format or minify.</p>
+            <textarea id="jsonInput" class="form-input" placeholder="Paste JSON here — e.g. objects with key-value pairs." spellcheck="false"></textarea>
           </div>
 
           <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload JSON file. Click or drag and drop." aria-describedby="drop-hint">
@@ -105,7 +104,7 @@
               <label class="form-label" for="jsonOutput">Preview</label>
               <textarea id="jsonOutput" class="form-input" readonly placeholder="Format or minify JSON to see output here." aria-label="Formatted or minified JSON preview" style="min-height: 120px;"></textarea>
             </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+            <div class="result-actions">
               <button class="btn-download" id="copyBtn" type="button" aria-label="Copy JSON to clipboard">
                 <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
                   <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
@@ -273,20 +272,20 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
-              <span itemprop="name">What does a JSON formatter do?</span>
+              <span itemprop="name">How do I format or validate JSON?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">A JSON formatter (or beautifier) takes minified or messy JSON and adds indentation and line breaks so it’s easy to read. This tool also validates your JSON and can minify it to a single line.</span>
+              <span itemprop="text">Paste your JSON or upload a file, then click Format JSON or Minify JSON. Valid input is formatted or minified; invalid input shows an error with details. No output is produced until the JSON is valid.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">How do I validate JSON?</span>
+              <span itemprop="name">Can I do this without installing anything?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Paste your JSON or upload a file, then click Format JSON or Minify JSON. The tool parses the input and shows a success message if it’s valid, or an error message with details if it’s invalid.</span>
+              <span itemprop="text">Yes. Formatting and validation run in your browser. Works for API responses, config files, or any JSON text.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
@@ -295,43 +294,25 @@
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">You’ll see a clear error message describing the problem. Many errors include position or line information so you can fix the JSON. No output is produced until the JSON is valid.</span>
+              <span itemprop="text">You see an error message with the problem (e.g. position or line). Fix the JSON and try again; no output is produced until it is valid.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
-              <span itemprop="name">Can I minify JSON too?</span>
+              <span itemprop="name">Does this tool keep my data private?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Click Minify JSON to convert valid JSON into a single compact line with no extra spaces or line breaks. Useful for smaller payloads or file size.</span>
+              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
-              <span itemprop="name">Are my files uploaded anywhere?</span>
+              <span itemprop="name">Can I minify JSON to a single line?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">No. Everything runs locally in your browser. Your JSON is never sent to a server.</span>
-            </div>
-          </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
-              <span itemprop="name">Is this JSON formatter free?</span>
-              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The JSON formatter and validator is free to use with no signup required.</span>
-            </div>
-          </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
-              <span itemprop="name">Can I use this for API responses or config files?</span>
-              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Paste API response JSON to validate and prettify it, or paste config JSON to format and clean it up. The tool accepts any valid JSON.</span>
+              <span itemprop="text">Yes. Click Minify JSON. Valid JSON is turned into one line with no extra spaces or line breaks. Useful for smaller payloads.</span>
             </div>
           </div>
         </div>
