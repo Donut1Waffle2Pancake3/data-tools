@@ -7,6 +7,20 @@
    DESIGN SYSTEM — CSS Variables
 ============================================================ */
 :root {
+  /* Grey scale (12 steps, 1 = lightest, 12 = darkest) — use for backgrounds, borders, text when a neutral grey is needed */
+  --grey-1:  #fafafa;
+  --grey-2:  #f5f5f5;
+  --grey-3:  #eeeeee;
+  --grey-4:  #e5e5e5;
+  --grey-5:  #d4d4d4;
+  --grey-6:  #c4c4c4;
+  --grey-7:  #a3a3a3;
+  --grey-8:  #737373;
+  --grey-9:  #525252;
+  --grey-10: #404040;
+  --grey-11: #262626;
+  --grey-12: #171717;
+
   /* Colors: surfaces */
   --bg: #ffffff;
   --surface: #ffffff;
@@ -80,6 +94,8 @@
   --space-16: 16px;
   --space-20: 20px;
   --space-24: 24px;
+  --space-100: 100px;
+  --space-52: 52px;
 }
 
 /* ============================================================
@@ -455,7 +471,7 @@ body.nav-drawer-open .nav-drawer {
 /* Mobile breakpoint: root font size, show hamburger, hide dropdown */
 @media (max-width: 640px) {
   html {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   .site-nav {
@@ -487,9 +503,9 @@ body.nav-drawer-open .nav-drawer {
 
 .hero h1 {
   font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: normal;
+  font-weight: 500;
   line-height: var(--line-height-tight);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   color: var(--text-primary);
   margin-bottom: 16px;
 }
@@ -521,54 +537,38 @@ body.nav-drawer-open .nav-drawer {
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
-  padding: 40px;
+  padding: 24px;
   margin-bottom: 16px;
 }
 
-/* Tool card mode tabs */
+/* Tool card mode tabs (simple button tabs, no container background) */
 .tool-tabs {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
-  margin: -8px 0 0;
-  padding: 0 0 8px;
+  gap: var(--space-8);
 }
 
 .tool-tabs .tab {
-  padding: var(--space-12) var(--space-16);
+  padding: var(--space-8) var(--space-16);
   font-size: var(--text-sm);
   font-weight: 500;
   font-family: var(--font-body);
   color: var(--text-muted);
-  background: none;
+  background: transparent;
   border: none;
   border-radius: var(--radius);
   cursor: pointer;
   transition: color var(--transition), background var(--transition);
-  position: relative;
-  margin-bottom: -1px;
 }
 
 .tool-tabs .tab:hover {
   color: var(--text-secondary);
-  background: var(--surface-secondary);
+  background: var(--surface-hover, rgba(0 0 0 / 0.04));
 }
 
 .tool-tabs .tab.active {
-  color: var(--accent);
-  background: transparent;
-}
-
-.tool-tabs .tab.active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -9px;
-  height: 2px;
-  background: var(--accent);
-  border-radius: 2px 2px 0 0;
+  color: var(--text-primary);
+  background: var(--grey-3);
 }
 
 .tool-tabs .tab:focus-visible {
@@ -1574,11 +1574,57 @@ textarea.form-input {
   cursor: not-allowed;
 }
 
+/* Tertiary button (light grey, subtle) */
+.btn-tertiary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 12px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: var(--font-body);
+  line-height: var(--line-height-solid);
+  color: var(--text-secondary);
+  background: var(--surface-secondary);
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  text-decoration: none;
+}
+
+.btn-tertiary:hover:not(:disabled) {
+  background: #eee;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.btn-tertiary:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.btn-tertiary:disabled {
+  color: var(--text-placeholder);
+  background: var(--surface-secondary);
+  cursor: not-allowed;
+}
+
 /* Size modifiers for buttons (must appear after base .btn-* so they override) */
 .btn--sm {
   padding: 0 12px;
   font-size: var(--text-sm);
   height: 32px;
+  line-height: var(--line-height-solid);
+}
+
+.btn--icon-24 {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  min-height: 24px;
+  padding: 0;
   line-height: var(--line-height-solid);
 }
 
@@ -1729,16 +1775,53 @@ textarea.form-input {
   height: 16px;
 }
 
+/* Centered wrapper used when privacy note is moved below the tool card */
+.privacy-note-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-8);
+}
+
+/* Ensure the tool section has enough bottom space before the next section divider. */
+#tool {
+  padding-bottom: var(--space-100);
+}
+
 /* ============================================================
    CONTENT SECTIONS
 ============================================================ */
 .content-section {
-  padding: 56px 0;
+  padding: var(--space-100) 0;
 }
 
 .content-section + .content-section {
-  border-top: 1px solid var(--border);
-  padding-top: 52px;
+  border-top: 1px solid var(--grey-3);
+  padding-top: var(--space-100);
+}
+
+/* Ensure the first "How it Works" section also gets the top divider */
+.content-section[aria-labelledby="how-heading"] {
+  border-top: 1px solid var(--grey-3);
+  padding-top: var(--space-100);
+}
+
+/* Mobile web: reduce section vertical rhythm */
+@media (max-width: 640px) {
+  #tool {
+    padding-bottom: var(--space-52);
+  }
+
+  .content-section {
+    padding: var(--space-52) 0;
+  }
+
+  .content-section + .content-section {
+    padding-top: var(--space-52);
+  }
+
+  .content-section[aria-labelledby="how-heading"] {
+    padding-top: var(--space-52);
+  }
 }
 
 .content-section--centered {
@@ -1761,7 +1844,7 @@ textarea.form-input {
 
 .section-title {
   font-size: clamp(1.4rem, 3vw, 1.9rem);
-  font-weight: normal;
+  font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--text-primary);
   margin-bottom: 12px;

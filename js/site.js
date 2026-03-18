@@ -38,6 +38,7 @@ const NAV_GROUPS = [
         { id: 'text-counter', href: 'text-counter/index.html', label: 'Word, Line, and Character Counter' },
         { id: 'find-and-replace-text', href: 'find-and-replace-text/index.html', label: 'Find and Replace' },
         { id: 'trim-whitespace', href: 'trim-whitespace/index.html', label: 'Trim Whitespace' },
+        { id: 'url-encoder-decoder', href: 'url-encoder-decoder/index.html', label: 'URL Encoder / Decoder' },
       ],
     },
     {
@@ -60,6 +61,7 @@ const RELATED_TOOL_OVERRIDES = {
   'text-counter': ['trim-whitespace', 'json-formatter'],
   'find-and-replace-text': ['trim-whitespace', 'remove-duplicate-lines', 'json-formatter'],
   'trim-whitespace': ['find-and-replace-text', 'remove-duplicate-lines', 'csv-row-filter'],
+  'url-encoder-decoder': ['find-and-replace-text', 'trim-whitespace', 'json-formatter', 'json-validator'],
   'csv-deduplicator': ['remove-duplicate-lines'],
   'csv-sorter': ['sort-lines'],
   'csv-row-filter': ['find-and-replace-text', 'trim-whitespace'],
@@ -233,6 +235,16 @@ const RELATED_TOOL_OVERRIDES = {
 (function () {
   const INTRO = 'More tools in this category.';
 
+  function getGroupForToolId(id) {
+    for (var g = 0; g < NAV_GROUPS.length; g++) {
+      var group = NAV_GROUPS[g];
+      for (var i = 0; i < group.items.length; i++) {
+        if (group.items[i].id === id) return group;
+      }
+    }
+    return null;
+  }
+
   function getToolById(id) {
     for (var g = 0; g < NAV_GROUPS.length; g++) {
       var group = NAV_GROUPS[g];
@@ -246,13 +258,9 @@ const RELATED_TOOL_OVERRIDES = {
   function getRelatedToolsHtml(base, currentId) {
     const baseSlash = base ? base.replace(/\/?$/, '/') : '';
     var relatedItems = [];
-    for (var g = 0; g < NAV_GROUPS.length; g++) {
-      var group = NAV_GROUPS[g];
-      var inGroup = group.items.some(function (item) { return item.id === currentId; });
-      if (inGroup) {
-        relatedItems = group.items.filter(function (item) { return item.id !== currentId; });
-        break;
-      }
+    var currentGroup = getGroupForToolId(currentId);
+    if (currentGroup) {
+      relatedItems = currentGroup.items.filter(function (item) { return item.id !== currentId; });
     }
 
     var overrides = RELATED_TOOL_OVERRIDES[currentId] || [];
@@ -456,6 +464,31 @@ function initFaqAccordion() {
 }
 
 /* ============================================================
+   TinyDataTool — Privacy note placement
+   Many tool pages render a .privacy-note inside .tool-card.
+   Move it to sit directly below the main tool card and center it.
+============================================================ */
+function movePrivacyNoteBelowToolCard() {
+  var toolCards = document.querySelectorAll('#tool .tool-card');
+  if (!toolCards || toolCards.length === 0) return;
+
+  toolCards.forEach(function (toolCard) {
+    var note = toolCard.querySelector('.privacy-note');
+    if (!note) return;
+
+    var parent = toolCard.parentElement;
+    if (!parent) return;
+
+    var wrapper = document.createElement('div');
+    wrapper.className = 'privacy-note-container';
+    wrapper.appendChild(note);
+
+    if (toolCard.nextSibling) parent.insertBefore(wrapper, toolCard.nextSibling);
+    else parent.appendChild(wrapper);
+  });
+}
+
+/* ============================================================
    UTILITY FUNCTIONS
 ============================================================ */
 
@@ -641,4 +674,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavDropdown();
   initNavDrawer();
   initFaqAccordion();
+  movePrivacyNoteBelowToolCard();
 });

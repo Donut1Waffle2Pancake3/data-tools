@@ -6,7 +6,7 @@
     "generate-header-logo": "node scripts/generate-header-logo.js",
     "build": "cleancss -o css/global.min.css css/global.css && terser js/site.js -o js/site.min.js -c -m",
     "build:vercel": "npm run generate-header-logo && npm run build && node scripts/rewrite-html-for-prod.js",
-    "test": "node scripts/test-csv-column-remover.js && node scripts/test-csv-column-splitter.js && node scripts/test-csv-column-joiner.js && node scripts/test-csv-deduplicator.js && node scripts/test-csv-sorter.js && node scripts/test-csv-row-filter.js"
+    "test": "node scripts/test-url-encoder-decoder.js && node scripts/test-csv-column-remover.js && node scripts/test-csv-column-splitter.js && node scripts/test-csv-column-joiner.js && node scripts/test-csv-deduplicator.js && node scripts/test-csv-sorter.js && node scripts/test-csv-row-filter.js"
   },
   "devDependencies": {
     "clean-css-cli": "^5.6.0",
