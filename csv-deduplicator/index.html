@@ -30,35 +30,19 @@
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
   <style>
-    .dedupe-options { display: flex; flex-direction: column; gap: 16px; }
-    .dedupe-options .form-label { margin-bottom: 8px; }
-    .dedupe-mode__label { display: block; font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
-    .dedupe-mode__options { display: flex; flex-direction: column; gap: 8px; }
-    .dedupe-mode__option { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .dedupe-mode__option input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
-    .dedupe-mode__option span { font-size: var(--text-sm); color: var(--text-primary); }
-    .column-selection { }
-    .column-selection.is-hidden { display: none; }
-    .column-selection__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-    .column-selection__left { flex: 1; min-width: 0; }
-    .column-selection__hint { font-size: var(--text-xs); color: var(--text-muted); margin: 0; }
-    .column-selection__links { display: flex; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
-    .column-checkbox-list { display: flex; flex-wrap: wrap; gap: 12px 20px; max-height: 180px; overflow-y: auto; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-secondary); }
-    .column-checkbox-list--empty { align-items: center; justify-content: center; color: var(--text-muted); font-size: var(--text-xs); }
-    .column-checkbox-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-    .column-checkbox-item input { cursor: pointer; }
-    .column-checkbox-item label { cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
+    .column-checkbox-list { max-height: 180px; }
   </style>
 </head>
 <body>
 
   <div id="site-header-root" data-base="../" data-active="csv-deduplicator"></div>
 
+  <div id="privacy-banner-root"></div>
+
   <main id="main-content">
 
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <span class="hero__eyebrow">Free CSV Deduplicator</span>
         <h1 id="hero-heading">CSV Deduplicator</h1>
         <p class="hero__sub">Remove duplicate rows from a CSV instantly in your browser. Paste CSV data or upload a file, choose how to deduplicate it, and get a clean CSV in seconds. Fast, free, and private.</p>
       </div>
@@ -85,41 +69,43 @@
             <input type="file" id="fileInput" accept=".csv,text/csv" aria-label="Select CSV file" />
           </div>
 
-          <div class="dedupe-options">
-            <div class="dedupe-option-group">
-              <span class="dedupe-mode__label">Header row</span>
+          <div class="form-section" style="gap: var(--space-20);">
+            <div class="form-section">
+              <span class="form-section__label">Header row</span>
               <label class="dedupe-mode__option">
                 <input type="checkbox" id="hasHeaderCheckbox" checked />
                 <span>First row is a header</span>
               </label>
             </div>
-            <div class="dedupe-option-group dedupe-mode">
-              <span class="dedupe-mode__label">Remove duplicates by</span>
-              <div class="dedupe-mode__options">
-                <label class="dedupe-mode__option">
+            <div class="form-section">
+              <span class="form-section__label">Duplicate handling</span>
+              <fieldset class="form-option-group" aria-label="Remove duplicates by">
+                <label class="form-option">
                   <input type="radio" name="dedupeMode" id="modeExact" value="exact" checked />
                   <span>Entire row</span>
                 </label>
-                <label class="dedupe-mode__option">
+                <label class="form-option">
                   <input type="radio" name="dedupeMode" id="modeColumns" value="columns" />
                   <span>Selected column(s)</span>
                 </label>
-              </div>
+              </fieldset>
             </div>
 
             <div class="column-selection is-hidden" id="columnSection">
-              <div class="column-selection__header">
-                <div class="column-selection__left">
-                  <label class="form-label" id="columnSectionLabel">Select columns</label>
-                  <p class="column-selection__hint" id="columnSectionHint">Columns to use as the deduplication key</p>
+              <div class="form-section">
+                <div class="column-selection__header">
+                  <div class="column-selection__left">
+                    <label class="form-section__label" id="columnSectionLabel">Select columns</label>
+                    <p class="form-section__hint" id="columnSectionHint">Columns to use as the deduplication key</p>
+                  </div>
+                  <span class="column-selection__links">
+                    <a href="#" class="clear-link" id="selectAllBtn" role="button" aria-disabled="true">Select All</a>
+                    <a href="#" class="clear-link" id="clearSelectionBtn" role="button" aria-disabled="true">Clear</a>
+                  </span>
                 </div>
-                <span class="column-selection__links">
-                  <a href="#" class="clear-link" id="selectAllBtn" role="button" aria-disabled="true">Select All</a>
-                  <a href="#" class="clear-link" id="clearSelectionBtn" role="button" aria-disabled="true">Clear</a>
-                </span>
-              </div>
-              <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel" aria-describedby="columnSectionHint">
-                <span class="column-checkbox-list--empty" id="columnPlaceholder">Column names will appear here after CSV is loaded.</span>
+                <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel" aria-describedby="columnSectionHint">
+                  <span class="column-checkbox-list--empty" id="columnPlaceholder">Column names will appear here after CSV is loaded.</span>
+                </div>
               </div>
             </div>
           </div>
@@ -145,7 +131,8 @@
               <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
-            <div class="form-group" style="margin-top: 12px;">
+            <div class="result-section__body">
+            <div class="form-group">
               <label class="form-label" for="csvOutput">Preview</label>
               <textarea id="csvOutput" class="form-input" readonly placeholder="Deduplicated CSV will appear here." aria-label="Deduplicated CSV preview" style="min-height: 120px;"></textarea>
             </div>
@@ -162,6 +149,7 @@
                 </svg>
                 Download CSV
               </a>
+            </div>
             </div>
           </div>
 

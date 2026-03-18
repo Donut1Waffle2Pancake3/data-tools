@@ -34,11 +34,12 @@
 
   <div id="site-header-root" data-base="../" data-active="csv-to-json"></div>
 
+  <div id="privacy-banner-root"></div>
+
   <main id="main-content">
 
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <span class="hero__eyebrow">Free CSV to JSON Converter</span>
         <h1 id="hero-heading">CSV to JSON Converter</h1>
         <p class="hero__sub">Convert CSV into JSON instantly in your browser. Paste CSV text or upload a CSV file and get a clean JSON array of objects in seconds. Fast, free, and private.</p>
       </div>
@@ -86,7 +87,8 @@
               <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
-            <div class="form-group" style="margin-top: 12px;">
+            <div class="result-section__body">
+            <div class="form-group">
               <label class="form-label" for="jsonOutput">Preview</label>
               <textarea id="jsonOutput" class="form-input" readonly placeholder="Convert CSV to see JSON here." aria-label="Generated JSON preview" style="min-height: 120px;"></textarea>
             </div>
@@ -106,6 +108,7 @@
               <button class="btn-download" id="clearOutputBtn" type="button" aria-label="Clear output">
                 Clear
               </button>
+            </div>
             </div>
           </div>
 

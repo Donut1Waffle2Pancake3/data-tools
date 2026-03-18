@@ -30,19 +30,13 @@
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
   <style>
-    .sort-options { display: flex; flex-direction: column; gap: 20px; }
+    .sort-options { display: flex; flex-direction: column; gap: var(--space-24); }
     .sort-options.is-hidden { display: none; }
-    .sort-options__section { display: flex; flex-direction: column; gap: 6px; }
-    .sort-options__section-label { display: block; font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin: 0; }
-    .sort-options__row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
-    .sort-options__radio-group { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
-    .sort-options__radio { display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
-    .sort-options__radio input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
-    .sort-options__checkbox { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
-    .sort-options__checkbox input { cursor: pointer; }
+    .sort-options__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-16); }
+    .sort-options__radio-group { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-12); }
     .sort-options fieldset { border: none; margin: 0; padding: 0; min-width: 0; }
     @media (max-width: 480px) {
-      .sort-options__row { gap: 6px 12px; }
+      .sort-options__row { gap: var(--space-8) var(--space-12); }
     }
   </style>
 </head>
@@ -50,11 +44,12 @@
 
   <div id="site-header-root" data-base="../" data-active="csv-sorter"></div>
 
+  <div id="privacy-banner-root"></div>
+
   <main id="main-content">
 
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <span class="hero__eyebrow">Free CSV Sorter</span>
         <h1 id="hero-heading">CSV Sorter</h1>
         <p class="hero__sub">Sort CSV files online in your browser. Upload a CSV or paste data, choose a column and sort order, then copy or download the sorted result. Fast, free, and private.</p>
       </div>
@@ -82,64 +77,62 @@
           </div>
 
           <div class="sort-options is-hidden" id="sortOptions">
-            <div class="sort-options__section">
-              <p class="sort-options__section-label" id="sort-header-label">Header</p>
-              <div class="sort-options__row">
-                <label class="sort-options__checkbox" for="hasHeaderCheckbox">
-                  <input type="checkbox" id="hasHeaderCheckbox" checked />
-                  <span>First row is a header</span>
-                </label>
-              </div>
+            <div class="form-section">
+              <span class="form-section__label" id="sort-header-label">Header row</span>
+              <label class="form-option">
+                <input type="checkbox" id="hasHeaderCheckbox" checked />
+                <span>First row is a header</span>
+              </label>
             </div>
-            <div class="sort-options__section">
-              <p class="sort-options__section-label" id="sort-sort-label">Sort</p>
-              <div class="sort-options__row">
+            <div class="form-section">
+              <span class="form-section__label" id="sort-sort-label">Sort settings</span>
+              <div class="form-inline-row">
                 <select id="sortColumnSelect" class="field-md" aria-labelledby="sort-sort-label">
                   <option value="0">Column 1</option>
                 </select>
                 <fieldset class="sort-options__radio-group" aria-label="Sort order">
-                  <label class="sort-options__radio">
+                  <label class="form-option">
                     <input type="radio" name="sortOrder" id="orderAsc" value="asc" checked />
                     <span>Asc</span>
                   </label>
-                  <label class="sort-options__radio">
+                  <label class="form-option">
                     <input type="radio" name="sortOrder" id="orderDesc" value="desc" />
                     <span>Desc</span>
                   </label>
                 </fieldset>
               </div>
             </div>
-            <div class="sort-options__section" role="group" aria-labelledby="sort-type-label">
-              <p class="sort-options__section-label" id="sort-type-label">Type</p>
-              <div class="sort-options__row">
-                <div class="sort-options__radio-group">
-                  <label class="sort-options__radio">
+            <div class="form-section" role="group" aria-labelledby="sort-type-label">
+              <span class="form-section__label" id="sort-type-label">Type</span>
+              <div class="form-inline-row">
+                <fieldset class="sort-options__radio-group" aria-label="Sort type">
+                  <label class="form-option">
                     <input type="radio" name="valueType" id="typeAuto" value="auto" checked />
                     <span>Auto</span>
                   </label>
-                  <label class="sort-options__radio">
+                  <label class="form-option">
                     <input type="radio" name="valueType" id="typeText" value="text" />
                     <span>Text</span>
                   </label>
-                  <label class="sort-options__radio">
+                  <label class="form-option">
                     <input type="radio" name="valueType" id="typeNumber" value="number" />
                     <span>Number</span>
                   </label>
-                  <label class="sort-options__radio">
+                  <label class="form-option">
                     <input type="radio" name="valueType" id="typeDate" value="date" />
                     <span>Date</span>
                   </label>
-                </div>
+                </fieldset>
               </div>
             </div>
-            <div class="sort-options__section">
-              <p class="sort-options__section-label" id="sort-options-label">Options</p>
-              <div class="sort-options__row">
-                <label class="sort-options__checkbox">
+            <div class="form-section">
+              <span class="form-section__label" id="sort-options-label">Options</span>
+              <div class="form-inline-row">
+                <label class="form-option">
                   <input type="checkbox" id="caseInsensitiveCheckbox" />
                   <span>Case-insensitive</span>
                 </label>
-                <label class="sort-options__checkbox">
+                <label class="form-option">
                   <input type="checkbox" id="emptyLastCheckbox" />
                   <span>Empty values last</span>
                 </label>
@@ -168,7 +161,8 @@
               <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
-            <div class="form-group" style="margin-top: 12px;">
+            <div class="result-section__body">
+            <div class="form-group">
               <label class="form-label" for="csvOutput">Preview</label>
               <textarea id="csvOutput" class="form-input" readonly placeholder="Sorted CSV will appear here." aria-label="Sorted CSV preview" style="min-height: 120px;"></textarea>
             </div>
@@ -185,6 +179,7 @@
                 </svg>
                 Download CSV
               </a>
+            </div>
             </div>
           </div>
 

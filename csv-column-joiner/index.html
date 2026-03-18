@@ -30,38 +30,20 @@
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
   <style>
-    .column-selection { }
-    .column-selection.is-hidden { display: none; }
-    .column-selection__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
-    .column-selection__left { flex: 1; min-width: 0; }
-    .column-selection__hint { font-size: var(--text-xs); color: var(--text-muted); margin: 0; }
-    .column-selection__links { display: flex; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
-    .column-checkbox-list { display: flex; flex-wrap: wrap; gap: 12px 20px; max-height: 200px; overflow-y: auto; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-secondary); }
-    .column-checkbox-list--empty { align-items: center; justify-content: center; color: var(--text-muted); font-size: var(--text-xs); }
-    .column-checkbox-item { display: flex; align-items: center; gap: 6px; }
-    .column-checkbox-item input { cursor: pointer; }
-    .column-checkbox-item label { cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
-    .header-option { display: flex; flex-direction: column; gap: 8px; }
-    .header-option .form-label { margin-bottom: 0; }
-    .joiner-options { display: flex; flex-direction: column; gap: 8px; }
-    .joiner-options .form-label { margin-bottom: 2px; }
-    .joiner-delimiter-wrap { }
-    .joiner-delimiter-wrap .column-selection__hint { margin-top: 4px; margin-bottom: 0; }
-    .joiner-delimiter-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .joiner-delimiter-row { display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap; }
     .joiner-delimiter-row .form-input { width: 100px; min-width: 80px; }
-    .joiner-option-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .joiner-option-row label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
   </style>
 </head>
 <body>
 
   <div id="site-header-root" data-base="../" data-active="csv-column-joiner"></div>
 
+  <div id="privacy-banner-root"></div>
+
   <main id="main-content">
 
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <span class="hero__eyebrow">Free CSV Column Joiner</span>
         <h1 id="hero-heading">CSV Column Joiner</h1>
         <p class="hero__sub">Combine multiple columns into a single column with a custom delimiter. Paste CSV or upload a file, select columns to join, and get a new CSV instantly. Fast, free, and runs entirely in your browser.</p>
       </div>
@@ -88,8 +70,8 @@
             <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
           </div>
 
-          <div class="form-group header-option">
-            <label class="form-label" for="hasHeaderCheckbox">Header</label>
+          <div class="form-section">
+            <span class="form-section__label">Header row</span>
             <label class="dedupe-mode__option">
               <input type="checkbox" id="hasHeaderCheckbox" checked />
               <span>First row is header</span>
@@ -97,24 +79,26 @@
           </div>
 
           <div class="column-selection is-hidden" id="columnSection">
-            <div class="column-selection__header">
-              <div class="column-selection__left">
-                <label class="form-label" id="columnSectionLabel">Select columns to join</label>
-                <p class="column-selection__hint" id="columnCountHint">0 columns, 0 selected</p>
-              </div>
+            <div class="form-section">
+              <div class="column-selection__header">
+                <div class="column-selection__left">
+                  <label class="form-section__label" id="columnSectionLabel">Columns to combine</label>
+                  <p class="form-section__hint" id="columnCountHint">0 columns, 0 selected</p>
+                </div>
               <span class="column-selection__links">
                 <a href="#" class="clear-link" id="selectAllBtn" role="button" aria-disabled="true">Select All</a>
                 <a href="#" class="clear-link" id="clearSelectionBtn" role="button" aria-disabled="true">Clear</a>
               </span>
             </div>
-            <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel">
-              <span class="column-checkbox-list--empty" id="columnPlaceholder">Column names will appear here after CSV is loaded.</span>
+              <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel">
+                <span class="column-checkbox-list--empty" id="columnPlaceholder">Column names will appear here after CSV is loaded.</span>
+              </div>
             </div>
           </div>
 
-          <div class="form-group joiner-options">
-            <label class="form-label" for="delimiterSelect">Delimiter</label>
-            <div class="joiner-delimiter-wrap">
+          <div class="form-section">
+            <span class="form-section__label">Delimiter</span>
+            <div class="form-section__body">
               <div class="joiner-delimiter-row">
                 <select id="delimiterSelect" class="field-md" aria-label="Preset delimiter" style="min-width: 140px;">
                   <option value="," selected>Comma (,)</option>
@@ -127,12 +111,12 @@
                 </select>
                 <input type="text" id="delimiterInput" class="form-input field-md" value="," maxlength="20" placeholder="," aria-label="Delimiter value (used for join)" />
               </div>
-              <p class="column-selection__hint">Select a preset or type a custom delimiter. The input is used for the join.</p>
+              <p class="form-section__hint">Select a preset or type a custom delimiter. The input is used for the join.</p>
+              <label class="dedupe-mode__option">
+                <input type="checkbox" id="removeOriginalCheckbox" />
+                <span>Remove original columns after joining</span>
+              </label>
             </div>
-            <label class="dedupe-mode__option">
-              <input type="checkbox" id="removeOriginalCheckbox" />
-              <span>Remove original columns after joining</span>
-            </label>
           </div>
 
           <button class="btn-primary" id="joinBtn" type="button" aria-label="Join columns" disabled>
@@ -156,7 +140,8 @@
               <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
-            <div class="form-group" style="margin-top: 12px;">
+            <div class="result-section__body">
+            <div class="form-group">
               <label class="form-label" for="csvOutput">Output</label>
               <textarea id="csvOutput" class="form-input" readonly placeholder="Joined CSV will appear here." aria-label="Joined CSV output" style="min-height: 120px;"></textarea>
             </div>
@@ -173,6 +158,7 @@
                 </svg>
                 Download CSV
               </a>
+            </div>
             </div>
           </div>
 

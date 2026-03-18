@@ -72,6 +72,14 @@
 
   /* Motion */
   --transition: 0.1s ease;
+
+  /* Spacing scale (base-4) — use for gap, padding, margin in form/control layouts */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
 }
 
 /* ============================================================
@@ -104,6 +112,22 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+/* ============================================================
+   PRIVACY BANNER (below header, above main content)
+============================================================ */
+.privacy-banner {
+  font-size: 13px;
+  text-align: center;
+  padding: 8px 12px;
+  background: var(--surface-secondary);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-body);
+  line-height: var(--line-height-normal);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* ============================================================
@@ -276,8 +300,11 @@ a:hover {
 
 .nav-dropdown__item--active::after {
   content: '';
+  flex-shrink: 0;
   width: 6px;
+  min-width: 6px;
   height: 6px;
+  min-height: 6px;
   border-radius: 50%;
   background: var(--accent);
 }
@@ -425,8 +452,12 @@ body.nav-drawer-open .nav-drawer {
   transform: translateX(0);
 }
 
-/* Mobile breakpoint: show hamburger, hide dropdown */
+/* Mobile breakpoint: root font size, show hamburger, hide dropdown */
 @media (max-width: 640px) {
+  html {
+    font-size: 10px;
+  }
+
   .site-nav {
     display: none;
   }
@@ -440,7 +471,7 @@ body.nav-drawer-open .nav-drawer {
    HERO
 ============================================================ */
 .hero {
-  padding: 64px 0 48px;
+  padding: 64px 0 36px;
   text-align: center;
 }
 
@@ -505,7 +536,7 @@ body.nav-drawer-open .nav-drawer {
 }
 
 .tool-tabs .tab {
-  padding: 10px 16px;
+  padding: var(--space-12) var(--space-16);
   font-size: var(--text-sm);
   font-weight: 500;
   font-family: var(--font-body);
@@ -792,6 +823,9 @@ body.nav-drawer-open .nav-drawer {
 ============================================================ */
 .form-group {
   margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* Tool card uses gap for spacing; form-groups inside it don't need top margin */
@@ -803,7 +837,6 @@ body.nav-drawer-open .nav-drawer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
   gap: 12px;
 }
 
@@ -914,6 +947,281 @@ textarea.form-input {
 }
 
 /* ============================================================
+   FORM SECTIONS (tool option panels)
+   Reusable layout for lower-page form areas. Use gap for rhythm;
+   section labels above each logical control group.
+============================================================ */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.form-section__label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0 0;
+  letter-spacing: -0.01em;
+}
+
+.form-section__hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+.form-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* Checkbox/radio group: vertical list with consistent gap */
+.form-option-group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  align-items: flex-start;
+}
+
+.form-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  cursor: pointer;
+  font-size: var(--form-option-font-size);
+  color: var(--text-primary);
+}
+
+.form-option input {
+  cursor: pointer;
+}
+
+/* Inline row: label + controls on one line, wraps on small screens */
+.form-inline-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-16);
+}
+
+/* Repeatable field row (e.g. filter rows with add/remove) */
+.form-repeat-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-12);
+}
+
+@media (max-width: 480px) {
+  .form-repeat-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Action row: primary/secondary buttons */
+.form-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+/* Result section: body uses gap so first form-group doesn't need margin-top */
+.result-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.result-section__body > .form-group {
+  margin-top: 0;
+}
+
+/* Column selection (shared across column-remover, splitter, joiner, deduplicator) */
+.column-selection.is-hidden {
+  display: none;
+}
+
+.column-selection__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-12);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-12);
+}
+
+.column-selection__left {
+  flex: 1;
+  min-width: 0;
+}
+
+.column-selection__hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.column-selection__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+  flex-shrink: 0;
+}
+
+.column-checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12) var(--space-20);
+  max-height: 200px;
+  overflow-y: auto;
+  padding: var(--space-12);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-secondary);
+}
+
+.column-checkbox-list--empty {
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.column-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  cursor: pointer;
+}
+
+.column-checkbox-item input {
+  cursor: pointer;
+}
+
+.column-checkbox-item label {
+  cursor: pointer;
+  font-size: var(--form-option-font-size);
+  color: var(--text-primary);
+}
+
+/* Filter row (e.g. csv-row-filter: column + operator + value + remove) */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-12);
+}
+
+.filter-row__value-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+.filter-row__value {
+  min-width: 0;
+  flex: 1;
+}
+
+.filter-row__remove {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: var(--space-8);
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-row__remove svg {
+  width: 20px;
+  height: 20px;
+}
+
+.filter-row__remove:hover {
+  color: var(--text-primary);
+}
+
+@media (max-width: 480px) {
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-row__value-wrap {
+    min-width: 100%;
+  }
+}
+
+/* Delimiter + inline options row */
+.delimiter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-12);
+}
+
+/* Toggle button group (e.g. AND/OR, Keep/Remove) */
+.logic-toggle,
+.mode-toggle {
+  display: inline-flex;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.logic-toggle__btn,
+.mode-toggle__btn {
+  padding: var(--space-4) var(--space-12);
+  font-size: var(--text-xs);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.logic-toggle__btn[aria-pressed="true"] {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.mode-toggle__btn[aria-pressed="true"] {
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+}
+
+.results-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12) var(--space-20);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.results-summary span {
+  white-space: nowrap;
+}
+
+/* Container for repeatable filter rows (add/remove); use gap between rows */
+.filter-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+/* ============================================================
    PRIMARY BUTTON
 ============================================================ */
 .btn-primary {
@@ -979,8 +1287,8 @@ textarea.form-input {
 .status-message {
   display: none;
   align-items: flex-start;
-  gap: 10px;
-  padding: 14px 16px;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16);
   border-radius: var(--radius);
   font-size: var(--text-sm);
   line-height: var(--line-height-normal);
@@ -1009,7 +1317,7 @@ textarea.form-input {
 
 /* Optional error details (e.g. line/column/snippet) under the main error text */
 .status-message__details {
-  margin-top: 10px;
+  margin-top: var(--space-8);
   font-size: var(--text-sm);
 }
 .status-message__details p {
@@ -1088,8 +1396,8 @@ textarea.form-input {
 .result-download {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-16);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -1226,7 +1534,6 @@ textarea.form-input {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 16px;
 }
 .result-actions > * {
   flex: 1 1 0;
@@ -1399,7 +1706,7 @@ textarea.form-input {
 .dedupe-mode__option {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-8);
   cursor: pointer;
   color: var(--text-primary);
 }
@@ -1762,7 +2069,7 @@ textarea.form-input {
 }
 
 @media (max-width: 500px) {
-  .hero         { padding: 40px 0 32px; }
+  .hero         { padding: 40px 0 24px; }
   .steps        { grid-template-columns: 1fr; }
   .benefits     { grid-template-columns: 1fr; }
   .site-header__badge { display: none; }

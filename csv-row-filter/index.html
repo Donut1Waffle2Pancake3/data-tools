@@ -30,47 +30,22 @@
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
   <style>
-    .tool-form { display: flex; flex-direction: column; gap: 20px; }
-    .tool-form__actions { display: flex; flex-wrap: wrap; gap: 12px; }
-    .filter-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 8px; margin-bottom: 12px; }
-    .filter-row__select { min-width: 140px; max-width: 220px; border: 1px solid var(--border); border-radius: var(--radius); background-color: var(--surface); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23767676' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px; color: var(--text-primary); appearance: none; padding-right: 26px; }
-    .filter-row__select:hover { border-color: var(--border-strong); }
-    .filter-row__select:focus { outline: none; border-color: var(--border-focus); background-color: var(--surface); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23767676' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px; }
-    .filter-row__value-wrap { display: flex; align-items: center; gap: 8px; flex: 1 1 160px; min-width: 0; }
-    .filter-row__value { min-width: 0; flex: 1; }
-    .filter-row__remove { flex-shrink: 0; background: none; border: none; padding: 6px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
-    .filter-row__remove svg { width: 20px; height: 20px; }
-    .filter-row__remove:hover { color: var(--text-primary); }
-    .form-option-group { border: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
-    .form-option { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
-    .form-option input { cursor: pointer; }
-    .logic-toggle { display: inline-flex; border-radius: 999px; border: 1px solid var(--border); overflow: hidden; }
-    .logic-toggle__btn { padding: 4px 10px; font-size: var(--text-xs); background: transparent; border: none; cursor: pointer; color: var(--text-secondary); }
-    .logic-toggle__btn[aria-pressed="true"] { background: var(--accent-light); color: var(--accent); }
-    .mode-toggle { display: inline-flex; border-radius: 999px; border: 1px solid var(--border); overflow: hidden; }
-    .mode-toggle__btn { padding: 4px 10px; font-size: var(--text-xs); background: transparent; border: none; cursor: pointer; color: var(--text-secondary); }
-    .mode-toggle__btn[aria-pressed="true"] { background: var(--surface-secondary); color: var(--text-primary); }
-    .delimiter-group { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
-    .delimiter-select { min-width: 120px; border: 1px solid var(--border); border-radius: var(--radius); background-color: var(--surface); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23767676' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px; color: var(--text-primary); appearance: none; padding-right: 26px; }
-    .delimiter-select:hover { border-color: var(--border-strong); }
-    .delimiter-select:focus { outline: none; border-color: var(--border-focus); background-color: var(--surface); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath fill='%23767676' d='M303.5 473C312.9 482.4 328.1 482.4 337.4 473L537.4 273C546.8 263.6 546.8 248.4 537.4 239.1C528 229.8 512.8 229.7 503.5 239.1L320.5 422.1L137.5 239.1C128.1 229.7 112.9 229.7 103.6 239.1C94.3 248.5 94.2 263.7 103.6 273L303.6 473z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 16px; }
-    .results-summary { display: flex; flex-wrap: wrap; gap: 12px 20px; font-size: var(--text-xs); color: var(--text-muted); margin-top: 8px; }
-    .results-summary span { white-space: nowrap; }
-    @media (max-width: 480px) {
-      .filter-row { flex-direction: column; align-items: stretch; }
-      .filter-row__value-wrap { min-width: 100%; }
-    }
+    .tool-form { display: flex; flex-direction: column; gap: var(--space-20); }
+    .tool-form__actions { display: flex; flex-wrap: wrap; gap: var(--space-12); }
+    .filter-row__select { min-width: 140px; max-width: 220px; }
+    .form-label-row__links { display: flex; align-items: center; gap: var(--space-12); }
   </style>
 </head>
 <body>
 
   <div id="site-header-root" data-base="../" data-active="csv-row-filter"></div>
 
+  <div id="privacy-banner-root"></div>
+
   <main id="main-content">
 
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <span class="hero__eyebrow">Free CSV Row Filter</span>
         <h1 id="hero-heading">CSV Row Filter</h1>
         <p class="hero__sub">Filter rows in a CSV file by column value, text match, or numeric conditions. Paste CSV data or upload a file to keep only the rows you need.</p>
       </div>
@@ -98,34 +73,36 @@
               <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Options</label>
+            <div class="form-section">
+              <span class="form-section__label">Options</span>
               <div class="delimiter-group">
                 <label for="delimiterSelect">Delimiter</label>
-                <select id="delimiterSelect" class="delimiter-select field-md">
+                <select id="delimiterSelect" class="field-md" style="min-width: 120px;">
                   <option value=",">Comma</option>
                   <option value="tab">Tab</option>
                   <option value=";">Semicolon</option>
                   <option value="|">Pipe</option>
                 </select>
-                <label class="dedupe-mode__option" style="margin-left: 8px;">
+                <label class="dedupe-mode__option">
                   <input type="checkbox" id="hasHeaderCheckbox" checked />
                   <span>First row is a header</span>
                 </label>
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-section">
               <div class="form-label-row">
-                <label class="form-label">Filters</label>
-                <a href="#" class="clear-link" id="resetFiltersLink" role="button" aria-disabled="true">Reset filters</a>
+                <label class="form-section__label">Filters</label>
+                <div class="form-label-row__links">
+                  <a href="#" class="clear-link" id="addFilterLink" role="button" aria-disabled="true">Add</a>
+                  <a href="#" class="clear-link" id="resetFiltersLink" role="button" aria-disabled="true">Reset filters</a>
+                </div>
               </div>
-              <div id="filterContainer"></div>
-              <button class="btn-secondary btn--sm" type="button" id="addFilterBtn" disabled>Add</button>
+              <div id="filterContainer" class="filter-rows"></div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Match</label>
+            <div class="form-section">
+              <span class="form-section__label">Match</span>
               <fieldset class="form-option-group" aria-label="Filter logic">
                 <label class="form-option">
                   <input type="radio" name="logicMode" id="logicAll" value="all" checked />
@@ -138,8 +115,8 @@
               </fieldset>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Mode</label>
+            <div class="form-section">
+              <span class="form-section__label">Mode</span>
               <fieldset class="form-option-group" aria-label="Filter mode">
                 <label class="form-option">
                   <input type="radio" name="filterMode" id="modeKeep" value="keep" checked />
@@ -176,12 +153,13 @@
               <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
+            <div class="result-section__body">
             <div class="results-summary" id="resultsSummary" aria-label="Filter summary" hidden>
               <span id="summaryProcessed"></span>
               <span id="summaryKept"></span>
               <span id="summaryRemoved"></span>
             </div>
-            <div class="form-group" style="margin-top: 12px;">
+            <div class="form-group">
               <label class="form-label" for="csvOutput">Filtered CSV output</label>
               <textarea id="csvOutput" class="form-input" readonly placeholder="Filtered CSV will appear here." aria-label="Filtered CSV preview" style="min-height: 120px;"></textarea>
             </div>
@@ -198,6 +176,7 @@
                 </svg>
                 Download CSV
               </a>
+            </div>
             </div>
           </div>
 
@@ -382,7 +361,7 @@
       const delimiterSelect = document.getElementById('delimiterSelect');
       const hasHeaderCheckbox = document.getElementById('hasHeaderCheckbox');
       const filterContainer = document.getElementById('filterContainer');
-      const addFilterBtn = document.getElementById('addFilterBtn');
+      const addFilterLink = document.getElementById('addFilterLink');
       const logicAllRadio = document.getElementById('logicAll');
       const logicAnyRadio = document.getElementById('logicAny');
       const modeKeepRadio = document.getElementById('modeKeep');
@@ -525,7 +504,8 @@
       function updateFilterButtonState() {
         const hasText = getInputText().length > 0;
         filterBtn.disabled = !hasText;
-        addFilterBtn.disabled = !hasText;
+        addFilterLink.classList.toggle('clear-link--enabled', hasText);
+        addFilterLink.setAttribute('aria-disabled', hasText ? 'false' : 'true');
         clearLink.classList.toggle('clear-link--enabled', hasText);
         clearLink.setAttribute('aria-disabled', hasText ? 'false' : 'true');
       }
@@ -573,6 +553,11 @@
         const operatorSelect = row.querySelector('.filter-operator');
         const valueInput = row.querySelector('.filter-value');
         const removeBtn = row.querySelector('.filter-row__remove');
+        const isFirstRow = filterContainer.children.length === 0;
+
+        if (isFirstRow && removeBtn) {
+          removeBtn.remove();
+        }
 
         columnOptions.forEach(function (opt, idx) {
           const option = document.createElement('option');
@@ -588,10 +573,12 @@
           if (!needsValue) valueInput.value = '';
         });
 
-        removeBtn.addEventListener('click', function () {
-          filterContainer.removeChild(row);
-          updateResetFiltersLinkState();
-        });
+        if (removeBtn && removeBtn.parentNode) {
+          removeBtn.addEventListener('click', function () {
+            filterContainer.removeChild(row);
+            updateResetFiltersLinkState();
+          });
+        }
 
         filterContainer.appendChild(row);
         updateResetFiltersLinkState();
@@ -624,7 +611,8 @@
         const headerRow = hasHeader ? rows[0] : rows[0].map(function (_, idx) { return 'Column ' + (idx + 1); });
         const displayNames = headerDisplayNames(headerRow);
 
-        addFilterBtn.disabled = false;
+        addFilterLink.classList.add('clear-link--enabled');
+        addFilterLink.setAttribute('aria-disabled', 'false');
         createFilterRow(displayNames);
       }
 
@@ -799,8 +787,9 @@
         parseAndUpdateFilterUi();
       });
 
-      addFilterBtn.addEventListener('click', function () {
-        if (addFilterBtn.disabled) return;
+      addFilterLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (addFilterLink.getAttribute('aria-disabled') === 'true') return;
         if (!parsedRows || !parsedRows.length) {
           parseAndUpdateFilterUi();
           if (!parsedRows || !parsedRows.length) return;
@@ -827,6 +816,8 @@
         if (logicAnyRadio) logicAnyRadio.checked = false;
         if (modeKeepRadio) modeKeepRadio.checked = true;
         if (modeRemoveRadio) modeRemoveRadio.checked = false;
+        if (getInputText()) parseAndUpdateFilterUi();
+        updateResetFiltersLinkState();
       });
 
       clearLink.addEventListener('click', function (e) {

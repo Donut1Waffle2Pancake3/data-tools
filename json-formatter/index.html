@@ -34,11 +34,12 @@
 
   <div id="site-header-root" data-base="../" data-active="json-formatter"></div>
 
+  <div id="privacy-banner-root"></div>
+
   <main id="main-content">
 
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <span class="hero__eyebrow">Free JSON Formatter & Validator</span>
         <h1 id="hero-heading">JSON Formatter &amp; Validator</h1>
         <p class="hero__sub">Format, validate, prettify, and minify JSON instantly in your browser. Paste JSON or upload a file and get clean, readable output or compact minified JSON in seconds. Fast, free, and private.</p>
       </div>
@@ -100,7 +101,8 @@
               <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
-            <div class="form-group" style="margin-top: 12px;">
+            <div class="result-section__body">
+            <div class="form-group">
               <label class="form-label" for="jsonOutput">Preview</label>
               <textarea id="jsonOutput" class="form-input" readonly placeholder="Format or minify JSON to see output here." aria-label="Formatted or minified JSON preview" style="min-height: 120px;"></textarea>
             </div>
@@ -117,6 +119,7 @@
                 </svg>
                 Download JSON
               </a>
+            </div>
             </div>
           </div>
 

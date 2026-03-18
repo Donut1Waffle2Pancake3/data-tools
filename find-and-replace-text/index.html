@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       SEO
+  ============================================================ -->
+  <title>Find and Replace Text | Free &amp; Private | TinyDataTool</title>
+  <meta name="description" content="Find and replace text instantly in your browser. Paste text, choose options, and copy the updated output. Fast, free, and private." />
+  <link rel="canonical" href="https://tinydatatool.com/find-and-replace-text/" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Find and Replace Text | Free &amp; Private | TinyDataTool" />
+  <meta property="og:description" content="Find and replace text in your browser. Free, private, no signup." />
+  <meta property="og:url"         content="https://tinydatatool.com/find-and-replace-text/" />
+  <meta property="og:site_name"   content="TinyDataTool" />
+
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="Find and Replace Text | Free &amp; Private | TinyDataTool" />
+  <meta name="twitter:description" content="Find and replace text in your browser. Free, private, no signup." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Find and Replace Text","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/find-and-replace-text/","description":"Find and replace text directly in your browser. Free, private, and no uploads required."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .find-replace-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-12) var(--space-16); }
+    @media (max-width: 640px) { .find-replace-grid { grid-template-columns: 1fr; } }
+    .find-replace-field { display: flex; flex-direction: column; gap: var(--space-8); }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="find-and-replace-text"></div>
+
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">Find and Replace Text</h1>
+        <p class="hero__sub">Find and replace text instantly in your browser. Paste your content, enter find and replace strings, and optionally use regex or replace-all. Copy the updated output. Fast, free, and private.</p>
+      </div>
+    </section>
+
+    <section aria-label="Find and replace text" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="Find and replace text">
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="textInput">Text input</label>
+              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+            </div>
+            <textarea id="textInput" class="form-input" placeholder="Paste text here to find and replace." spellcheck="false"></textarea>
+          </div>
+
+          <div class="form-section" role="group" aria-label="Find and replace controls" style="gap: var(--space-16);">
+            <div class="find-replace-grid">
+              <div class="find-replace-field">
+                <label class="form-section__label" for="findInput">Find</label>
+                <input id="findInput" class="form-input field-md" type="text" placeholder="Text to find" />
+              </div>
+              <div class="find-replace-field">
+                <label class="form-section__label" for="replaceInput">Replace with</label>
+                <input id="replaceInput" class="form-input field-md" type="text" placeholder="Replacement text" />
+              </div>
+            </div>
+            <div class="form-section">
+              <span class="form-section__label" id="find-replace-options-label">Options</span>
+              <div class="form-inline-row">
+                <label class="form-option" for="caseSensitiveCheckbox">
+                  <input type="checkbox" id="caseSensitiveCheckbox" checked />
+                  <span>Case-sensitive</span>
+                </label>
+                <label class="form-option" for="replaceAllCheckbox">
+                  <input type="checkbox" id="replaceAllCheckbox" checked />
+                  <span>Replace all</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="actionBtn" type="button" aria-label="Replace text" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            <span id="actionBtnLabel">Replace</span>
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+              <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
+            </svg>
+          </button>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Results</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="result-section__body">
+            <div class="form-group">
+              <label class="form-label" for="textOutput">Preview</label>
+              <textarea id="textOutput" class="form-input" readonly placeholder="Updated text will appear here." aria-label="Updated text preview" style="min-height: 120px;"></textarea>
+            </div>
+            <div class="result-actions">
+              <button class="btn-download" id="copyBtn" type="button" aria-label="Copy output to clipboard">
+                <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
+                </svg>
+                Copy output
+              </button>
+            </div>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Text is processed entirely in your browser and is never uploaded to any server.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" id="how-heading">How to Find and Replace Text</h2>
+        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste your text</p>
+            <p class="step__desc">Paste the text you want to modify into the input box.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Enter find and replace values</p>
+            <p class="step__desc">Type the text to find and the replacement text. You can use plain text or regex for find.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Set options and click Replace</p>
+            <p class="step__desc">Choose case-sensitive or replace all, then click Replace. The preview shows the updated text.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">4</span>
+            <p class="step__title">Copy the output</p>
+            <p class="step__desc">Copy the result to your clipboard for use in docs, code, or configs.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Why Use Find and Replace?</h2>
+        <p class="section-body">Bulk text changes are tedious by hand. Find and replace updates every occurrence at once—names, placeholders, or patterns—without opening an editor or running a script.</p>
+        <p class="section-body" style="margin-top: 12px;">Useful when you need to:</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M369.1 80.9C373 68.2 386.5 61.2 399.1 65.1C411.7 69 418.8 82.5 414.9 95.1L270.9 559.1C267 571.8 253.5 578.8 240.9 574.9C228.3 571 221.2 557.5 225.1 544.9L369.1 80.9zM177 199C186.4 208.4 186.4 223.6 177 232.9L90 319.9L177 406.9C186.4 416.3 186.4 431.5 177 440.8C167.6 450.1 152.4 450.2 143.1 440.8L39 337C29.6 327.6 29.6 312.4 39 303.1L143 199C152.4 189.6 167.6 189.6 176.9 199zM463 199C472.4 189.6 487.6 189.6 496.9 199L601 303C610.4 312.4 610.4 327.6 601 336.9L497 441C487.6 450.4 472.4 450.4 463.1 441C453.8 431.6 453.7 416.4 463.1 407.1L550.1 320.1L463.1 233.1C453.7 223.7 453.7 208.5 463.1 199.2z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Update placeholders or names</p>
+              <p class="benefit__desc">Replace repeated strings like {{name}} or old URLs with new values in one go.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 14V4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Use regex for patterns</p>
+              <p class="benefit__desc">Enable regex to match patterns (e.g. dates, IDs) and replace with fixed or dynamic text.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Replace first or all</p>
+              <p class="benefit__desc">Replace only the first match or every occurrence, with optional case-sensitive matching.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <circle cx="12.5" cy="5.5" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">No editor required</p>
+              <p class="benefit__desc">Run find and replace in the browser on pasted text—no IDE or command line needed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="secure-heading">
+      <div class="container--wide">
+        <p class="section-label">Privacy</p>
+        <h2 class="section-title" id="secure-heading">Private and Secure</h2>
+        <p class="section-body">Your text is never uploaded to a server. This tool runs entirely in your browser using client-side processing.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Data stays on your device</p>
+              <p class="benefit__desc">Your data never leaves your browser. No uploads, no cloud storage, no logs.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M184 64C135.4 64 96 103.4 96 152L96 496C96 540.2 131.8 576 176 576L520 576C533.3 576 544 565.3 544 552C544 538.7 533.3 528 520 528L512 528L512 451.9C531.3 439 544 417 544 392L544 136C544 96.2 511.8 64 472 64L184 64zM464 464L464 528L176 528C158.3 528 144 513.7 144 496C144 478.3 158.3 464 176 464L464 464zM176 416C164.6 416 153.8 418.4 144 422.7L144 152C144 129.9 161.9 112 184 112L472 112C485.3 112 496 122.7 496 136L496 392C496 405.3 485.3 416 472 416L176 416z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Nothing stored or sent</p>
+              <p class="benefit__desc">No text is stored or transmitted. Find and replace happens only in memory.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Fast and private</p>
+              <p class="benefit__desc">Replacement is instant and runs locally at full browser speed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-1-answer">
+              <span itemprop="name">How do I find and replace text in a document online without Word or uploading?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="fr-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste your text, enter the find string and replacement text, set options (case-sensitive, replace all), then click Replace. Copy the result from the preview.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-2-answer">
+              <span itemprop="name">Can I use regex or regular expressions to find and replace text?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="fr-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Check “Regex” so the find field is treated as a JavaScript regular expression. Invalid regex will show an error; fix the pattern and try again.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-3-answer">
+              <span itemprop="name">Is my text sent to a server when I do find and replace in the browser?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="fr-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-4-answer">
+              <span itemprop="name">What’s the difference between replacing the first match and replace all?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="fr-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">When “Replace all” is checked, every match in the text is replaced. When unchecked, only the first occurrence is replaced.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="find-and-replace-text"></div>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+
+  <script>
+    (function () {
+      const textInput = document.getElementById('textInput');
+      const findInput = document.getElementById('findInput');
+      const replaceInput = document.getElementById('replaceInput');
+      const caseSensitiveCheckbox = document.getElementById('caseSensitiveCheckbox');
+      const replaceAllCheckbox = document.getElementById('replaceAllCheckbox');
+      const actionBtn = document.getElementById('actionBtn');
+      const clearLink = document.getElementById('clearLink');
+      const errorMsg = document.getElementById('errorMsg');
+      const errorText = document.getElementById('errorText');
+      const resultSection = document.getElementById('resultSection');
+      const resultMeta = document.getElementById('resultMeta');
+      const textOutput = document.getElementById('textOutput');
+      const copyBtn = document.getElementById('copyBtn');
+
+      function clearError() { errorMsg.classList.remove('visible'); }
+      function showError(msg) { errorText.textContent = msg; errorMsg.classList.add('visible'); }
+
+      function clearResult() {
+        resultSection.classList.remove('visible');
+        textOutput.value = '';
+        resultMeta.textContent = '';
+      }
+
+      function updateActionButtonState() {
+        var hasInput = (textInput.value || '').trim().length > 0;
+        actionBtn.disabled = !hasInput;
+        clearLink.classList.toggle('clear-link--enabled', hasInput);
+        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+      }
+
+      function escapeRegExp(s) {
+        return (s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      }
+
+      function runReplace() {
+        clearError();
+        clearResult();
+        var raw = (textInput.value || '');
+        if (!raw.trim()) { showError('Please paste text to process.'); textInput.focus(); return; }
+
+        var findText = (findInput.value || '');
+        var replaceText = (replaceInput.value || '');
+        if (!findText) { showError('Please enter text to find.'); findInput.focus(); return; }
+
+        var caseSensitive = caseSensitiveCheckbox.checked;
+        var replaceAll = replaceAllCheckbox.checked;
+
+        var matches = 0;
+        var output = raw;
+
+        try {
+          if (caseSensitive) {
+            if (replaceAll) {
+              var parts = raw.split(findText);
+              matches = Math.max(0, parts.length - 1);
+              output = parts.join(replaceText);
+            } else {
+              var idx = raw.indexOf(findText);
+              if (idx !== -1) {
+                matches = 1;
+                output = raw.slice(0, idx) + replaceText + raw.slice(idx + findText.length);
+              }
+            }
+          } else {
+            var re = new RegExp(escapeRegExp(findText), replaceAll ? 'gi' : 'i');
+            output = raw.replace(re, function (m) { matches++; return replaceText; });
+          }
+        } catch (err) {
+          showError('Replace failed. Try a different find value.');
+          return;
+        }
+
+        resultSection.classList.add('visible');
+        textOutput.value = output;
+        resultMeta.textContent = matches.toLocaleString() + ' match' + (matches !== 1 ? 'es' : '') + ' replaced';
+      }
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!(textInput.value || '').trim()) return;
+        textInput.value = '';
+        clearError();
+        clearResult();
+        updateActionButtonState();
+        textInput.focus();
+      });
+
+      textInput.addEventListener('input', function () {
+        clearError();
+        clearResult();
+        updateActionButtonState();
+      });
+
+      [findInput, replaceInput, caseSensitiveCheckbox, replaceAllCheckbox].forEach(function (el) {
+        el.addEventListener('input', function () { clearError(); clearResult(); });
+        el.addEventListener('change', function () { clearError(); clearResult(); });
+      });
+
+      actionBtn.addEventListener('click', function () {
+        actionBtn.disabled = true;
+        actionBtn.classList.add('spinning');
+        actionBtn.setAttribute('aria-busy', 'true');
+        try { runReplace(); } finally {
+          actionBtn.classList.remove('spinning');
+          actionBtn.removeAttribute('aria-busy');
+          updateActionButtonState();
+        }
+      });
+
+      copyBtn.addEventListener('click', function () {
+        var out = textOutput.value;
+        if (!out) return;
+        var originalContent = copyBtn.innerHTML;
+        navigator.clipboard.writeText(out).then(function () {
+          copyBtn.innerHTML = 'Copied!';
+          setTimeout(function () { copyBtn.innerHTML = originalContent; }, 2000);
+        }).catch(function () {
+          showError('Copy failed. You can select and copy the preview text manually.');
+        });
+      });
+
+      updateActionButtonState();
+    })();
+  </script>
+</body>
+</html>

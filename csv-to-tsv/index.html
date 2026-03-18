@@ -34,11 +34,12 @@
 
   <div id="site-header-root" data-base="../" data-active="csv-to-tsv"></div>
 
+  <div id="privacy-banner-root"></div>
+
   <main id="main-content">
 
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <span class="hero__eyebrow">Free CSV to TSV Converter</span>
         <h1 id="hero-heading">CSV to TSV Converter</h1>
         <p class="hero__sub">Convert CSV files into TSV instantly in your browser. Upload a CSV file or paste CSV text and generate clean tab-separated output in seconds. Fast, free, and private.</p>
       </div>
@@ -86,7 +87,8 @@
               <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
-            <div class="form-group" style="margin-top: 12px;">
+            <div class="result-section__body">
+            <div class="form-group">
               <label class="form-label" for="tsvOutput">Preview</label>
               <textarea id="tsvOutput" class="form-input" readonly placeholder="Convert CSV to see TSV here." aria-label="Generated TSV preview" style="min-height: 120px;"></textarea>
             </div>
@@ -103,6 +105,7 @@
                 </svg>
                 Download TSV
               </a>
+            </div>
             </div>
           </div>
 

@@ -30,39 +30,30 @@
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
   <style>
-    .column-selection { }
-    .column-selection.is-hidden { display: none; }
-    .column-selection__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
-    .column-selection__left { flex: 1; min-width: 0; }
-    .column-selection__hint { font-size: var(--text-xs); color: var(--text-muted); margin: 0; }
-    .column-selection__links { display: flex; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
-    .column-checkbox-list { display: flex; flex-wrap: wrap; gap: 12px 20px; max-height: 200px; overflow-y: auto; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-secondary); }
-    .column-checkbox-list--empty { align-items: center; justify-content: center; color: var(--text-muted); font-size: var(--text-xs); }
-    .column-checkbox-item { display: flex; align-items: center; gap: 6px; }
-    .column-checkbox-item input { cursor: pointer; }
-    .column-checkbox-item label { cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); }
-    .output-placement { margin-top: 16px; }
+    .output-placement { margin-top: 0; }
     .output-placement fieldset { border: none; margin: 0; padding: 0; }
-    .output-placement legend { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
-    .output-placement label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary); margin-bottom: 6px; }
+    .output-placement legend { font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin: 0 0 var(--space-8) 0; }
+    .output-placement label { display: flex; align-items: center; gap: var(--space-8); cursor: pointer; font-size: var(--form-option-font-size); color: var(--text-primary); }
     .output-placement input { cursor: pointer; }
-    .split-outputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0; }
+    .output-placement .form-option-group { gap: var(--space-8); }
+    .split-outputs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); }
     @media (max-width: 640px) { .split-outputs { grid-template-columns: 1fr; } }
-    .split-output { display: flex; flex-direction: column; gap: 6px; }
+    .split-output { display: flex; flex-direction: column; gap: var(--space-8); }
     .split-output .form-label { margin-bottom: 0; }
-    .split-output__meta { font-size: var(--text-xs); color: var(--text-muted); margin-top: 0; }
-    .split-output__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .split-output__meta { font-size: var(--text-xs); color: var(--text-muted); margin: 0; }
+    .split-output__actions { display: flex; flex-wrap: wrap; gap: var(--space-8); }
   </style>
 </head>
 <body>
 
   <div id="site-header-root" data-base="../" data-active="csv-column-splitter"></div>
 
+  <div id="privacy-banner-root"></div>
+
   <main id="main-content">
 
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <span class="hero__eyebrow">Free CSV Column Splitter</span>
         <h1 id="hero-heading">CSV Column Splitter</h1>
         <p class="hero__sub">Split one CSV into two CSV files by choosing which columns go to which output. Paste or upload CSV, select columns, then copy or download both results. Fast, free, and runs entirely in your browser.</p>
       </div>
@@ -89,40 +80,42 @@
             <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Options</label>
-            <label class="dedupe-mode__option" style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: var(--text-sm); color: var(--text-primary);">
+          <div class="form-section">
+            <span class="form-section__label">Options</span>
+            <label class="dedupe-mode__option">
               <input type="checkbox" id="hasHeaderCheckbox" checked />
               <span>First row is a header</span>
             </label>
           </div>
 
           <div class="column-selection is-hidden" id="columnSection">
-            <div class="column-selection__header">
-              <div class="column-selection__left">
-                <label class="form-label" id="columnSectionLabel">Columns for selected output</label>
-                <p class="column-selection__hint" id="columnCountHint">0 columns, 0 selected</p>
+            <div class="form-section">
+              <div class="column-selection__header">
+                <div class="column-selection__left">
+                  <label class="form-section__label" id="columnSectionLabel">Columns for selected output</label>
+                  <p class="form-section__hint" id="columnCountHint">0 columns, 0 selected</p>
+                </div>
+                <span class="column-selection__links">
+                  <a href="#" class="clear-link" id="selectAllBtn" role="button" aria-disabled="true">Select All</a>
+                  <a href="#" class="clear-link" id="clearSelectionBtn" role="button" aria-disabled="true">Clear</a>
+                </span>
               </div>
-              <span class="column-selection__links">
-                <a href="#" class="clear-link" id="selectAllBtn" role="button" aria-disabled="true">Select All</a>
-                <a href="#" class="clear-link" id="clearSelectionBtn" role="button" aria-disabled="true">Clear</a>
-              </span>
-            </div>
-            <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel">
-              <span class="column-checkbox-list--empty" id="columnPlaceholder">Column names will appear here after CSV is loaded.</span>
-            </div>
-            <div class="output-placement">
-              <fieldset>
-                <legend>Where do selected columns go?</legend>
-                <label>
-                  <input type="radio" name="placement" value="a" id="placementA" checked />
-                  <span>A</span>
-                </label>
-                <label>
-                  <input type="radio" name="placement" value="b" id="placementB" />
-                  <span>B</span>
-                </label>
-              </fieldset>
+              <div class="column-checkbox-list" id="columnCheckboxList" role="group" aria-labelledby="columnSectionLabel">
+                <span class="column-checkbox-list--empty" id="columnPlaceholder">Column names will appear here after CSV is loaded.</span>
+              </div>
+              <div class="output-placement form-section">
+                <fieldset class="form-option-group" aria-label="Where do selected columns go">
+                  <legend class="form-section__label">Where do selected columns go?</legend>
+                  <label class="form-option">
+                    <input type="radio" name="placement" value="a" id="placementA" checked />
+                    <span>A</span>
+                  </label>
+                  <label class="form-option">
+                    <input type="radio" name="placement" value="b" id="placementB" />
+                    <span>B</span>
+                  </label>
+                </fieldset>
+              </div>
             </div>
           </div>
 
@@ -147,6 +140,7 @@
               <p class="result-section__title">Results</p>
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
+            <div class="result-section__body">
             <div class="split-outputs">
               <div class="split-output">
                 <label class="form-label" for="outputA">Output A</label>
@@ -166,6 +160,7 @@
                   <a class="btn-download" id="downloadBLink" href="#" download="split-remaining.csv" aria-label="Download Output B">Download CSV</a>
                 </div>
               </div>
+            </div>
             </div>
           </div>
 

@@ -30,6 +30,17 @@ const NAV_GROUPS = [
       ],
     },
     {
+      label: 'Text',
+      id: 'text',
+      items: [
+        { id: 'remove-duplicate-lines', href: 'remove-duplicate-lines/index.html', label: 'Remove Duplicate Lines' },
+        { id: 'sort-lines', href: 'sort-lines/index.html', label: 'Sort Lines' },
+        { id: 'text-counter', href: 'text-counter/index.html', label: 'Word, Line, and Character Counter' },
+        { id: 'find-and-replace-text', href: 'find-and-replace-text/index.html', label: 'Find and Replace' },
+        { id: 'trim-whitespace', href: 'trim-whitespace/index.html', label: 'Trim Whitespace' },
+      ],
+    },
+    {
       label: 'Converters',
       id: 'converters',
       items: [
@@ -38,6 +49,22 @@ const NAV_GROUPS = [
       ],
     },
   ];
+
+/* ============================================================
+   TinyDataTool — Cross-category related tools (optional)
+   Adds a few additional relevant tools without changing layout.
+============================================================ */
+const RELATED_TOOL_OVERRIDES = {
+  'remove-duplicate-lines': ['sort-lines', 'trim-whitespace', 'csv-deduplicator'],
+  'sort-lines': ['remove-duplicate-lines', 'csv-sorter', 'trim-whitespace'],
+  'text-counter': ['trim-whitespace', 'json-formatter'],
+  'find-and-replace-text': ['trim-whitespace', 'remove-duplicate-lines', 'json-formatter'],
+  'trim-whitespace': ['find-and-replace-text', 'remove-duplicate-lines', 'csv-row-filter'],
+  'csv-deduplicator': ['remove-duplicate-lines'],
+  'csv-sorter': ['sort-lines'],
+  'csv-row-filter': ['find-and-replace-text', 'trim-whitespace'],
+  'json-formatter': ['find-and-replace-text', 'trim-whitespace'],
+};
 
 /* ============================================================
    TinyDataTool — Global header module
@@ -138,6 +165,27 @@ const NAV_GROUPS = [
 })();
 
 /* ============================================================
+   TinyDataTool — Privacy banner (global)
+   Injects the privacy banner into #privacy-banner-root.
+   Single source of truth for copy; change here to update all pages.
+============================================================ */
+(function () {
+  const PRIVACY_BANNER_HTML = '<div class="privacy-banner">Runs entirely in your browser — no uploads, your data stays on your device.</div>';
+
+  function injectPrivacyBanner() {
+    const root = document.getElementById('privacy-banner-root');
+    if (!root) return;
+    root.outerHTML = PRIVACY_BANNER_HTML;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injectPrivacyBanner);
+  } else {
+    injectPrivacyBanner();
+  }
+})();
+
+/* ============================================================
    TinyDataTool — Global footer module
    Injects the site footer into #site-footer-root.
    Optional: set data-base (e.g. "../") on the placeholder if
@@ -185,6 +233,16 @@ const NAV_GROUPS = [
 (function () {
   const INTRO = 'More tools in this category.';
 
+  function getToolById(id) {
+    for (var g = 0; g < NAV_GROUPS.length; g++) {
+      var group = NAV_GROUPS[g];
+      for (var i = 0; i < group.items.length; i++) {
+        if (group.items[i].id === id) return group.items[i];
+      }
+    }
+    return null;
+  }
+
   function getRelatedToolsHtml(base, currentId) {
     const baseSlash = base ? base.replace(/\/?$/, '/') : '';
     var relatedItems = [];
@@ -196,6 +254,18 @@ const NAV_GROUPS = [
         break;
       }
     }
+
+    var overrides = RELATED_TOOL_OVERRIDES[currentId] || [];
+    if (overrides && overrides.length) {
+      overrides.forEach(function (id) {
+        if (id === currentId) return;
+        var tool = getToolById(id);
+        if (!tool) return;
+        var already = relatedItems.some(function (x) { return x.id === tool.id; });
+        if (!already) relatedItems.push(tool);
+      });
+    }
+
     if (relatedItems.length === 0) {
       return '<section class="content-section" aria-labelledby="related-heading">\n' +
         '  <div class="container--wide">\n' +

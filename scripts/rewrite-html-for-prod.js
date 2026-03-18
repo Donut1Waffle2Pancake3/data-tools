@@ -1,7 +1,7 @@
 /**
- * Rewrites HTML files to reference global.min.css instead of global.css.
+ * Rewrites HTML files for production: global.min.css, site.min.js.
  * Run only during production build (e.g. on Vercel). Keeps repo using
- * global.css so local dev shows CSS changes immediately.
+ * global.css and site.js so local dev shows changes immediately.
  */
 
 const fs = require("fs");
@@ -36,8 +36,10 @@ for (const file of htmlFiles) {
   let content = fs.readFileSync(filePath, "utf8");
   content = content
     .replace(/href="css\/global\.css"/g, 'href="css/global.min.css"')
-    .replace(/href="\.\.\/css\/global\.css"/g, 'href="../css/global.min.css"');
+    .replace(/href="\.\.\/css\/global\.css"/g, 'href="../css/global.min.css"')
+    .replace(/src="js\/site\.js"/g, 'src="js/site.min.js"')
+    .replace(/src="\.\.\/js\/site\.js"/g, 'src="../js/site.min.js"');
   fs.writeFileSync(filePath, content);
 }
 
-console.log("Rewrote HTML to use global.min.css for production.");
+console.log("Rewrote HTML to use global.min.css and site.min.js for production.");

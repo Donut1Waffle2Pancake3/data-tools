@@ -1,0 +1,25 @@
+---
+description: Use multiples of 4 for spacing and sizing (base-4 / 4px grid)
+alwaysApply: true
+---
+
+# Base-4 spacing and sizing
+
+This project uses a **base-4** system: spacing and sizing values should be multiples of 4.
+
+## Use multiples of 4 for
+
+- **Padding** (e.g. `8px`, `12px`, `16px`, `24px`, `32px`, `40px`, `48px`)
+- **Margin** (same scale)
+- **Gap** (flex/grid: `gap: 8px`, `gap: 16px`, etc.)
+- **Width/height** when defining layout or component size (e.g. min/max widths, icon sizes)
+- **Border radius** (e.g. `4px`, `8px`, `12px`)
+- **Font sizes** can follow design tokens; where you set raw pixel spacing around type, use 4px multiples
+
+## Examples
+
+- Prefer `padding: 40px 0 38px` → use `40px 0 36px` (36 is a multiple of 4).
+- Prefer `gap: 10px` → use `gap: 8px` or `gap: 12px`.
+- Prefer `margin-bottom: 6px` → use `4px` or `8px`.
+
+When suggesting or editing CSS/layout, choose the nearest multiple of 4 unless a design token or existing variable already defines the value.
