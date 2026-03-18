@@ -26,6 +26,11 @@ const htmlFiles = [
   "csv-to-json/index.html",
   "csv-to-tsv/index.html",
   "tsv-to-csv/index.html",
+  "find-and-replace-text/index.html",
+  "remove-duplicate-lines/index.html",
+  "sort-lines/index.html",
+  "text-counter/index.html",
+  "trim-whitespace/index.html",
 ];
 
 const root = path.resolve(__dirname, "..");
