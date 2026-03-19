@@ -325,7 +325,7 @@ a:hover {
   background: var(--accent);
 }
 
-/* ---- Mobile: hamburger (hidden by default) ---- */
+/* ---- Mobile: hamburger (2 bars) ---- */
 .nav-burger {
   display: none;
   align-items: center;
@@ -339,7 +339,7 @@ a:hover {
   border-radius: var(--radius);
   cursor: pointer;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--space-8);
   color: var(--text-primary);
 }
 
@@ -512,7 +512,7 @@ body.nav-drawer-open .nav-drawer {
 
 .hero__sub {
   font-size: var(--text-md);
-  color: var(--text-secondary);
+  color: var(--text-primary);
   margin: 0 auto 8px;
   line-height: var(--line-height-relaxed);
 }
@@ -536,7 +536,7 @@ body.nav-drawer-open .nav-drawer {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
+  box-shadow: none;
   padding: 24px;
   margin-bottom: 16px;
 }
@@ -1609,6 +1609,67 @@ textarea.form-input {
   color: var(--text-placeholder);
   background: var(--surface-secondary);
   cursor: not-allowed;
+}
+
+/* Input clear (X) button: one shade darker so it’s visible on light inputs */
+.input-clear-btn.btn-tertiary {
+  background: var(--grey-2);
+}
+.input-clear-btn.btn-tertiary:hover:not(:disabled) {
+  background: var(--grey-3);
+}
+
+/* ---- Copy icon button + tooltip ---- */
+.copy-icon-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  color: var(--text-primary);
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--transition);
+}
+.copy-icon-btn:hover:not(:disabled):not(.is-copied) {
+  background-color: var(--grey-3);
+}
+.copy-icon-btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+.copy-icon-btn:disabled {
+  cursor: not-allowed;
+  color: var(--text-placeholder);
+}
+.copy-icon-btn.is-copied {
+  background-color: var(--grey-3);
+}
+
+.tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--space-8));
+  transform: translateX(-50%) translateY(4px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  background: var(--text-primary);
+  color: #ffffff;
+  padding: var(--space-4) var(--space-8);
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  line-height: 1;
+  transition: opacity var(--transition), transform var(--transition);
+}
+.tooltip.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* Size modifiers for buttons (must appear after base .btn-* so they override) */

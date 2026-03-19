@@ -37,6 +37,73 @@
     }
     .transform-ui[hidden] { display: none; }
 
+    .tool-card .form-label { margin-bottom: 0; }
+
+    .example-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-8);
+      margin-top: var(--space-8);
+    }
+    @media (max-width: 640px) {
+      .example-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-left: calc(-1 * var(--space-8));
+        margin-right: calc(-1 * var(--space-8));
+        padding-left: var(--space-8);
+        padding-right: var(--space-8);
+      }
+      .example-chips .example-chip {
+        flex-shrink: 0;
+      }
+    }
+
+    /* Copy: icon-only by default; "Copy" text only in tooltip on hover (robust for prod) */
+    #outputGroup .copy-icon-btn {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: none;
+      background: none;
+      border-radius: 50%;
+      overflow: visible;
+    }
+    #outputGroup .copy-icon-btn .tooltip {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + var(--space-8));
+      transform: translateX(-50%) translateY(4px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      white-space: nowrap;
+      background: var(--text-primary);
+      color: #fff;
+      padding: var(--space-4) var(--space-8);
+      border-radius: 999px;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      line-height: 1;
+      transition: opacity var(--transition), transform var(--transition);
+    }
+    #outputGroup .copy-icon-btn .tooltip.is-visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+    #outputGroup .copy-icon-btn:hover:not(:disabled):not(.is-copied) {
+      background-color: var(--grey-3);
+    }
+    #outputGroup .copy-icon-btn.is-copied {
+      background-color: var(--grey-3);
+    }
+
     .url-output-top {
       display: flex;
       align-items: flex-start;
@@ -89,10 +156,17 @@
                 id="htmlInput"
                 class="form-input"
                 rows="6"
+                placeholder="Paste text or HTML entities — we'll automatically encode or decode"
                 autocomplete="off"
                 autocapitalize="off"
                 spellcheck="false"
               ></textarea>
+            </div>
+            <div class="example-chips" aria-label="Example inputs">
+              <button type="button" class="btn-secondary btn--sm example-chip" data-example="ampersand">Ampersand</button>
+              <button type="button" class="btn-secondary btn--sm example-chip" data-example="tag">HTML tag</button>
+              <button type="button" class="btn-secondary btn--sm example-chip" data-example="encoded">Encoded tag</button>
+              <button type="button" class="btn-secondary btn--sm example-chip" data-example="nonascii">Non-ASCII</button>
             </div>
           </div>
 
@@ -107,7 +181,6 @@
             </div>
 
             <div id="encodeOptions" class="form-section" role="group" aria-label="Encode options" style="display:flex;">
-              <span class="form-section__label" id="encode-options-label">Options</span>
               <div class="form-inline-row">
                 <label class="form-option" for="encodeNonAscii">
                   <input type="checkbox" id="encodeNonAscii" />
@@ -117,6 +190,7 @@
             </div>
 
             <div class="form-group" id="outputGroup">
+              <label class="form-label" for="htmlOutput">Output</label>
               <div class="url-output-wrap" aria-label="Output">
                 <div class="url-output-top">
                   <pre
@@ -439,6 +513,13 @@
 
       let copyTooltipTimer = null;
 
+      var EXAMPLE_INPUTS = {
+        ampersand: 'Tom & Jerry',
+        tag: '<div class="note">Hello</div>',
+        encoded: '&lt;div&gt;Hello&lt;/div&gt;',
+        nonascii: 'François & ☕'
+      };
+
       var NAMED_ENTITIES = {
         '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&apos;': "'", '&#39;': "'",
         '&nbsp;': '\u00A0', '&copy;': '\u00A9', '&reg;': '\u00AE', '&trade;': '\u2122',
@@ -594,6 +675,19 @@
           if (transformUi) transformUi.hidden = true;
         });
       }
+
+      document.querySelectorAll('.example-chip').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var key = btn.getAttribute('data-example');
+          var text = EXAMPLE_INPUTS[key];
+          if (text == null) return;
+          inputEl.value = text;
+          runTransform();
+          updateControls();
+          var transformUi = document.getElementById('transformUi');
+          if (transformUi) transformUi.hidden = false;
+        });
+      });
 
       tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {

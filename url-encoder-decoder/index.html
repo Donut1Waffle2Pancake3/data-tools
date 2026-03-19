@@ -50,55 +50,6 @@
     }
     .input-clear-btn.is-visible { display: inline-flex; }
 
-    .copy-icon-btn {
-      width: 24px;
-      height: 24px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      border: none;
-      background: none;
-      color: var(--text-primary);
-      cursor: pointer;
-      position: relative;
-      transition: color var(--transition);
-    }
-    .copy-icon-btn:hover:not(:disabled) {
-      color: var(--text-secondary);
-    }
-    .copy-icon-btn:focus-visible {
-      outline: 2px solid var(--border-focus);
-      outline-offset: 2px;
-    }
-    .copy-icon-btn:disabled {
-      cursor: not-allowed;
-      color: var(--text-placeholder);
-    }
-
-    .copy-tooltip {
-      position: absolute;
-      left: 50%;
-      bottom: calc(100% + var(--space-8));
-      transform: translateX(-50%) translateY(4px);
-      opacity: 0;
-      pointer-events: none;
-      white-space: nowrap;
-      background: var(--text-primary);
-      color: #ffffff;
-      padding: var(--space-4) var(--space-8);
-      border-radius: var(--radius-sm);
-      font-size: var(--text-xs);
-      font-weight: 600;
-      line-height: 1.2;
-      transition: opacity var(--transition), transform var(--transition);
-    }
-
-    .copy-tooltip.is-visible {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
     .url-output-top {
       display: flex;
       align-items: flex-start;
@@ -190,7 +141,7 @@
                         <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
                       </svg>
                     </span>
-                    <span id="copyTooltip" class="copy-tooltip" role="tooltip" aria-hidden="true">Copied</span>
+                    <span id="copyTooltip" class="tooltip" role="tooltip" aria-hidden="true">Copy</span>
                   </button>
                 </div>
               </div>
@@ -426,7 +377,6 @@
 
       const tabs = document.querySelectorAll('.tool-tabs .tab');
       let mode = 'encode';
-      let autoModeApplied = false;
       let userSelectedMode = false;
       const inputClearBtn = document.getElementById('inputClearBtn');
       const copyOutputBtn = document.getElementById('copyOutputBtn');
@@ -602,20 +552,43 @@
       }
 
       inputEl.addEventListener('input', function () {
-        // One-time initial selection based on the first meaningful input.
-        if (!autoModeApplied && !userSelectedMode && hasInput()) {
-          setMode(detectInitialMode(getInput()));
-          autoModeApplied = true;
-          return;
+        // If the user hasn't interacted with the tabs yet, auto-detect on every new entry.
+        // Once they pick a mode manually, stop taking over.
+        if (!userSelectedMode && hasInput()) {
+          const desired = detectInitialMode(getInput());
+          if (desired !== mode) {
+            setMode(desired);
+            return; // setMode -> runTransform -> updateControls()
+          }
         }
-
         runTransform();
         updateControls();
       });
 
       if (fullyDecode) {
         fullyDecode.addEventListener('change', function () {
-          if (mode === 'decode') runTransform();
+          if (mode !== 'decode') return;
+
+          // Preserve caret/scroll so toggling "Fully decode" doesn't snap the input view.
+          const hadFocus = document.activeElement === inputEl;
+          const scrollLeft = inputEl.scrollLeft;
+          const selStart = inputEl.selectionStart;
+          const selEnd = inputEl.selectionEnd;
+
+          runTransform();
+
+          requestAnimationFrame(function () {
+            // Keep the horizontal scroll stable for long single-line URLs.
+            inputEl.scrollLeft = scrollLeft;
+            if (hadFocus && typeof selStart === 'number' && typeof selEnd === 'number') {
+              try {
+                inputEl.setSelectionRange(selStart, selEnd);
+                inputEl.focus();
+              } catch (e) {
+                // Ignore selection restore errors (e.g., input not focusable at this moment).
+              }
+            }
+          });
         });
       }
 
@@ -652,27 +625,49 @@
         });
       });
 
+      function showCopyTooltip() {
+        if (!copyTooltip || copyOutputBtn.classList.contains('is-copied')) return;
+        copyTooltip.textContent = 'Copy';
+        copyTooltip.classList.add('is-visible');
+        copyTooltip.setAttribute('aria-hidden', 'false');
+      }
+
+      function hideCopyTooltip() {
+        if (!copyTooltip || copyOutputBtn.classList.contains('is-copied')) return;
+        copyTooltip.classList.remove('is-visible');
+        copyTooltip.setAttribute('aria-hidden', 'true');
+      }
+
+      function resetCopyButton() {
+        if (copyOutputBtnIcon) copyOutputBtnIcon.innerHTML = copyIconSvg;
+        copyOutputBtn.setAttribute('aria-label', 'Copy output to clipboard');
+        copyOutputBtn.classList.remove('is-copied');
+        if (copyTooltip) {
+          copyTooltip.textContent = 'Copy';
+          copyTooltip.classList.remove('is-visible');
+          copyTooltip.setAttribute('aria-hidden', 'true');
+        }
+      }
+
+      copyOutputBtn.addEventListener('mouseenter', showCopyTooltip);
+      copyOutputBtn.addEventListener('mouseleave', hideCopyTooltip);
+
       copyOutputBtn.addEventListener('click', function () {
         const text = outputEl.textContent || '';
         if (!text) return;
         navigator.clipboard.writeText(text).then(function () {
+          if (copyTooltipTimer) clearTimeout(copyTooltipTimer);
           if (copyOutputBtnIcon) copyOutputBtnIcon.innerHTML = checkmarkIconSvg;
           copyOutputBtn.setAttribute('aria-label', 'Copied');
-
+          copyOutputBtn.classList.add('is-copied');
           if (copyTooltip) {
-            if (copyTooltipTimer) clearTimeout(copyTooltipTimer);
+            copyTooltip.textContent = 'Copied!';
             copyTooltip.classList.add('is-visible');
             copyTooltip.setAttribute('aria-hidden', 'false');
           }
-
-          setTimeout(function () {
-            if (copyOutputBtnIcon) copyOutputBtnIcon.innerHTML = copyIconSvg;
-            copyOutputBtn.setAttribute('aria-label', 'Copy output to clipboard');
-
-            if (copyTooltip) {
-              copyTooltip.classList.remove('is-visible');
-              copyTooltip.setAttribute('aria-hidden', 'true');
-            }
+          copyTooltipTimer = setTimeout(function () {
+            copyTooltipTimer = null;
+            resetCopyButton();
           }, 2000);
         }).catch(function () {
           showError('Copy failed. You can select and copy the output manually.');

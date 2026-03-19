@@ -126,6 +126,22 @@ const plain = 'Tom & Jerry\n<div class="note">Hello</div>';
 const encoded = encodeHtml(plain);
 eq(decodeHtml(encoded), plain, 'encode then decode = original');
 
+// --- Example chips (match EXAMPLE_INPUTS on page) ---
+const EXAMPLE_INPUTS = {
+  ampersand: 'Tom & Jerry',
+  tag: '<div class="note">Hello</div>',
+  encoded: '&lt;div&gt;Hello&lt;/div&gt;',
+  nonascii: 'François & ☕'
+};
+
+console.log('\nExample chips:');
+eq(encodeHtml(EXAMPLE_INPUTS.ampersand), 'Tom &amp; Jerry', 'Tom & Jerry → encode');
+eq(encodeHtml(EXAMPLE_INPUTS.tag), '&lt;div class=&quot;note&quot;&gt;Hello&lt;/div&gt;', 'HTML tag → encode');
+eq(decodeHtml(EXAMPLE_INPUTS.encoded), '<div>Hello</div>', 'Encoded tag → decode');
+eq(encodeHtml(EXAMPLE_INPUTS.nonascii, true).indexOf('&#231;') !== -1, true, 'Non-ASCII encode (ç as &#231;)');
+eq(encodeHtml(EXAMPLE_INPUTS.nonascii, true).indexOf('&#9749;') !== -1, true, 'Non-ASCII encode (☕ as &#9749;)');
+eq(encodeHtml(EXAMPLE_INPUTS.nonascii, true).indexOf('&amp;') !== -1, true, 'Non-ASCII encode (& escaped)');
+
 // --- Empty / edge ---
 console.log('\nEdge cases:');
 eq(decodeHtml(''), '', 'decode empty');

@@ -132,7 +132,6 @@ const RELATED_TOOL_OVERRIDES = {
       '    <button class="nav-burger" id="navBurger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">\n' +
       '      <span class="nav-burger__line"></span>\n' +
       '      <span class="nav-burger__line"></span>\n' +
-      '      <span class="nav-burger__line"></span>\n' +
       '    </button>\n' +
       '  </div>\n' +
       '\n' +
