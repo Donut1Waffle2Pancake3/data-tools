@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       SEO
+  ============================================================ -->
+  <title>HTML Encoder / Decoder | Free &amp; Private | TinyDataTool</title>
+  <meta name="description" content="Encode or decode HTML entities instantly in your browser. Escape special characters for safe display, or convert HTML entities back into readable text. Ideal for code snippets, debugging markup, and handling user input. Fast, free, and private — no uploads." />
+  <link rel="canonical" href="https://tinydatatool.com/html-encoder-decoder/" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="HTML Encoder / Decoder | Free &amp; Private | TinyDataTool" />
+  <meta property="og:description" content="Encode or decode HTML entities instantly in your browser. Fast, free, and private — no uploads." />
+  <meta property="og:url"         content="https://tinydatatool.com/html-encoder-decoder/" />
+  <meta property="og:site_name"   content="TinyDataTool" />
+
+  <meta name="twitter:card"        content="summary" />
+  <meta name="twitter:title"       content="HTML Encoder / Decoder | Free &amp; Private | TinyDataTool" />
+  <meta name="twitter:description" content="Encode or decode HTML entities in your browser. Free, private, no signup." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"HTML Encoder / Decoder","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/html-encoder-decoder/","description":"Encode or decode HTML entities directly in your browser. Escape HTML for safe display or decode entities back to text. Free, private, and no uploads required."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .transform-ui {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-20);
+    }
+    .transform-ui[hidden] { display: none; }
+
+    .url-output-top {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-12);
+      background: var(--grey-2);
+      padding: var(--space-12);
+      border-radius: var(--radius);
+    }
+    .url-output-top > *:first-child { flex: 1; min-width: 0; }
+    .url-output-text {
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      line-height: var(--line-height-loose);
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="html-encoder-decoder"></div>
+
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">HTML Encoder / Decoder</h1>
+        <p class="hero__sub">Encode or decode HTML entities instantly in your browser. Escape special characters for safe display, or convert HTML entities back into readable text. Ideal for code snippets, debugging markup, and handling user input.</p>
+      </div>
+    </section>
+
+    <section aria-label="HTML encoder and decoder" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="HTML encoder and decoder tool">
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="htmlInput">Input</label>
+              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+            </div>
+            <div class="html-input-wrap">
+              <textarea
+                id="htmlInput"
+                class="form-input"
+                rows="6"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="transform-ui" id="transformUi" hidden>
+            <div class="transform-ui__top">
+              <div class="tool-tabs" role="tablist" aria-label="HTML tool mode">
+                <button type="button" class="tab active" role="tab" id="tab-encode" aria-selected="true" aria-controls="panel-controls" data-mode="encode">Encode</button>
+                <button type="button" class="tab" role="tab" id="tab-decode" aria-selected="false" aria-controls="panel-controls" data-mode="decode">Decode</button>
+              </div>
+              <div class="form-section" id="panel-controls" role="tabpanel" aria-labelledby="tab-encode">
+              </div>
+            </div>
+
+            <div id="encodeOptions" class="form-section" role="group" aria-label="Encode options" style="display:flex;">
+              <span class="form-section__label" id="encode-options-label">Options</span>
+              <div class="form-inline-row">
+                <label class="form-option" for="encodeNonAscii">
+                  <input type="checkbox" id="encodeNonAscii" />
+                  <span>Encode non-ASCII characters</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" id="outputGroup">
+              <div class="url-output-wrap" aria-label="Output">
+                <div class="url-output-top">
+                  <pre
+                    id="htmlOutput"
+                    class="url-output-text"
+                    aria-label="HTML encoded or decoded output"
+                    spellcheck="false"
+                  ></pre>
+                  <button class="copy-icon-btn" id="copyOutputBtn" type="button" aria-label="Copy output to clipboard" disabled>
+                    <span id="copyOutputBtnIcon" aria-hidden="true">
+                      <svg width="20" height="20" viewBox="0 0 640 640" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
+                      </svg>
+                    </span>
+                    <span id="copyTooltip" class="tooltip" role="tooltip" aria-hidden="true">Copy</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="status-message status-message--success" id="successMsg" role="status" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span id="successText"></span>
+          </div>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+        </div>
+        <div class="privacy-note-container">
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Text is processed entirely in your browser and is never uploaded to any server.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" id="how-heading">Encode or decode HTML entities instantly</h2>
+        <p class="section-body">Paste your text and choose Encode or Decode. Encoding turns special characters into HTML entities so they display safely; decoding turns entities back into normal characters. Everything runs locally in your browser.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste your text</p>
+            <p class="step__desc">Paste plain text, HTML, or entity-encoded content. Line breaks and multi-line input are preserved.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Choose Encode or Decode</p>
+            <p class="step__desc">Use the tabs to switch between encoding (text → entities) and decoding (entities → text). Output updates live as you type.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy the result</p>
+            <p class="step__desc">Copy the output for use in HTML, attributes, documentation, or anywhere you need escaped or unescaped text.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="examples-heading">
+      <div class="container--wide">
+        <p class="section-label">Examples</p>
+        <h2 class="section-title" id="examples-heading">Example inputs and outputs</h2>
+        <p class="section-body">These examples show how the HTML encoder and decoder behave.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 14V4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M5 6h8M5 9h8M5 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Encode: Tom &amp; Jerry</p>
+              <p class="benefit__desc"><strong>Input:</strong><br><code>Tom &amp; Jerry</code></p>
+              <p class="benefit__desc"><strong>Output:</strong><br><code>Tom &amp;amp; Jerry</code></p>
+              <p class="benefit__desc">The ampersand is escaped so it displays correctly in HTML.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 14V4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M5 6h8M5 9h8M5 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Encode: HTML tag</p>
+              <p class="benefit__desc"><strong>Input:</strong><br><code>&lt;div class="note"&gt;Hello&lt;/div&gt;</code></p>
+              <p class="benefit__desc"><strong>Output:</strong><br><code>&amp;lt;div class=&quot;note&quot;&amp;gt;Hello&amp;lt;/div&amp;gt;</code></p>
+              <p class="benefit__desc">Safe to show as text instead of rendering as HTML.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 14V4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M5 6h8M5 9h8M5 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Decode: named entities</p>
+              <p class="benefit__desc"><strong>Input:</strong><br><code>&amp;lt;div&amp;gt;Hello&amp;lt;/div&amp;gt;</code></p>
+              <p class="benefit__desc"><strong>Output:</strong><br><code>&lt;div&gt;Hello&lt;/div&gt;</code></p>
+              <p class="benefit__desc">Named entities are turned back into characters.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 14V4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M5 6h8M5 9h8M5 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Encode: non-ASCII (option on)</p>
+              <p class="benefit__desc"><strong>Input:</strong><br><code>François &amp; ☕</code></p>
+              <p class="benefit__desc"><strong>Output:</strong><br><code>Fran&amp;#231;ois &amp;amp; &amp;#9749;</code></p>
+              <p class="benefit__desc">With “Encode non-ASCII” on, characters like <code>ç</code> and <code>☕</code> become numeric entities.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">When to escape HTML or decode entities</h2>
+        <p class="section-body">HTML encoding replaces characters like <code>&amp;</code>, <code>&lt;</code>, and <code>&gt;</code> with entity references so they display as text instead of being interpreted as HTML. Decoding does the reverse: it turns entity references back into normal characters.</p>
+        <p class="section-body" style="margin-top: 12px;">Common use cases:</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M369.1 80.9C373 68.2 386.5 61.2 399.1 65.1C411.7 69 418.8 82.5 414.9 95.1L270.9 559.1C267 571.8 253.5 578.8 240.9 574.9C228.3 571 221.2 557.5 225.1 544.9L369.1 80.9zM177 199C186.4 208.4 186.4 223.6 177 232.9L90 319.9L177 406.9C186.4 416.3 186.4 431.5 177 440.8C167.6 450.1 152.4 450.2 143.1 440.8L39 337C29.6 327.6 29.6 312.4 39 303.1L143 199C152.4 189.6 167.6 189.6 176.9 199zM463 199C472.4 189.6 487.6 189.6 496.9 199L601 303C610.4 312.4 610.4 327.6 601 336.9L497 441C487.6 450.4 472.4 450.4 463.1 441C453.8 431.6 453.7 416.4 463.1 407.1L550.1 320.1L463.1 233.1C453.7 223.7 453.7 208.5 463.1 199.2z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Display user input safely</p>
+              <p class="benefit__desc">Escape HTML before showing user-generated content to prevent XSS and broken layout when the text contains <code>&lt;</code>, <code>&gt;</code>, or <code>&amp;</code>.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 14V4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M5 6h8M5 9h8M5 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Show code or markup as text</p>
+              <p class="benefit__desc">Encode HTML tags and attributes so they appear as literal text in docs, comments, or code samples instead of rendering.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Decode copied content</p>
+              <p class="benefit__desc">Paste entity-encoded text from emails, logs, or CMS output and decode it back into readable characters.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <circle cx="12.5" cy="5.5" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Handle attributes and quoted text</p>
+              <p class="benefit__desc">Encode <code>&quot;</code> and <code>&#39;</code> for safe use inside HTML attribute values.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="html-faq-1-answer">
+              <span itemprop="name">How do I encode HTML special characters?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="html-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">To encode HTML, paste your text into the tool and select “Encode.” Special characters like <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>&quot;</code>, and <code>&#39;</code> are converted into HTML entities (e.g., <code>&amp;lt;</code>, <code>&amp;gt;</code>, <code>&amp;amp;</code>). This prevents them from being interpreted as HTML and ensures they display correctly.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="html-faq-2-answer">
+              <span itemprop="name">How do I decode HTML entities back into normal text?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="html-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste the encoded string (such as <code>&amp;lt;div&amp;gt;Hello&amp;lt;/div&amp;gt;</code>) and select “Decode.” The tool converts HTML entities back into readable characters like <code>&lt;div&gt;Hello&lt;/div&gt;</code>.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="html-faq-3-answer">
+              <span itemprop="name">What’s the difference between HTML encoding and URL encoding?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="html-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">HTML encoding replaces characters like <code>&lt;</code> and <code>&amp;</code> with HTML entities so they display safely in web pages. URL encoding formats characters for use in URLs (e.g., spaces become <code>%20</code>). They serve different purposes and are not interchangeable.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="html-faq-4-answer">
+              <span itemprop="name">When should I escape HTML characters?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="html-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Escape HTML when displaying user input, showing code examples, or inserting text into a webpage where characters like <code>&lt;</code> or <code>&amp;</code> could be interpreted as markup. This helps prevent rendering issues and security risks like XSS.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="html-faq-5-answer">
+              <span itemprop="name">Why are my &lt; and &gt; showing as &amp;lt; and &amp;gt;?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="html-faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Your content has been HTML-encoded. Browsers display <code>&amp;lt;</code> and <code>&amp;gt;</code> as <code>&lt;</code> and <code>&gt;</code> to prevent them from being treated as actual HTML tags. If you want the original characters back, use the Decode function.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="html-faq-6-answer">
+              <span itemprop="name">Does this tool work with numeric and hex HTML entities?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="html-faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The tool supports named entities (<code>&amp;amp;</code>), decimal entities (<code>&amp;#38;</code>), and hexadecimal entities (<code>&amp;#x26;</code>). All are correctly encoded and decoded.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="html-faq-7-answer">
+              <span itemprop="name">Is this HTML encoder and decoder private?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="html-faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Everything runs entirely in your browser. Your data is not uploaded or stored, so your input stays on your device.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="html-faq-8-answer">
+              <span itemprop="name">What characters need to be HTML encoded?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="html-faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">At minimum: <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&quot;</code>, and <code>&#39;</code>. These characters can affect how HTML is parsed. In some cases, non-ASCII characters (like é or emoji) may also be encoded for compatibility.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="html-encoder-decoder"></div>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+
+  <script>
+    (function () {
+      const inputEl = document.getElementById('htmlInput');
+      const outputEl = document.getElementById('htmlOutput');
+      const panelControls = document.getElementById('panel-controls');
+      const encodeOptions = document.getElementById('encodeOptions');
+
+      const tabs = document.querySelectorAll('.tool-tabs .tab');
+      let mode = 'encode';
+
+      const clearLink = document.getElementById('clearLink');
+      const copyOutputBtn = document.getElementById('copyOutputBtn');
+      const copyOutputBtnIcon = document.getElementById('copyOutputBtnIcon');
+      const copyTooltip = document.getElementById('copyTooltip');
+      const copyIconSvg = copyOutputBtnIcon ? copyOutputBtnIcon.innerHTML : '';
+      const checkmarkIconSvg = '<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M534 132.5C544.8 140.2 547.2 155.2 539.5 166L275.5 534C271.4 539.7 265 543.4 258 543.9C251 544.4 244 542 239 537L103 401C93.6 391.6 93.6 376.4 103 367.1C112.4 357.8 127.6 357.7 136.9 367.1L253 483L500.5 138C508.2 127.2 523.2 124.8 534 132.5z" fill="currentColor"/></svg>';
+
+      const successMsg = document.getElementById('successMsg');
+      const successText = document.getElementById('successText');
+      const errorMsg = document.getElementById('errorMsg');
+      const errorText = document.getElementById('errorText');
+
+      const encodeNonAscii = document.getElementById('encodeNonAscii');
+
+      let copyTooltipTimer = null;
+
+      var NAMED_ENTITIES = {
+        '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&apos;': "'", '&#39;': "'",
+        '&nbsp;': '\u00A0', '&copy;': '\u00A9', '&reg;': '\u00AE', '&trade;': '\u2122',
+        '&mdash;': '\u2014', '&ndash;': '\u2013', '&hellip;': '\u2026', '&lsquo;': '\u2018',
+        '&rsquo;': '\u2019', '&ldquo;': '\u201C', '&rdquo;': '\u201D'
+      };
+
+      function clearMessages() {
+        successMsg.classList.remove('visible');
+        errorMsg.classList.remove('visible');
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+        successMsg.classList.remove('visible');
+      }
+
+      function showSuccess(msg) {
+        successText.textContent = msg;
+        successMsg.classList.add('visible');
+        errorMsg.classList.remove('visible');
+      }
+
+      function getInput() {
+        return inputEl.value || '';
+      }
+
+      function hasInput() {
+        return getInput().trim().length > 0;
+      }
+
+      function hasOutput() {
+        return (outputEl.textContent || '').length > 0;
+      }
+
+      function updateControls() {
+        const inputOk = hasInput();
+        if (clearLink) {
+          clearLink.classList.toggle('clear-link--enabled', inputOk);
+          clearLink.setAttribute('aria-disabled', inputOk ? 'false' : 'true');
+        }
+
+        const errorVisible = errorMsg.classList.contains('visible');
+        const showUi = inputOk || hasOutput() || errorVisible;
+        const transformUi = document.getElementById('transformUi');
+        if (transformUi) transformUi.hidden = !showUi;
+
+        if (encodeOptions) encodeOptions.style.display = (mode === 'encode') ? 'flex' : 'none';
+
+        copyOutputBtn.disabled = !hasOutput();
+      }
+
+      function encodeHtml(str, nonAscii) {
+        if (nonAscii === undefined) nonAscii = false;
+        var out = '';
+        for (var i = 0; i < str.length; i++) {
+          var c = str.charAt(i);
+          var code = str.charCodeAt(i);
+          if (c === '&') out += '&amp;';
+          else if (c === '<') out += '&lt;';
+          else if (c === '>') out += '&gt;';
+          else if (c === '"') out += '&quot;';
+          else if (c === "'") out += '&#39;';
+          else if (nonAscii && code > 127) out += '&#' + code + ';';
+          else out += c;
+        }
+        return out;
+      }
+
+      function decodeHtml(str) {
+        var s = str;
+        for (var key in NAMED_ENTITIES) {
+          if (NAMED_ENTITIES.hasOwnProperty(key)) {
+            s = s.split(key).join(NAMED_ENTITIES[key]);
+          }
+        }
+        s = s.replace(/&#(\d+);/g, function (_, dec) {
+          var n = parseInt(dec, 10);
+          return n >= 0 && n <= 0x10FFFF ? String.fromCodePoint(n) : '';
+        });
+        s = s.replace(/&#x([0-9a-fA-F]+);/g, function (_, hex) {
+          var n = parseInt(hex, 16);
+          return n >= 0 && n <= 0x10FFFF ? String.fromCodePoint(n) : '';
+        });
+        return s;
+      }
+
+      function runEncode() {
+        const raw = getInput();
+        if (!raw) {
+          outputEl.textContent = '';
+          updateControls();
+          return;
+        }
+        var nonAscii = encodeNonAscii ? encodeNonAscii.checked : false;
+        outputEl.textContent = encodeHtml(raw, nonAscii);
+        updateControls();
+      }
+
+      function runDecode() {
+        const raw = getInput();
+        if (!raw) {
+          outputEl.textContent = '';
+          updateControls();
+          return;
+        }
+        try {
+          outputEl.textContent = decodeHtml(raw);
+          clearMessages();
+          updateControls();
+        } catch (err) {
+          outputEl.textContent = '';
+          updateControls();
+          showError(err.message || 'Invalid HTML entity sequence.');
+        }
+      }
+
+      function runTransform() {
+        clearMessages();
+        if (mode === 'decode') runDecode();
+        else runEncode();
+      }
+
+      function setMode(newMode) {
+        mode = newMode;
+        tabs.forEach(function (tab) {
+          const isActive = tab.getAttribute('data-mode') === mode;
+          tab.classList.toggle('active', isActive);
+          tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          if (isActive && panelControls) panelControls.setAttribute('aria-labelledby', tab.id);
+        });
+        runTransform();
+        updateControls();
+      }
+
+      inputEl.addEventListener('input', function () {
+        runTransform();
+        updateControls();
+      });
+
+      if (encodeNonAscii) encodeNonAscii.addEventListener('change', runEncode);
+
+      if (clearLink) {
+        clearLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (!hasInput()) return;
+          inputEl.value = '';
+          outputEl.textContent = '';
+          clearMessages();
+          updateControls();
+          var transformUi = document.getElementById('transformUi');
+          if (transformUi) transformUi.hidden = true;
+        });
+      }
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          setMode(tab.getAttribute('data-mode'));
+        });
+        tab.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setMode(tab.getAttribute('data-mode'));
+            tab.focus();
+          }
+        });
+      });
+
+      function showCopyTooltip() {
+        if (!copyTooltip || copyOutputBtn.classList.contains('is-copied')) return;
+        copyTooltip.textContent = 'Copy';
+        copyTooltip.classList.add('is-visible');
+        copyTooltip.setAttribute('aria-hidden', 'false');
+      }
+
+      function hideCopyTooltip() {
+        if (!copyTooltip || copyOutputBtn.classList.contains('is-copied')) return;
+        copyTooltip.classList.remove('is-visible');
+        copyTooltip.setAttribute('aria-hidden', 'true');
+      }
+
+      function resetCopyButton() {
+        if (copyOutputBtnIcon) copyOutputBtnIcon.innerHTML = copyIconSvg;
+        copyOutputBtn.setAttribute('aria-label', 'Copy output to clipboard');
+        copyOutputBtn.classList.remove('is-copied');
+        if (copyTooltip) {
+          copyTooltip.textContent = 'Copy';
+          copyTooltip.classList.remove('is-visible');
+          copyTooltip.setAttribute('aria-hidden', 'true');
+        }
+      }
+
+      copyOutputBtn.addEventListener('mouseenter', showCopyTooltip);
+      copyOutputBtn.addEventListener('mouseleave', hideCopyTooltip);
+
+      copyOutputBtn.addEventListener('click', function () {
+        const text = outputEl.textContent || '';
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(function () {
+          if (copyTooltipTimer) clearTimeout(copyTooltipTimer);
+          if (copyOutputBtnIcon) copyOutputBtnIcon.innerHTML = checkmarkIconSvg;
+          copyOutputBtn.setAttribute('aria-label', 'Copied');
+          copyOutputBtn.classList.add('is-copied');
+          if (copyTooltip) {
+            copyTooltip.textContent = 'Copied!';
+            copyTooltip.classList.add('is-visible');
+            copyTooltip.setAttribute('aria-hidden', 'false');
+          }
+          copyTooltipTimer = setTimeout(function () {
+            copyTooltipTimer = null;
+            resetCopyButton();
+          }, 2000);
+        }).catch(function () {
+          showError('Copy failed. You can select and copy the output manually.');
+        });
+      });
+
+      setMode('encode');
+      updateControls();
+    })();
+  </script>
+</body>
+</html>

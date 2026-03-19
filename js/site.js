@@ -39,6 +39,7 @@ const NAV_GROUPS = [
         { id: 'find-and-replace-text', href: 'find-and-replace-text/index.html', label: 'Find and Replace' },
         { id: 'trim-whitespace', href: 'trim-whitespace/index.html', label: 'Trim Whitespace' },
         { id: 'url-encoder-decoder', href: 'url-encoder-decoder/index.html', label: 'URL Encoder / Decoder' },
+        { id: 'html-encoder-decoder', href: 'html-encoder-decoder/index.html', label: 'HTML Encoder / Decoder' },
       ],
     },
     {
@@ -61,7 +62,8 @@ const RELATED_TOOL_OVERRIDES = {
   'text-counter': ['trim-whitespace', 'json-formatter'],
   'find-and-replace-text': ['trim-whitespace', 'remove-duplicate-lines', 'json-formatter'],
   'trim-whitespace': ['find-and-replace-text', 'remove-duplicate-lines', 'csv-row-filter'],
-  'url-encoder-decoder': ['find-and-replace-text', 'trim-whitespace', 'json-formatter', 'json-validator'],
+  'url-encoder-decoder': ['find-and-replace-text', 'trim-whitespace', 'html-encoder-decoder', 'json-formatter'],
+  'html-encoder-decoder': ['url-encoder-decoder', 'find-and-replace-text', 'trim-whitespace', 'json-formatter'],
   'csv-deduplicator': ['remove-duplicate-lines'],
   'csv-sorter': ['sort-lines'],
   'csv-row-filter': ['find-and-replace-text', 'trim-whitespace'],
