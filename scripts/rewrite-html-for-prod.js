@@ -31,6 +31,8 @@ const htmlFiles = [
   "sort-lines/index.html",
   "text-counter/index.html",
   "trim-whitespace/index.html",
+  "url-encoder-decoder/index.html",
+  "html-encoder-decoder/index.html",
 ];
 
 const root = path.resolve(__dirname, "..");
