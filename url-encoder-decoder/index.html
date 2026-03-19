@@ -39,7 +39,10 @@
 
     .url-input-wrap { position: relative; }
     /* Override global .tool-card .form-input.field-lg so text doesn't run under the clear button */
-    .tool-card .url-input-wrap .form-input.field-lg { padding-right: 48px; }
+    .tool-card .url-input-wrap .form-input.field-lg {
+      padding-right: 48px;
+      font-size: 16px;
+    }
     .input-clear-btn {
       position: absolute;
       top: 50%;
@@ -55,7 +58,7 @@
       align-items: flex-start;
       gap: var(--space-12);
       background: var(--grey-2);
-      padding: var(--space-12);
+      padding: var(--space-16);
       border-radius: var(--radius);
     }
     .url-output-top > *:first-child { flex: 1; min-width: 0; }
@@ -65,7 +68,7 @@
       padding: 0;
       margin: 0;
       font-family: var(--font-body);
-      font-size: var(--text-sm);
+      font-size: 16px;
       line-height: var(--line-height-loose);
       color: var(--text-primary);
       white-space: pre-wrap;
@@ -104,6 +107,7 @@
                 class="form-input field-lg"
                 type="text"
                 inputmode="url"
+                placeholder="Paste a URL or encoded string — we'll auto-detect and convert"
                 autocomplete="off"
                 autocapitalize="off"
                 spellcheck="false"
