@@ -24,109 +24,108 @@
   <meta name="twitter:image" content="https://tinydatatool.com/assets/json-viewer-og.png" />
 
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "JSON Viewer & Tree Explorer",
-    "applicationCategory": "DeveloperApplication",
-    "operatingSystem": "Windows, macOS, Linux, Android, iOS",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "JSON Viewer & Tree Explorer",
+      "operatingSystem": "Windows, macOS, Linux, Android, iOS",
+      "applicationCategory": "DeveloperApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TinyDataTool",
+        "url": "https://tinydatatool.com/"
+      },
+      "url": "https://tinydatatool.com/json-viewer/",
+      "description": "Online JSON formatter and beautifier with 100% client-side processing, secure nested data navigation, and no uploads.",
+      "featureList": [
+        "Collapsible JSON tree view for nested objects and arrays",
+        "Code view with formatted JSON output",
+        "100% client-side JSON parsing and rendering",
+        "Secure nested data navigation with no server upload",
+        "Copy JSON Path by clicking tree nodes for faster debugging",
+        "Drag-and-drop and file upload support for JSON files",
+        "Copy formatted JSON output to clipboard",
+        "Download formatted JSON output as a file",
+        "Fast in-browser processing with no account or installation"
+      ]
     },
-    "publisher": {
-      "@type": "Organization",
-      "name": "TinyDataTool",
-      "url": "https://tinydatatool.com/"
-    },
-    "url": "https://tinydatatool.com/json-viewer/",
-    "description": "Online JSON formatter and beautifier with 100% client-side processing, secure nested data navigation, and no uploads.",
-    "featureList": [
-      "Collapsible JSON tree view for nested objects and arrays",
-      "Code view with formatted JSON output",
-      "100% client-side JSON parsing and rendering",
-      "Secure nested data navigation with no server upload",
-      "Copy JSON Path by clicking tree nodes for faster debugging",
-      "Drag-and-drop and file upload support for JSON files",
-      "Copy formatted JSON output to clipboard",
-      "Download formatted JSON output as a file",
-      "Fast in-browser processing with no account or installation"
-    ]
-  }
-  </script>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "How do I view JSON in a readable format?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Paste or upload your JSON into the viewer. The tool automatically formats your data and displays it as a structured tree so you can quickly scan keys, values, and nested objects."
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is my data sent to a server?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. This JSON viewer is 100% client-side. Your data never leaves your browser, making it safe for sensitive information."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can this tool handle large JSON files?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, it is optimized to handle large datasets efficiently using a virtualized tree view to maintain high performance."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I view JSON in a readable format?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Paste or upload your JSON into the viewer. The tool automatically formats your data and displays it as a structured tree so you can quickly scan keys, values, and nested objects."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I expand and explore nested JSON data?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The viewer converts your JSON into a collapsible tree. Click on objects or arrays to expand and inspect nested data without scrolling through raw text."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is my JSON not displaying in the viewer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If nothing appears, your JSON is likely invalid. Common issues include missing commas, extra or missing brackets, or incorrect quotes. Fix the error and try again. This tool only displays valid JSON."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I find errors in my JSON file?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "This viewer requires valid JSON to render results. If your data is not working, check for syntax errors like missing commas or unmatched brackets. For detailed error messages, use a JSON validator tool."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a JSON tree view?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A JSON tree view organizes data into a hierarchical structure. Instead of reading raw text, you can expand and collapse sections to quickly understand relationships between objects and arrays."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to install anything to use this JSON viewer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. This is a browser-based tool. You can paste or upload JSON and view it instantly without installing software or creating an account."
+          }
         }
-      },
-      {
-        "@type": "Question",
-        "name": "How can I expand and explore nested JSON data?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The viewer converts your JSON into a collapsible tree. Click on objects or arrays to expand and inspect nested data without scrolling through raw text."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Why is my JSON not displaying in the viewer?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "If nothing appears, your JSON is likely invalid. Common issues include missing commas, extra or missing brackets, or incorrect quotes. Fix the error and try again. This tool only displays valid JSON."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How do I find errors in my JSON file?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "This viewer requires valid JSON to render results. If your data is not working, check for syntax errors like missing commas or unmatched brackets. For detailed error messages, use a JSON validator tool."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can this tool handle large JSON files?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, it can handle moderately large files directly in your browser. Performance depends on your device and browser, so very large files may take longer to render or expand."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is a JSON tree view?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "A JSON tree view organizes data into a hierarchical structure. Instead of reading raw text, you can expand and collapse sections to quickly understand relationships between objects and arrays."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is this JSON viewer safe for sensitive data?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. All processing happens in your browser. Your JSON is not uploaded, stored, or sent to any server."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Do I need to install anything to use this JSON viewer?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No. This is a browser-based tool. You can paste or upload JSON and view it instantly without installing software or creating an account."
-        }
-      }
-    ]
-  }
+      ]
+    }
+  ]
   </script>
 
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
