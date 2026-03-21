@@ -29,6 +29,9 @@
   <link rel="icon" href="../assets/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
 </head>
 <body>
 
@@ -108,29 +111,24 @@
 
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Count Words, Lines, and Characters</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to count words, lines, and characters</h2>
+        <p class="section-body">Paste your text and instantly see word, line, and character counts. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
             <p class="step__title">Paste your text</p>
-            <p class="step__desc">Paste any text into the input box—articles, code, lists, or mixed content.</p>
+            <p class="step__desc">Paste any text into the input—articles, code, lists, or notes.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Click Count</p>
-            <p class="step__desc">The tool counts words, lines, and characters (with and without spaces) in the browser.</p>
+            <p class="step__title">View counts instantly</p>
+            <p class="step__desc">The tool automatically counts words, lines, and characters (with and without spaces).</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Review the results</p>
-            <p class="step__desc">See the totals in the preview. Results update as you change the input.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
             <p class="step__title">Copy the results</p>
-            <p class="step__desc">Copy the count summary to your clipboard for reports, limits, or documentation.</p>
+            <p class="step__desc">Copy the count summary to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -246,38 +244,65 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="tc-faq-1-answer">
-              <span itemprop="name">How does a word counter count words for essays, tweets, or copy?</span>
+              <span itemprop="name">How does a word counter count words and characters?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="tc-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Words are sequences of letters, numbers, and apostrophes separated by spaces or line breaks. Punctuation attached to a word is part of that word.</span>
+              <span itemprop="text">A word counter splits text by spaces and punctuation to count words, and counts every character to provide totals with and without spaces.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="tc-faq-2-answer">
-              <span itemprop="name">Do Twitter and LinkedIn count characters with or without spaces?</span>
+              <span itemprop="name">How do I count words and characters online?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="tc-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Character count with spaces includes every character (letters, digits, spaces, punctuation). Without spaces excludes space characters. Some platforms use one or the other for limits.</span>
+              <span itemprop="text">Paste your text into the tool to instantly see word count, character count, and line count. No software or downloads are required.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="tc-faq-3-answer">
-              <span itemprop="name">Is my text stored or sent when I use an online character counter?</span>
+              <span itemprop="name">Does character count include spaces?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="tc-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+              <span itemprop="text">Most tools show both counts: characters with spaces and characters without spaces, so you can use the one that fits your needs.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="tc-faq-4-answer">
-              <span itemprop="name">Can I get word count, line count, and character count in one place?</span>
+              <span itemprop="name">Is my text uploaded when I use an online word counter?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="tc-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The tool shows word count, line count, and character counts (with and without spaces) in one summary.</span>
+              <span itemprop="text">No. This tool runs entirely in your browser, so your text is never uploaded or sent to a server.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="tc-faq-5-answer">
+              <span itemprop="name">Can I count words, lines, and characters at the same time?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="tc-faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. The tool automatically calculates word count, line count, and character count in one place.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="tc-faq-6-answer">
+              <span itemprop="name">What counts as a word in a word counter?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="tc-faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Words are typically defined as sequences of characters separated by spaces or punctuation. Numbers and symbols may be counted depending on the format.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="tc-faq-7-answer">
+              <span itemprop="name">Can I use this for essays, tweets, or social media limits?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="tc-faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. You can use the counts to check limits for essays, tweets, LinkedIn posts, or other content with character restrictions.</span>
             </div>
           </div>
         </div>
@@ -355,7 +380,7 @@
 
         resultSection.classList.add('visible');
         textOutput.value = out;
-        resultMeta.textContent = 'Counts calculated';
+        resultMeta.textContent = '';
       }
 
       clearLink.addEventListener('click', function (e) {

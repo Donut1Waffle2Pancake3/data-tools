@@ -29,6 +29,10 @@
   <link rel="icon" href="../assets/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section__heading { display: flex; flex-direction: column; gap: var(--space-4); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
 </head>
 <body>
 
@@ -137,29 +141,24 @@
 
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Format or Validate JSON</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to format or validate JSON</h2>
+        <p class="section-body">Paste your JSON, format or validate it instantly, and copy or download the result. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
-            <p class="step__title">Paste your JSON or upload a file</p>
-            <p class="step__desc">Paste JSON into the input box or upload a JSON or text file using the upload area.</p>
+            <p class="step__title">Paste or upload your JSON</p>
+            <p class="step__desc">Paste JSON into the input or upload a file. The tool will automatically detect and validate it.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Format or minify your JSON</p>
-            <p class="step__desc">Click Format JSON to prettify with indentation, or Minify JSON to produce compact single-line output. The tool validates your JSON first.</p>
+            <p class="step__title">Format or validate your JSON</p>
+            <p class="step__desc">Format JSON for readability or minify it for compact output. Errors are highlighted if the JSON is invalid.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Review validation results</p>
-            <p class="step__desc">If the JSON is valid, you’ll see a success message and the formatted or minified output. If not, you’ll see a clear error with details.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Copy or download</p>
-            <p class="step__desc">Copy the output to your clipboard or download it as a JSON file.</p>
+            <p class="step__title">Copy or download the result</p>
+            <p class="step__desc">Copy the formatted JSON or download it as a file.</p>
           </article>
         </div>
       </div>

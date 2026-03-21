@@ -36,6 +36,24 @@
        Global Stylesheet
   ============================================================ -->
   <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    /* Merge CSV: add clearer spacing in visible results block */
+    .result-section.visible {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Keep CTA-style download link from inheriting anchor underline */
+    #downloadLink:hover {
+      text-decoration: none;
+    }
+
+    /* Snappier selected-file interactions for rapid remove actions */
+    .file-list__item {
+      animation: slideIn 0.08s ease both;
+    }
+  </style>
 </head>
 <body>
 
@@ -54,7 +72,7 @@
     <!-- Hero -->
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
-        <h1 id="hero-heading">Merge CSV Files Into One</h1>
+        <h1 id="hero-heading">CSV Merger</h1>
         <p class="hero__sub">Upload multiple CSV files and combine them into a single file — instantly, in your browser.</p>
       </div>
     </section>
@@ -118,26 +136,15 @@
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
             <div class="result-section__body">
-            <div class="result-download">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex-shrink:0;color:var(--accent)">
-                <rect x="1" y="1" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.3"/>
-                <path d="M4 6h8M4 9h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-              </svg>
-              <span class="result-download__filename" id="resultFilename"></span>
-              <span class="result-download__meta" id="resultRowCount"></span>
               <a
-                class="btn-download"
+                class="btn-primary"
                 id="downloadLink"
                 href="#"
                 download="merged.csv"
                 aria-label="Download merged CSV file"
               >
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                  <path d="M6.5 1.5v7M3.5 6l3 3 3-3M1.5 11.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Download
+                Download CSV
               </a>
-            </div>
             </div>
           </div>
 
@@ -354,8 +361,6 @@
     const errorText      = document.getElementById('errorText');
     const resultSection  = document.getElementById('resultSection');
     const resultMeta     = document.getElementById('resultMeta');
-    const resultFilename = document.getElementById('resultFilename');
-    const resultRowCount = document.getElementById('resultRowCount');
     const downloadLink   = document.getElementById('downloadLink');
 
     // ============================================================
@@ -443,7 +448,6 @@
       selectedFiles.forEach((file, idx) => {
         const item = document.createElement('div');
         item.className = 'file-list__item';
-        item.style.animationDelay = `${idx * 30}ms`;
         item.innerHTML = `
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex-shrink:0;color:var(--accent)">
             <rect x="1" y="1" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.3"/>
@@ -525,9 +529,7 @@
         downloadLink.download = filename;
         downloadLink.addEventListener('click', () => Analytics.downloadClicked(filename), { once: true });
 
-        resultFilename.textContent = filename;
-        resultRowCount.textContent = `${allRows.length.toLocaleString()} row${allRows.length !== 1 ? 's' : ''}`;
-        resultMeta.textContent     = `${selectedFiles.length} files merged, ${allRows.length.toLocaleString()} total data rows`;
+        resultMeta.textContent     = `${selectedFiles.length} files merged · ${allRows.length.toLocaleString()} data rows`;
         resultSection.classList.add('visible');
 
         mergeDone = true;

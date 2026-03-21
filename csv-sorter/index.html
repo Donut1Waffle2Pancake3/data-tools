@@ -35,6 +35,8 @@
     .sort-options__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-16); }
     .sort-options__radio-group { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-12); }
     .sort-options fieldset { border: none; margin: 0; padding: 0; min-width: 0; }
+    .result-section__heading { display: flex; flex-direction: column; gap: var(--space-4); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
     @media (max-width: 480px) {
       .sort-options__row { gap: var(--space-8) var(--space-12); }
     }
@@ -422,6 +424,13 @@
       let csvBlobUrl = null;
       let lastUploadFilename = '';
       let parsedData = null;
+      let lastRunKey = '';
+      let hasRunCurrentConfig = false;
+
+      function resetRunState() {
+        lastRunKey = '';
+        hasRunCurrentConfig = false;
+      }
 
       function parseCSV(text) {
         var normalized = (text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
@@ -584,20 +593,30 @@
         if (!hasInput || !parsedData) { sortBtn.disabled = true; return; }
         var colIdx = parseInt(sortColumnSelect.value, 10);
         if (isNaN(colIdx) || colIdx < 0 || colIdx >= parsedData.numCols) { sortBtn.disabled = true; return; }
+        var runKey = [
+          hasHeaderCheckbox.checked ? '1' : '0',
+          sortColumnSelect.value,
+          orderAsc.checked ? 'asc' : 'desc',
+          typeAuto.checked ? 'auto' : typeText.checked ? 'text' : typeNumber.checked ? 'number' : 'date',
+          caseInsensitiveCheckbox.checked ? 'ci1' : 'ci0',
+          emptyLastCheckbox.checked ? 'el1' : 'el0',
+          parsedData.displayNames ? parsedData.displayNames.join('|') : ''
+        ].join('::');
+        if (hasRunCurrentConfig && runKey === lastRunKey) { sortBtn.disabled = true; return; }
         sortBtn.disabled = false;
       }
 
       function runSort() {
         var text = getInputText();
-        if (!text) { showError('Please paste CSV data or upload a file.'); csvInput.focus(); return; }
+        if (!text) { showError('Please paste CSV data or upload a file.'); csvInput.focus(); return false; }
 
         var rows = parseCSV(text);
-        if (!rows || rows.length === 0) { showError('The CSV appears to be empty.'); return; }
+        if (!rows || rows.length === 0) { showError('The CSV appears to be empty.'); return false; }
 
         var hasHeader = hasHeaderCheckbox.checked;
         var dataStart = hasHeader ? 1 : 0;
         var dataRows = rows.slice(dataStart);
-        if (dataRows.length === 0) { showError('No data rows to sort.'); return; }
+        if (dataRows.length === 0) { showError('No data rows to sort.'); return false; }
 
         var normalized = normalizeColumnCount(rows.map(function (r) { return r.slice(); }));
         var header = hasHeader ? [normalized[0]] : [];
@@ -605,7 +624,7 @@
 
         var colIdx = parseInt(sortColumnSelect.value, 10);
         if (isNaN(colIdx) || colIdx < 0 || colIdx >= normalized[0].length) {
-          showError('Selected sort column is missing or invalid.'); return;
+          showError('Selected sort column is missing or invalid.'); return false;
         }
 
         var ascending = orderAsc.checked;
@@ -641,16 +660,26 @@
         var baseName = lastUploadFilename ? lastUploadFilename.replace(/\.[^/.]+$/, '') : '';
         downloadLink.download = baseName ? baseName + '-sorted.csv' : 'sorted.csv';
         downloadLink.style.display = 'inline-flex';
+        return true;
       }
 
       hasHeaderCheckbox.addEventListener('change', function () { parseAndUpdateColumns(); });
       sortColumnSelect.addEventListener('change', function () { updateSortButtonState(); });
+      orderAsc.addEventListener('change', function () { updateSortButtonState(); });
+      orderDesc.addEventListener('change', function () { updateSortButtonState(); });
+      typeAuto.addEventListener('change', function () { updateSortButtonState(); });
+      typeText.addEventListener('change', function () { updateSortButtonState(); });
+      typeNumber.addEventListener('change', function () { updateSortButtonState(); });
+      typeDate.addEventListener('change', function () { updateSortButtonState(); });
+      caseInsensitiveCheckbox.addEventListener('change', function () { updateSortButtonState(); });
+      emptyLastCheckbox.addEventListener('change', function () { updateSortButtonState(); });
 
       clearLink.addEventListener('click', function (e) {
         e.preventDefault();
         if (!getInputText().length) return;
         csvInput.value = '';
         lastUploadFilename = '';
+        resetRunState();
         clearError();
         clearResult();
         parseAndUpdateColumns();
@@ -659,6 +688,7 @@
 
       csvInput.addEventListener('input', function () {
         lastUploadFilename = '';
+        resetRunState();
         clearError();
         clearResult();
         parseAndUpdateColumns();
@@ -690,9 +720,22 @@
         sortBtn.disabled = true;
         sortBtn.classList.add('spinning');
         sortBtn.setAttribute('aria-busy', 'true');
-        try { runSort(); } finally {
+        var didRun = false;
+        try { didRun = runSort(); } finally {
           sortBtn.classList.remove('spinning');
           sortBtn.removeAttribute('aria-busy');
+          if (didRun) {
+            lastRunKey = [
+              hasHeaderCheckbox.checked ? '1' : '0',
+              sortColumnSelect.value,
+              orderAsc.checked ? 'asc' : 'desc',
+              typeAuto.checked ? 'auto' : typeText.checked ? 'text' : typeNumber.checked ? 'number' : 'date',
+              caseInsensitiveCheckbox.checked ? 'ci1' : 'ci0',
+              emptyLastCheckbox.checked ? 'el1' : 'el0',
+              parsedData && parsedData.displayNames ? parsedData.displayNames.join('|') : ''
+            ].join('::');
+            hasRunCurrentConfig = true;
+          }
           updateSortButtonState();
         }
       });

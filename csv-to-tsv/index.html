@@ -29,6 +29,9 @@
   <link rel="icon" href="../assets/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
 </head>
 <body>
 
@@ -123,29 +126,24 @@
 
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Convert CSV to TSV</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to convert CSV to TSV</h2>
+        <p class="section-body">Paste your CSV, convert it to TSV (tab-separated values), and download the result instantly. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
-            <p class="step__title">Paste your CSV data or upload a CSV file</p>
-            <p class="step__desc">Paste CSV text into the input box or upload a CSV file using the upload area.</p>
+            <p class="step__title">Paste or upload your CSV</p>
+            <p class="step__desc">Paste CSV data into the input or upload a file.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Click Convert to TSV</p>
-            <p class="step__desc">Click the convert button to generate tab-separated output from your CSV.</p>
+            <p class="step__title">Convert CSV to TSV</p>
+            <p class="step__desc">The tool automatically converts comma-separated values into tab-separated columns.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Review the tab-separated output</p>
-            <p class="step__desc">Check the preview to confirm the conversion looks correct.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Copy or download</p>
-            <p class="step__desc">Copy the TSV output to your clipboard or download it as a TSV file.</p>
+            <p class="step__title">Download the TSV file</p>
+            <p class="step__desc">Download the converted TSV or copy it to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -265,47 +263,65 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
-              <span itemprop="name">How do I convert CSV to TSV?</span>
+              <span itemprop="name">How do I convert CSV to TSV online?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Paste your CSV or upload a file, then click Convert. Commas become tabs; quoted values are handled correctly. Download or copy the TSV result.</span>
+              <span itemprop="text">Paste or upload your CSV file, and the tool will instantly convert it into TSV (tab-separated values). You can then download or copy the result.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">Can I do this without Excel or other software?</span>
+              <span itemprop="name">What is the easiest way to convert CSV to TSV?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Conversion runs in your browser. The output TSV works in Excel, Google Sheets, and other spreadsheet tools.</span>
+              <span itemprop="text">The easiest way is to use a browser-based CSV to TSV converter. It automatically replaces commas with tabs and preserves your data structure.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
-              <span itemprop="name">What happens if a value contains commas or quotes?</span>
+              <span itemprop="name">Can I convert CSV to TSV without Excel or software?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">The parser reads quoted CSV fields correctly. Those values are written into the TSV as-is; tabs inside values are not added by this tool.</span>
+              <span itemprop="text">Yes. This tool runs entirely in your browser, so you can convert CSV to TSV instantly without installing anything.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
-              <span itemprop="name">Does this tool keep my data private?</span>
+              <span itemprop="name">What happens if my CSV contains commas or quoted values?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+              <span itemprop="text">Properly formatted CSV files with quoted values are handled correctly. Fields containing commas remain intact during conversion.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
-              <span itemprop="name">Can I open the output in Excel or Google Sheets?</span>
+              <span itemprop="name">Can I open TSV files in Excel or Google Sheets?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The generated TSV works in Excel, Google Sheets, and other spreadsheet tools.</span>
+              <span itemprop="text">Yes. TSV files can be opened directly in Excel, Google Sheets, and most spreadsheet tools.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What is the difference between CSV and TSV?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">CSV uses commas to separate values, while TSV uses tabs. TSV is often preferred when data contains commas, as it avoids delimiter conflicts.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Is my data private when converting CSV to TSV?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. All processing happens locally in your browser. Your data is never uploaded or sent to a server.</span>
             </div>
           </div>
         </div>
@@ -487,7 +503,7 @@
           resultSection.classList.add('visible');
           tsvOutput.value = tsv;
           var lineCount = tsv.split(/\r\n|\r|\n/).length;
-          resultMeta.textContent = lineCount.toLocaleString() + ' row' + (lineCount !== 1 ? 's' : '') + ' (including header)';
+          resultMeta.textContent = lineCount.toLocaleString() + ' row' + (lineCount !== 1 ? 's' : '');
           var blob = new Blob([tsv], { type: 'text/tab-separated-values;charset=utf-8' });
           if (tsvBlobUrl) URL.revokeObjectURL(tsvBlobUrl);
           tsvBlobUrl = URL.createObjectURL(blob);

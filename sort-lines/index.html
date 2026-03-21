@@ -33,6 +33,7 @@
     .sort-options-blocks { display: flex; flex-direction: column; gap: var(--space-16); }
     .sort-options-blocks fieldset { border: none; margin: 0; padding: 0; min-width: 0; }
     .sort-options-blocks .form-inline-row { gap: var(--space-4) var(--space-12); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
   </style>
 </head>
 <body>
@@ -146,29 +147,24 @@
 
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Sort Lines</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to sort lines of text</h2>
+        <p class="section-body">Paste your text, sort the lines, and copy the result instantly. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
             <p class="step__title">Paste your text</p>
-            <p class="step__desc">Paste text into the input box—one item per line. Lists, keywords, or any line-separated content work.</p>
+            <p class="step__desc">Paste your text into the input, with one item per line.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Choose order and options</p>
-            <p class="step__desc">Select ascending or descending, and optionally enable case-sensitive or numeric sort and remove empty lines.</p>
+            <p class="step__title">Choose sort options</p>
+            <p class="step__desc">Sort lines alphabetically (A–Z or Z–A), or enable options like case-sensitive or numeric sorting.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Click Sort lines</p>
-            <p class="step__desc">The tool sorts in the browser and shows the result in the preview area.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Copy the output</p>
-            <p class="step__desc">Copy the sorted text to your clipboard for use in docs, code, or other tools.</p>
+            <p class="step__title">Copy the sorted text</p>
+            <p class="step__desc">Copy the sorted result to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -284,38 +280,65 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="sort-faq-1-answer">
-              <span itemprop="name">How do I sort a list of lines alphabetically online without Excel?</span>
+              <span itemprop="name">How do I sort lines alphabetically online?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="sort-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Paste your text (one item per line), choose ascending or descending and any options, then click Sort lines. Copy the result from the preview.</span>
+              <span itemprop="text">Paste your text into the tool and sort lines instantly in ascending (A–Z) or descending (Z–A) order. No Excel or software required.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="sort-faq-2-answer">
-              <span itemprop="name">Why does “10” appear before “2” when I sort lines? How do I fix numeric sort?</span>
+              <span itemprop="name">What is the easiest way to sort a list of text lines?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="sort-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Numeric sort compares lines as numbers when possible, so 2 comes before 10. Without it, sorting is alphabetical (e.g. “10” before “2”).</span>
+              <span itemprop="text">The easiest way is to use a browser-based line sorter. It quickly organizes text alphabetically or numerically without manual editing.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="sort-faq-3-answer">
-              <span itemprop="name">Is my data uploaded when I sort lines in the browser?</span>
+              <span itemprop="name">Why does “10” appear before “2” when sorting lines?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="sort-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+              <span itemprop="text">This happens with alphabetical sorting, where values are compared as text. Enable numeric sorting to correctly order numbers from smallest to largest.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="sort-faq-4-answer">
-              <span itemprop="name">How do I sort lines from Z to A or largest to smallest?</span>
+              <span itemprop="name">Can I sort lines numerically instead of alphabetically?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="sort-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Select “Desc” to sort Z–A or largest to smallest. “Asc” is A–Z or smallest to largest.</span>
+              <span itemprop="text">Yes. You can enable numeric sorting to sort numbers correctly (e.g., 1, 2, 10 instead of 1, 10, 2).</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="sort-faq-5-answer">
+              <span itemprop="name">Can I sort lines from Z to A or largest to smallest?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="sort-faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. You can sort in descending order for both text (Z–A) and numbers (largest to smallest).</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="sort-faq-6-answer">
+              <span itemprop="name">Is my data uploaded when I sort lines?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="sort-faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. All sorting happens locally in your browser. Your data is never uploaded or sent to a server.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="sort-faq-7-answer">
+              <span itemprop="name">Can I sort lines and remove duplicates or empty lines?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="sort-faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. You can combine sorting with options like removing duplicate lines or stripping empty lines.</span>
             </div>
           </div>
         </div>

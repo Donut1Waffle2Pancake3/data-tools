@@ -36,6 +36,10 @@
        Global Stylesheet
   ============================================================ -->
   <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section__heading { display: flex; flex-direction: column; gap: var(--space-4); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
 </head>
 <body>
 
@@ -157,29 +161,24 @@
     <!-- How to Convert -->
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Convert JSON to CSV</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to convert JSON to CSV</h2>
+        <p class="section-body">Paste your JSON, convert it to CSV, and download the result instantly. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
-            <p class="step__title">Paste your JSON or upload a file</p>
-            <p class="step__desc">Paste JSON data into the input box or upload a JSON file using the upload area.</p>
+            <p class="step__title">Paste or upload your JSON</p>
+            <p class="step__desc">Paste JSON data into the input or upload a file.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Check your format</p>
-            <p class="step__desc">Make sure your JSON is a top-level array of objects. Each object becomes a row; keys become columns.</p>
+            <p class="step__title">Convert JSON to CSV</p>
+            <p class="step__desc">The tool automatically maps JSON objects to rows and fields to columns, generating a CSV from your data.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Click Convert to CSV</p>
-            <p class="step__desc">Click the convert button to generate CSV from your JSON.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Copy or download</p>
-            <p class="step__desc">Copy the CSV output to your clipboard or download it as a CSV file.</p>
+            <p class="step__title">Download the CSV file</p>
+            <p class="step__desc">Download the converted CSV or copy it to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -301,47 +300,74 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
-              <span itemprop="name">How do I convert JSON to CSV?</span>
+              <span itemprop="name">How do I convert JSON to CSV online?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Paste your JSON or upload a file, then click Convert. The tool expects a top-level array of objects; each object becomes a row and its keys become CSV columns. Download or copy the result.</span>
+              <span itemprop="text">Paste or upload your JSON, and the tool will automatically convert it into CSV format. You can then download the result or copy it to your clipboard.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">Can I do this without Excel or a script?</span>
+              <span itemprop="name">What is the easiest way to convert JSON to CSV?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Conversion runs in your browser. No installs or spreadsheets needed; the output CSV works in Excel, Google Sheets, and other tools.</span>
+              <span itemprop="text">The simplest way is to use a browser-based JSON to CSV converter. It automatically maps JSON objects to rows and keys to columns without requiring Excel or code.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
-              <span itemprop="name">What happens if my JSON has nested objects or arrays?</span>
+              <span itemprop="name">Can I convert JSON to CSV without Excel or coding?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Nested values are serialized as JSON strings in a single CSV cell. The structure is preserved but not flattened into extra columns.</span>
+              <span itemprop="text">Yes. This tool works entirely in your browser, so you can convert JSON to CSV instantly without using Excel, scripts, or installing software.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
-              <span itemprop="name">Does this tool keep my data private?</span>
+              <span itemprop="name">How does JSON structure map to CSV columns?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+              <span itemprop="text">Each object in your JSON becomes a row, and each key becomes a column. The tool automatically detects fields and creates a structured CSV output.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
-              <span itemprop="name">What if my JSON is invalid?</span>
+              <span itemprop="name">What happens if my JSON has nested objects or arrays?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">The tool will show an error with details about the problem. Fix the JSON (e.g. trailing commas, unquoted keys) and try again. No output is produced until the input is valid.</span>
+              <span itemprop="text">Nested data may be flattened or converted into string values depending on the structure. For best results, use a flat array of objects.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What format should my JSON be for CSV conversion?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The ideal format is a top-level array of objects, where each object has consistent keys. This ensures clean rows and columns in the CSV output.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">What if my JSON is invalid or malformed?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The tool will detect invalid JSON and show an error. You can fix formatting issues before converting.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
+              <span itemprop="name">Is my data private when converting JSON to CSV?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. All processing happens locally in your browser. Your data is never uploaded or sent to a server.</span>
             </div>
           </div>
         </div>
@@ -383,6 +409,8 @@
       const downloadLink = document.getElementById('downloadLink');
 
       let csvBlobUrl = null;
+      let lastRunInputKey = '';
+      let hasRunCurrentInput = false;
 
       // ---- Escape a value for CSV (RFC 4180 style) ----
       function escapeCsvValue(val) {
@@ -409,12 +437,19 @@
         return order;
       }
 
-      // ---- Convert array of objects to CSV string ----
+      function normalizeRows(data) {
+        if (Array.isArray(data)) return data;
+        if (data !== null && typeof data === 'object' && !Array.isArray(data)) return [data];
+        throw new Error('JSON must be an object or a non-empty array of objects.');
+      }
+
+      // ---- Convert object/array of objects to CSV string ----
       function jsonToCsv(data) {
-        if (!Array.isArray(data) || data.length === 0) {
-          throw new Error('JSON must be a non-empty array of objects.');
+        const normalized = normalizeRows(data);
+        if (!normalized.length) {
+          throw new Error('JSON must be an object or a non-empty array of objects.');
         }
-        const rows = data.map(item => {
+        const rows = normalized.map(item => {
           if (item !== null && typeof item === 'object' && !Array.isArray(item)) return item;
           throw new Error('Each array element must be an object.');
         });
@@ -463,35 +498,83 @@
         return (jsonInput.value || '').trim();
       }
 
-      // ---- Validate: must be non-empty array of objects with at least one key ----
-      function isInputValidForConvert() {
-        const text = getInputText();
-        if (!text) return false;
+      function getInputRunKey() {
+        return getInputText();
+      }
+
+      function resetRunState() {
+        hasRunCurrentInput = false;
+      }
+
+      function parseJsonWithRecovery(text) {
         try {
-          const data = JSON.parse(text);
-          if (!Array.isArray(data) || data.length === 0) return false;
-          for (let i = 0; i < data.length; i++) {
-            const item = data[i];
-            if (item === null || typeof item !== 'object' || Array.isArray(item)) return false;
-          }
-          const keys = getAllKeys(data);
-          return keys.length > 0;
-        } catch (e) {
-          return false;
+          return { data: JSON.parse(text), recovered: false };
+        } catch (err) {
+          // Try a conservative recovery for missing trailing closing brackets/braces.
+          const recoveredText = tryAutoCloseJson(text);
+          if (!recoveredText) throw err;
+          return { data: JSON.parse(recoveredText), recovered: true };
         }
+      }
+
+      function tryAutoCloseJson(text) {
+        const stack = [];
+        let inString = false;
+        let escaped = false;
+
+        for (let i = 0; i < text.length; i++) {
+          const ch = text[i];
+          if (inString) {
+            if (escaped) {
+              escaped = false;
+            } else if (ch === '\\') {
+              escaped = true;
+            } else if (ch === '"') {
+              inString = false;
+            }
+            continue;
+          }
+
+          if (ch === '"') {
+            inString = true;
+            continue;
+          }
+          if (ch === '{' || ch === '[') {
+            stack.push(ch);
+            continue;
+          }
+          if (ch === '}' || ch === ']') {
+            const top = stack[stack.length - 1];
+            if ((ch === '}' && top === '{') || (ch === ']' && top === '[')) {
+              stack.pop();
+            } else {
+              return null;
+            }
+          }
+        }
+
+        if (inString || !stack.length) return null;
+
+        let suffix = '';
+        for (let i = stack.length - 1; i >= 0; i--) {
+          suffix += stack[i] === '{' ? '}' : ']';
+        }
+        return text + suffix;
       }
 
       var validationTimer = null;
       function checkReady() {
-        var valid = isInputValidForConvert();
-        convertBtn.disabled = !valid;
         var hasContent = getInputText().length > 0;
+        var runKey = getInputRunKey();
+        var alreadyRanThisInput = hasRunCurrentInput && runKey === lastRunInputKey;
+        convertBtn.disabled = !hasContent || alreadyRanThisInput;
         clearLink.classList.toggle('clear-link--enabled', hasContent);
         clearLink.setAttribute('aria-disabled', hasContent ? 'false' : 'true');
       }
 
       function setInputText(text) {
         jsonInput.value = text;
+        resetRunState();
         clearError();
         clearResult();
         if (validationTimer) clearTimeout(validationTimer);
@@ -536,10 +619,12 @@
 
       // ---- Input: debounced validation for Convert button ----
       jsonInput.addEventListener('input', function () {
+        resetRunState();
         if (validationTimer) clearTimeout(validationTimer);
         validationTimer = setTimeout(checkReady, 300);
       });
       jsonInput.addEventListener('paste', function () {
+        resetRunState();
         setTimeout(function () {
           if (validationTimer) clearTimeout(validationTimer);
           validationTimer = setTimeout(checkReady, 300);
@@ -551,24 +636,27 @@
         clearError();
         clearResult();
         const text = getInputText();
-        if (!isInputValidForConvert()) return;
+        if (!text) return;
         setProcessing(true);
         try {
-          const data = JSON.parse(text);
+          const parsed = parseJsonWithRecovery(text);
+          const data = parsed.data;
           const csv = jsonToCsv(data);
           resultSection.classList.add('visible');
           csvOutput.value = csv;
           const lineCount = csv.split(/\r\n|\r|\n/).length;
-          resultMeta.textContent = lineCount.toLocaleString() + ' row' + (lineCount !== 1 ? 's' : '') + ' (including header)';
+          resultMeta.textContent = lineCount.toLocaleString() + ' row' + (lineCount !== 1 ? 's' : '');
           const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
           if (csvBlobUrl) URL.revokeObjectURL(csvBlobUrl);
           csvBlobUrl = URL.createObjectURL(blob);
           downloadLink.href = csvBlobUrl;
           downloadLink.download = 'output.csv';
           downloadLink.style.display = 'inline-flex';
+          lastRunInputKey = getInputRunKey();
+          hasRunCurrentInput = true;
         } catch (err) {
           if (err instanceof SyntaxError) {
-            showError('Invalid JSON. Please check your syntax (e.g. quotes, commas, brackets).');
+            showError('Invalid JSON. We can auto-fix simple missing closing brackets, but this input still has syntax issues.');
           } else {
             showError(err.message || 'Conversion failed.');
           }
@@ -582,6 +670,7 @@
         e.preventDefault();
         if (!getInputText()) return;
         jsonInput.value = '';
+        resetRunState();
         clearError();
         clearResult();
         checkReady();

@@ -29,6 +29,9 @@
   <link rel="icon" href="../assets/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
 </head>
 <body>
 
@@ -126,29 +129,24 @@
 
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Trim Whitespace</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to trim whitespace</h2>
+        <p class="section-body">Paste your text, remove extra whitespace, and copy the cleaned result instantly. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
             <p class="step__title">Paste your text</p>
-            <p class="step__desc">Paste the text you want to clean into the input box. Any source—copy-paste, exports, or logs.</p>
+            <p class="step__desc">Paste the text you want to clean into the input.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
             <p class="step__title">Choose trim options</p>
-            <p class="step__desc">Optionally collapse multiple spaces, remove empty lines, and normalize line endings (e.g. to Unix).</p>
+            <p class="step__desc">Remove leading and trailing whitespace, collapse multiple spaces, or clean up empty lines.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Click Trim</p>
-            <p class="step__desc">The tool trims leading and trailing whitespace from each line and applies your options in the browser.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Copy the output</p>
-            <p class="step__desc">Copy the cleaned text to your clipboard for use in code, configs, or other tools.</p>
+            <p class="step__title">Copy the cleaned text</p>
+            <p class="step__desc">Apply the changes and copy the trimmed text to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -264,38 +262,65 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="trim-faq-1-answer">
-              <span itemprop="name">How do I remove extra spaces and trim whitespace from text or CSV lines online?</span>
+              <span itemprop="name">How do I remove extra spaces and trim whitespace from text online?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="trim-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">It removes leading and trailing spaces and tabs from each line. Optionally it can collapse multiple spaces into one, remove empty lines, and normalize line endings (e.g. to Unix LF).</span>
+              <span itemprop="text">Paste your text into the tool to remove leading and trailing spaces, collapse multiple spaces, and clean up formatting instantly.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="trim-faq-2-answer">
-              <span itemprop="name">Why do my line endings cause problems in Git or on another OS? What does normalize line endings do?</span>
+              <span itemprop="name">What is the easiest way to remove whitespace from text or CSV lines?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="trim-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">It converts all line breaks (Windows CRLF, old Mac CR, or mixed) to a single style—Unix-style LF. That avoids cross-platform issues in scripts and version control.</span>
+              <span itemprop="text">The easiest way is to use a browser-based whitespace remover. It quickly trims spaces and cleans line formatting without using Excel or scripts.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="trim-faq-3-answer">
-              <span itemprop="name">Is my text uploaded when I trim whitespace in the browser?</span>
+              <span itemprop="name">What does trimming whitespace mean?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="trim-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+              <span itemprop="text">Trimming whitespace removes extra spaces at the beginning and end of each line, and can also clean up repeated spaces within text.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="trim-faq-4-answer">
-              <span itemprop="name">Can I only remove empty lines and keep trimming spaces on each line?</span>
+              <span itemprop="name">What does normalize line endings do?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="trim-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. You can enable only “Remove empty lines” and leave the others off. Trimming of leading and trailing spaces on each line always runs; the checkboxes add optional steps.</span>
+              <span itemprop="text">Normalizing line endings converts line breaks to a consistent format (such as Unix LF), which helps avoid issues across different operating systems or tools like Git.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="trim-faq-5-answer">
+              <span itemprop="name">Can I remove empty lines and extra spaces at the same time?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="trim-faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. You can remove blank lines while also trimming or collapsing spaces in a single step.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="trim-faq-6-answer">
+              <span itemprop="name">Is my text uploaded when I trim whitespace online?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="trim-faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. All processing happens locally in your browser. Your text is never uploaded or sent to a server.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="trim-faq-7-answer">
+              <span itemprop="name">Can I clean whitespace in large text or code files?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="trim-faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. You can paste large blocks of text, logs, or code and quickly clean up whitespace and formatting.</span>
             </div>
           </div>
         </div>

@@ -29,6 +29,9 @@
   <link rel="icon" href="../assets/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
 </head>
 <body>
 
@@ -126,29 +129,24 @@
 
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Remove Duplicate Lines</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to remove duplicate lines</h2>
+        <p class="section-body">Paste your text, remove duplicate lines, and copy the result instantly. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
             <p class="step__title">Paste your text</p>
-            <p class="step__desc">Paste text into the input box—one item per line. Lists, logs, or any line-separated content work.</p>
+            <p class="step__desc">Paste your text into the input, with one item per line.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Set options</p>
-            <p class="step__desc">Choose case-sensitive matching, whether to preserve the original order, and whether to remove empty lines.</p>
+            <p class="step__title">Remove duplicate lines</p>
+            <p class="step__desc">The tool automatically removes duplicate lines. You can adjust options like case sensitivity or keeping the original order.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Click Remove duplicates</p>
-            <p class="step__desc">The tool de-duplicates in the browser and shows how many lines remain and how many were removed.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Copy the output</p>
-            <p class="step__desc">Copy the cleaned text to your clipboard for use in docs, code, or other tools.</p>
+            <p class="step__title">Copy the cleaned text</p>
+            <p class="step__desc">Copy the deduplicated text to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -264,38 +262,65 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="rdl-faq-1-answer">
-              <span itemprop="name">How do I remove duplicate lines from a list or text online without uploading?</span>
+              <span itemprop="name">How do I remove duplicate lines from text online?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="rdl-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Paste your text (one item per line), set options like case-sensitive and preserve order, then click Remove duplicates. Copy the result from the preview.</span>
+              <span itemprop="text">Paste your text into the tool, and it will automatically remove duplicate lines. You can then copy the cleaned result instantly.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="rdl-faq-2-answer">
-              <span itemprop="name">What does “preserve order” do when removing duplicate lines?</span>
+              <span itemprop="name">What is the fastest way to remove duplicate lines from a list?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="rdl-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">When checked, the first occurrence of each line is kept and the order of lines is unchanged. When unchecked, unique lines are sorted alphabetically.</span>
+              <span itemprop="text">The fastest way is to use a browser-based deduplication tool. It removes duplicate lines instantly without requiring Excel, scripts, or manual sorting.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="rdl-faq-3-answer">
-              <span itemprop="name">Is my text sent to a server when I remove duplicate lines?</span>
+              <span itemprop="name">Can I remove duplicate lines without uploading my data?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="rdl-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+              <span itemprop="text">Yes. This tool runs entirely in your browser, so your text is never uploaded or sent to a server.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="rdl-faq-4-answer">
-              <span itemprop="name">Can I remove duplicate lines and strip empty lines in one go?</span>
+              <span itemprop="name">What does “preserve order” mean when removing duplicates?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="rdl-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Check “Remove empty lines” and blank lines are stripped before de-duplication. Empty lines are not counted as duplicates of each other.</span>
+              <span itemprop="text">Preserving order keeps the first occurrence of each line in its original position. Duplicate lines are removed without changing the sequence.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="rdl-faq-5-answer">
+              <span itemprop="name">Can I remove duplicate lines and empty lines at the same time?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="rdl-faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. You can remove duplicate lines while also stripping empty or blank lines in a single step.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="rdl-faq-6-answer">
+              <span itemprop="name">Is the comparison case-sensitive when removing duplicates?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="rdl-faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">You can choose whether matching is case-sensitive. For example, “Apple” and “apple” can be treated as the same or different lines.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="rdl-faq-7-answer">
+              <span itemprop="name">What types of text can I deduplicate?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="rdl-faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Any line-based text works, including lists, logs, CSV rows, or copied data from spreadsheets.</span>
             </div>
           </div>
         </div>
@@ -384,7 +409,7 @@
         resultSection.classList.add('visible');
         textOutput.value = outText;
         var remaining = outLines.length;
-        resultMeta.textContent = remaining.toLocaleString() + ' line' + (remaining !== 1 ? 's' : '') + ' • ' + removed.toLocaleString() + ' removed';
+        resultMeta.textContent = remaining.toLocaleString() + ' line' + (remaining !== 1 ? 's' : '') + ' · ' + removed.toLocaleString() + ' removed';
       }
 
       clearLink.addEventListener('click', function (e) {

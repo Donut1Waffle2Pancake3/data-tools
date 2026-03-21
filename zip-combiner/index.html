@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       SEO
+  ============================================================ -->
+  <title>Batch ZIP Extractor | Free &amp; Private | TinyDataTool</title>
+  <meta
+    name="description"
+    content="Extract multiple ZIP files and save all extracted files into one folder in your browser. No uploads. Folder download is supported in Chrome and Edge via the File System Access API."
+  />
+  <link rel="canonical" href="https://tinydatatool.com/zip-combiner/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Batch ZIP Extractor | Free &amp; Private | TinyDataTool" />
+  <meta property="og:description" content="Combine multiple ZIP files into a single ZIP archive in your browser. No uploads." />
+  <meta property="og:url" content="https://tinydatatool.com/zip-combiner/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Batch ZIP Extractor | Free &amp; Private | TinyDataTool" />
+  <meta name="twitter:description" content="Combine multiple ZIP files into a single ZIP archive in your browser. No uploads." />
+
+  <!-- ============================================================
+       JSON-LD
+  ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Batch ZIP Extractor",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "publisher": { "@type": "Organization", "name": "TinyDataTool", "url": "https://tinydatatool.com/" },
+    "url": "https://tinydatatool.com/zip-combiner/",
+    "description": "Extract multiple ZIP files and save all extracted files into one folder in your browser. No uploads. Folder download is supported in Chrome and Edge."
+  }
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+
+  <!-- ============================================================
+       Global Stylesheet
+  ============================================================ -->
+  <link rel="stylesheet" href="../css/global.css" />
+</head>
+
+<body>
+
+  <!-- ============================================================
+       HEADER (injected by js/site.js)
+  ============================================================ -->
+  <div id="site-header-root" data-base="../" data-active="zip-combiner"></div>
+
+  <div id="privacy-banner-root"></div>
+
+  <!-- ============================================================
+       MAIN
+  ============================================================ -->
+  <main id="main-content">
+
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">Batch ZIP Extractor</h1>
+        <p class="hero__sub">Extract multiple ZIP files at once and save all files into a single folder. Runs entirely in your browser.</p>
+      </div>
+    </section>
+
+    <!-- Tool Card -->
+    <section aria-label="ZIP combiner tool" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="ZIP combiner">
+
+          <!-- Drop Zone -->
+          <div
+            class="drop-zone"
+            id="dropZone"
+            role="button"
+            tabindex="0"
+            aria-label="Upload ZIP files. Click or drag and drop."
+            aria-describedby="drop-hint"
+          >
+            <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+            </svg>
+            <p class="drop-zone__label">Upload ZIP files or drag and drop</p>
+            <input type="file" id="fileInput" accept=".zip,application/zip,application/x-zip-compressed" multiple aria-label="Select ZIP files" />
+          </div>
+
+          <!-- Uploaded File List -->
+          <div class="file-list" id="fileList" aria-live="polite" aria-label="Uploaded ZIP files">
+            <div class="file-list__header">
+              <span class="file-list__label-wrap">
+                <span class="file-list__label">Uploaded ZIPs</span>
+                <span class="file-list__count" id="fileCount"></span>
+              </span>
+              <a href="#" class="clear-link" id="removeAllBtn" role="button" aria-disabled="true">Remove All</a>
+            </div>
+            <div class="file-list__items" id="fileListItems"></div>
+          </div>
+
+          <!-- Processing Hint -->
+          <p class="form-hint" id="processingHint" aria-live="polite" style="display:none; margin-top: 16px;"></p>
+
+          <!-- Primary CTA -->
+          <button class="btn-primary" id="downloadAllBtn" type="button" aria-label="Download All Files" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            Download All Files
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+              <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
+            </svg>
+          </button>
+
+          <!-- Error Message -->
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="status-message status-message--success" id="successMsg" role="status" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span id="successText"></span>
+          </div>
+
+          <!-- Result: extracted preview -->
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Results</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="result-section__body">
+              <ul class="download-list" id="extractedFileList"></ul>
+            </div>
+          </div>
+
+          <!-- Privacy Note -->
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Files are processed entirely in your browser and are never uploaded to any server.
+          </div>
+
+        </div><!-- /.tool-card -->
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" id="how-heading">Extract ZIP contents in three steps</h2>
+        <p class="section-body">No accounts, no server uploads, and no extra software. Your ZIPs stay on your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Upload your ZIP files</p>
+            <p class="step__desc">Select multiple ZIPs or drag and drop them into the upload area.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">We extract the contents</p>
+            <p class="step__desc">We extract all files in your browser, preserving relative paths when possible.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Choose a folder and save</p>
+            <p class="step__desc">Click Download All Files, pick a folder, and save everything at once.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Explanation Section -->
+    <section class="content-section" aria-labelledby="explain-heading">
+      <div class="container--wide">
+        <p class="section-label">Extract</p>
+        <h2 class="section-title" id="explain-heading">Extract multiple ZIP files into one folder</h2>
+        <p class="section-body">
+          Extract all files from multiple ZIP archives at once and save them into a single folder on your device. This tool runs entirely in your browser, so there are no uploads or delays.
+        </p>
+        <p class="section-body" style="margin-top: 12px;">
+          Instead of opening each ZIP individually, you can process everything in one step and immediately work with the extracted files.
+        </p>
+      </div>
+    </section>
+
+    <!-- Limitations Section -->
+    <section class="content-section" aria-labelledby="limitations-heading">
+      <div class="container--wide">
+        <p class="section-label">Features</p>
+        <h2 class="section-title" id="limitations-heading">Supported features and limitations</h2>
+        <p class="section-body" style="margin-top: 8px;">Supported:</p>
+        <ul class="section-body" style="margin-top: 8px; padding-left: 1.25em; line-height: 1.7;">
+          <li>Works entirely in your browser with no uploads</li>
+          <li>Extracts multiple ZIP files in one step</li>
+          <li>Saves all files into a single folder</li>
+        </ul>
+        <p class="section-body" style="margin-top: 12px;">Not supported:</p>
+        <ul class="section-body" style="margin-top: 8px; padding-left: 1.25em; line-height: 1.7;">
+          <li>Password-protected ZIP files</li>
+          <li>Extremely large ZIP sets that exceed browser memory limits</li>
+          <li>Direct folder writing in browsers without File System Access API support</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">How do I extract multiple ZIP files at once?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Upload or drag in your ZIP files, then choose a destination folder. The tool extracts all files from each ZIP and saves them together in one folder on your device.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Does this tool merge ZIP files into a new archive?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. This tool does not create a new ZIP file. It extracts the contents of each ZIP and places all files into a single folder.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Can I extract multiple ZIP files into one folder?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. All files from every ZIP are extracted and saved into one folder, so you can access everything in one place without opening each archive individually.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">What happens if files have the same name?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">If duplicate file names are found, the browser will automatically handle them (usually by renaming with a suffix like "(1)"). No files are overwritten.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">Are my ZIP files uploaded to a server?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. All processing happens locally in your browser. Your files never leave your device.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">Does this preserve folder structure inside ZIP files?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Files keep their original folder structure when extracted, unless your browser flattens them during download.</span>
+            </div>
+          </div>
+
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Which browsers support extracting to a folder?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Best supported in Chrome and Edge. These browsers allow selecting a folder and saving all extracted files directly.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Tools (injected by js/site.js + enhanced locally) -->
+    <div id="related-tools-root" data-base="../" data-current="zip-combiner"></div>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER (injected by js/footer.js)
+  ============================================================ -->
+  <div id="site-footer-root"></div>
+
+  <!-- ============================================================
+       Global JS (header, footer, nav dropdown, FAQ accordion)
+  ============================================================ -->
+  <script src="../js/site.js" defer></script>
+
+  <!-- fflate (preferred for extraction + recompression) -->
+  <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js" crossorigin="anonymous"></script>
+
+  <!-- JSZip (fallback) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
+
+  <!-- ============================================================
+       Batch ZIP Extractor — Tool Logic
+  ============================================================ -->
+  <script>
+
+    // ============================================================
+    // ANALYTICS HOOKS
+    // ============================================================
+    const Analytics = {
+      filesSelected:  (count)           => { /* HOOK: files selected */ },
+      fileRemoved:    (filename)       => { /* HOOK: file removed */ },
+      extractionStarted: (count)      => { /* HOOK: extraction started */ },
+      extractionDone:    (count, extractedCount) => { /* HOOK: extraction completed */ },
+      folderSaveStarted: (extractedCount) => { /* HOOK: folder save started */ },
+      folderSaveDone:    (savedCount)     => { /* HOOK: folder save completed */ },
+    };
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    let selectedFiles = []; // array of File
+    let isProcessing = false;
+    let extractedFiles = []; // array of { path, size, dataU8 }
+    let extractedTotalBytes = 0;
+    let extractionDone = false;
+    let extractionToken = 0;
+
+    // ============================================================
+    // DOM REFERENCES
+    // ============================================================
+    const dropZone           = document.getElementById('dropZone');
+    const fileInput          = document.getElementById('fileInput');
+    const fileList           = document.getElementById('fileList');
+    const fileListItems      = document.getElementById('fileListItems');
+    const fileCount          = document.getElementById('fileCount');
+    const removeAllBtn       = document.getElementById('removeAllBtn');
+    const downloadAllBtn    = document.getElementById('downloadAllBtn');
+    const processingHint     = document.getElementById('processingHint');
+    const errorMsg           = document.getElementById('errorMsg');
+    const errorText          = document.getElementById('errorText');
+    const successMsg        = document.getElementById('successMsg');
+    const successText       = document.getElementById('successText');
+    const resultSection      = document.getElementById('resultSection');
+    const resultMeta         = document.getElementById('resultMeta');
+    const extractedFileList  = document.getElementById('extractedFileList');
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    const MAX_TOTAL_BYTES = 190 * 1024 * 1024; // ~190MB
+
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorMsg.classList.add('visible');
+    }
+
+    function clearError() {
+      errorMsg.classList.remove('visible');
+    }
+
+    function clearResults() {
+      resultSection.classList.remove('visible');
+      resultMeta.textContent = '';
+      if (extractedFileList) extractedFileList.innerHTML = '';
+
+      extractedFiles = [];
+      extractedTotalBytes = 0;
+      extractionDone = false;
+    }
+
+    function clearSuccess() {
+      if (successMsg) successMsg.classList.remove('visible');
+    }
+
+    function setProcessing(active) {
+      isProcessing = active;
+      if (active) {
+        downloadAllBtn.disabled = true;
+        downloadAllBtn.classList.add('spinning');
+        downloadAllBtn.setAttribute('aria-busy', 'true');
+      } else {
+        downloadAllBtn.classList.remove('spinning');
+        downloadAllBtn.removeAttribute('aria-busy');
+        if (processingHint) {
+          processingHint.style.display = 'none';
+          processingHint.textContent = '';
+        }
+        checkReady();
+      }
+    }
+
+    function checkReady() {
+      // Download is only enabled after extraction is complete.
+      downloadAllBtn.disabled = extractedFiles.length < 1 || isProcessing;
+      const hasFiles = selectedFiles.length > 0;
+      if (removeAllBtn) {
+        removeAllBtn.classList.toggle('clear-link--enabled', hasFiles);
+        removeAllBtn.setAttribute('aria-disabled', hasFiles ? 'false' : 'true');
+      }
+    }
+
+    function acceptZip(file) {
+      const nameOk = file && typeof file.name === 'string' && file.name.toLowerCase().endsWith('.zip');
+      const typeOk = file && typeof file.type === 'string' && (
+        file.type === 'application/zip' ||
+        file.type === 'application/x-zip-compressed'
+      );
+      return nameOk || typeOk;
+    }
+
+    function normalizeZipPath(inputPath) {
+      if (!inputPath) return '';
+      // Normalize separators and strip leading/traversal segments to keep paths safe in output archives.
+      let p = String(inputPath).replace(/\\/g, '/');
+      p = p.replace(/^\.?\//, ''); // leading ./ or /
+      const parts = p.split('/').filter(Boolean);
+      const safe = [];
+      for (const part of parts) {
+        if (part === '.' || part === '') continue;
+        if (part === '..') {
+          safe.pop();
+          continue;
+        }
+        safe.push(part);
+      }
+      return safe.join('/');
+    }
+
+    function sanitizePathComponent(component) {
+      // Trim whitespace; strip/replace characters Windows dislikes in filenames.
+      // Keep it conservative: replace with '_' so paths remain valid and stable.
+      const trimmed = String(component || '').trim();
+      if (!trimmed) return '';
+      // Invalid on Windows: < > : " / \ | ? * and control chars (0x00-0x1F).
+      return trimmed
+        .replace(/[<>:"/\\|?*\x00-\x1F]/g, '_')
+        .replace(/\s+/g, ' ');
+    }
+
+    function shouldSkipPath(path) {
+      // Skip hidden/system metadata files and folders commonly found in ZIPs.
+      const parts = path.split('/').filter(Boolean);
+      if (!parts.length) return true;
+
+      const SKIP_PARTS = new Set([
+        '__MACOSX',
+        '.DS_Store',
+        'desktop.ini',
+        'thumbs.db',
+        'system volume information',
+        '$recycle.bin',
+        'recycler',
+      ]);
+
+      for (const part of parts) {
+        // Treat Unix-style dotfiles as hidden.
+        if (part.startsWith('.')) return true;
+        if (SKIP_PARTS.has(part.toLowerCase())) return true;
+      }
+      return false;
+    }
+
+    function sanitizeZipPath(inputPath) {
+      const normalized = normalizeZipPath(inputPath);
+      if (!normalized) return '';
+
+      const parts = normalized.split('/').filter(Boolean).map(sanitizePathComponent).filter(Boolean);
+      if (!parts.length) return '';
+
+      const sanitized = parts.join('/');
+      if (shouldSkipPath(sanitized)) return '';
+      return sanitized;
+    }
+
+    function splitFilename(filename) {
+      const idx = filename.lastIndexOf('.');
+      if (idx > 0) {
+        return { base: filename.slice(0, idx), ext: filename.slice(idx) };
+      }
+      return { base: filename, ext: '' };
+    }
+
+    function makeUniquePath(path, usedPaths) {
+      if (!usedPaths.has(path)) return path;
+
+      const parts = path.split('/');
+      const fileName = parts.pop();
+      const dir = parts.join('/');
+
+      const { base, ext } = splitFilename(fileName);
+
+      let n = 1;
+      while (true) {
+        const candidateName = `${base} (${n})${ext}`;
+        const candidatePath = dir ? `${dir}/${candidateName}` : candidateName;
+        if (!usedPaths.has(candidatePath)) return candidatePath;
+        n++;
+      }
+    }
+
+    function sanitizeFilenameForRoot(filename) {
+      // Explorer-safe mode: avoid directories, keep filenames Windows-friendly.
+      const name = sanitizePathComponent(filename);
+      if (!name) return '';
+
+      // Windows doesn't like trailing spaces/dots.
+      const trimmedEnd = name.replace(/[. ]+$/g, '');
+      // If we stripped everything, pick a safe fallback.
+      const safe = trimmedEnd || 'file';
+
+      // Keep reasonably short to avoid potential unzip/path issues.
+      return safe.length > 200 ? safe.slice(0, 200) : safe;
+    }
+
+    function makeUniqueFilename(filename, usedFilenames) {
+      if (!usedFilenames.has(filename)) return filename;
+
+      const { base, ext } = splitFilename(filename);
+      let n = 1;
+
+      while (true) {
+        const candidate = `${base} (${n})${ext}`;
+        if (!usedFilenames.has(candidate)) return candidate;
+        n++;
+      }
+    }
+
+    // ============================================================
+    // FILE SELECTION
+    // ============================================================
+    dropZone.addEventListener('click', (e) => {
+      if (e.target !== fileInput) fileInput.click();
+    });
+
+    dropZone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (!fileInput.files || fileInput.files.length === 0) return;
+      const incoming = Array.from(fileInput.files).filter(acceptZip);
+      if (incoming.length === 0) {
+        showError('Please select valid .zip files.');
+        fileInput.value = '';
+        return;
+      }
+      addFiles(incoming);
+      fileInput.value = '';
+    });
+
+    dropZone.addEventListener('dragover',  (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', ()  => { dropZone.classList.remove('drag-over'); });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const files = Array.from(e.dataTransfer.files).filter(acceptZip);
+      if (files.length === 0) {
+        showError('Please drop valid .zip files.');
+        return;
+      }
+      addFiles(files);
+    });
+
+    function addFiles(incoming) {
+      // Deduplicate by name + size.
+      const existing = new Set(selectedFiles.map(f => f.name + f.size));
+      const newFiles = incoming.filter(f => !existing.has(f.name + f.size));
+      if (newFiles.length === 0) return;
+
+      selectedFiles = [...selectedFiles, ...newFiles];
+      clearError();
+      clearSuccess();
+      clearResults();
+      renderFileList();
+      checkReady();
+      Analytics.filesSelected(selectedFiles.length);
+
+      // Extract immediately after upload so the user can save everything in one step.
+      extractAllSelectedZips();
+    }
+
+    function removeFile(index) {
+      const removed = selectedFiles[index];
+      selectedFiles.splice(index, 1);
+      clearError();
+      clearSuccess();
+      clearResults();
+      renderFileList();
+      checkReady();
+      if (removed) Analytics.fileRemoved(removed.name);
+
+      if (selectedFiles.length > 0) extractAllSelectedZips();
+    }
+
+    function removeAllFiles() {
+      if (selectedFiles.length === 0) return;
+      selectedFiles = [];
+      fileInput.value = '';
+      clearError();
+      clearSuccess();
+      clearResults();
+      renderFileList();
+      checkReady();
+    }
+
+    if (removeAllBtn) {
+      removeAllBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        removeAllFiles();
+      });
+    }
+
+    function renderFileList() {
+      if (!fileList || !fileListItems) return;
+      if (selectedFiles.length === 0) {
+        fileList.classList.remove('visible');
+        fileListItems.innerHTML = '';
+        return;
+      }
+
+      fileList.classList.add('visible');
+      fileCount.textContent = selectedFiles.length > 0 ? ` (${selectedFiles.length})` : '';
+      fileListItems.innerHTML = '';
+
+      selectedFiles.forEach((file, idx) => {
+        const item = document.createElement('div');
+        item.className = 'file-list__item';
+        item.style.animationDelay = `${idx * 30}ms`;
+        item.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex-shrink:0;color:var(--accent)">
+            <rect x="1" y="1" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M4 6h8M4 9h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          <span class="file-list__item-name">${escapeHtml(file.name)}</span>
+          <span class="file-list__item-size">${formatFileSize(file.size)}</span>
+          <button class="btn-remove-file" aria-label="Remove ${escapeHtml(file.name)}" data-index="${idx}">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M14.793 6.27L11.043 10.02L14.762 13.738C15.074 14.02 15.074 14.488 14.762 14.77C14.48 15.082 14.012 15.082 13.73 14.77L9.98 11.05L6.262 14.77C5.98 15.082 5.512 15.082 5.23 14.77C4.918 14.488 4.918 14.02 5.23 13.707L8.949 9.988L5.23 6.27C4.918 5.988 4.918 5.52 5.23 5.207C5.512 4.926 5.98 4.926 6.293 5.207L10.012 8.957L13.73 5.238C14.012 4.926 14.48 4.926 14.793 5.238C15.074 5.52 15.074 5.988 14.793 6.27Z" fill="currentColor"/>
+            </svg>
+          </button>
+        `;
+        item.querySelector('.btn-remove-file').addEventListener('click', () => removeFile(idx));
+        fileListItems.appendChild(item);
+      });
+    }
+
+    // ============================================================
+    // ZIP MERGING
+    // ============================================================
+    function canUseFflateNow() {
+      try {
+        return typeof fflate !== 'undefined' &&
+          fflate &&
+          typeof fflate.unzipSync === 'function' &&
+          typeof fflate.zipSync === 'function';
+      } catch (_) {
+        return false;
+      }
+    }
+
+    async function extractZipEntriesWithFflate(arrayBuffer) {
+      // Returns array of { path, dataU8 } entries (files only).
+      const u8 = new Uint8Array(arrayBuffer);
+      const extracted = fflate.unzipSync(u8); // { "path/in/zip.txt": Uint8Array, ... }
+      const entries = [];
+      for (const key of Object.keys(extracted)) {
+        // fflate can include empty directories ending in "/"
+        if (key.endsWith('/')) continue;
+        const sanitizedPath = sanitizeZipPath(key);
+        if (!sanitizedPath) continue;
+
+        const value = extracted[key];
+        // Skip directories/null placeholders and anything that isn't file bytes.
+        if (!(value instanceof Uint8Array)) continue;
+
+        entries.push({ path: sanitizedPath, dataU8: value });
+      }
+      return entries;
+    }
+
+    async function extractZipEntriesWithJSZip(arrayBuffer) {
+      if (typeof JSZip === 'undefined') throw new Error('ZIP processing library failed to load.');
+      const zip = await JSZip.loadAsync(arrayBuffer);
+      const entries = [];
+
+      // Iterate in a stable order.
+      const filePaths = Object.keys(zip.files).sort();
+      for (const entryPath of filePaths) {
+        const entry = zip.files[entryPath];
+        if (!entry || entry.dir) continue;
+        const sanitizedPath = sanitizeZipPath(entryPath);
+        if (!sanitizedPath) continue;
+        const dataU8 = await entry.async('uint8array');
+        entries.push({ path: sanitizedPath, dataU8 });
+      }
+      return entries;
+    }
+
+    function setSuccess(msg) {
+      if (!successMsg || !successText) return;
+      successText.textContent = msg || '';
+      successMsg.classList.add('visible');
+    }
+
+    function renderExtractedPreview() {
+      if (!resultSection || !extractedFileList || !resultMeta) return;
+
+      const count = extractedFiles.length;
+      const totalSizeText = formatFileSize(extractedTotalBytes || 0);
+      resultMeta.textContent = `${count.toLocaleString()} file${count === 1 ? '' : 's'} extracted · ${totalSizeText}`;
+
+      extractedFileList.innerHTML = '';
+
+      const maxPreview = 24;
+      const previewItems = extractedFiles.slice(0, maxPreview);
+
+      previewItems.forEach((entry, idx) => {
+        const li = document.createElement('li');
+        li.className = 'download-item';
+        li.style.animationDelay = `${idx * 20}ms`;
+        li.innerHTML = `
+          <span class="download-item__filename">${escapeHtml(entry.path)}</span>
+          <span class="download-item__meta">${formatFileSize(entry.size)}</span>
+        `;
+        extractedFileList.appendChild(li);
+      });
+
+      if (count > maxPreview) {
+        const li = document.createElement('li');
+        li.className = 'download-item';
+        li.innerHTML = `
+          <span class="download-item__filename">… and ${count - maxPreview} more</span>
+          <span class="download-item__meta"></span>
+        `;
+        extractedFileList.appendChild(li);
+      }
+
+      resultSection.classList.add('visible');
+    }
+
+    async function extractAllSelectedZips() {
+      const token = ++extractionToken;
+
+      clearError();
+      clearSuccess();
+      clearResults();
+
+      if (selectedFiles.length < 1) return;
+
+      const totalInputBytes = selectedFiles.reduce((acc, f) => acc + (f.size || 0), 0);
+      if (totalInputBytes > MAX_TOTAL_BYTES) {
+        showError('Files are too large to process in-browser');
+        return;
+      }
+
+      setProcessing(true);
+      extractedFiles = [];
+      extractedTotalBytes = 0;
+      extractionDone = false;
+
+      try {
+        Analytics.extractionStarted(selectedFiles.length);
+
+        const usedPaths = new Set();
+        const allExtracted = [];
+
+        // Extract sequentially to reduce peak memory pressure.
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const file = selectedFiles[i];
+          progressText(`Extracting ZIP ${i + 1}/${selectedFiles.length}: ${file.name}`);
+
+          let arrayBuffer;
+          try {
+            arrayBuffer = await file.arrayBuffer();
+          } catch (_) {
+            throw new Error(`Failed to read "${file.name}". Please try again.`);
+          }
+
+          let entries;
+          try {
+            entries = await extractZipEntriesWithJSZip(arrayBuffer);
+          } catch (err) {
+            if (canUseFflateNow()) {
+              try {
+                entries = await extractZipEntriesWithFflate(arrayBuffer);
+              } catch (err2) {
+                const detail = err2 && err2.message ? err2.message : '';
+                throw new Error(`Unable to read "${file.name}". The ZIP may be corrupt or unsupported.${detail ? ' ' + detail : ''}`);
+              }
+            } else {
+              const detail = err && err.message ? err.message : '';
+              throw new Error(`Unable to read "${file.name}". The ZIP may be corrupt or unsupported.${detail ? ' ' + detail : ''}`);
+            }
+          }
+
+          for (const entry of entries) {
+            const p = entry.path;
+            if (!p) continue;
+
+            const uniquePath = makeUniquePath(p, usedPaths);
+            usedPaths.add(uniquePath);
+
+            const size = entry.dataU8 ? entry.dataU8.byteLength || 0 : 0;
+            extractedTotalBytes += size;
+            allExtracted.push({ path: uniquePath, size, dataU8: entry.dataU8 });
+          }
+
+          // If files changed mid-extraction, ignore results.
+          if (token !== extractionToken) return;
+        }
+
+        if (allExtracted.length === 0) {
+          throw new Error('No files were found inside the selected ZIP archives.');
+        }
+
+        extractedFiles = allExtracted;
+        extractionDone = true;
+        renderExtractedPreview();
+
+        Analytics.extractionDone(selectedFiles.length, extractedFiles.length);
+
+      } catch (err) {
+        extractedFiles = [];
+        extractedTotalBytes = 0;
+        extractionDone = false;
+        clearResults();
+        showError(err && err.message ? err.message : 'Something went wrong while extracting ZIP files.');
+      } finally {
+        if (token === extractionToken) setProcessing(false);
+      }
+    }
+
+    async function writeEntryToFolder(rootHandle, relativePath, dataU8) {
+      const parts = relativePath.split('/').filter(Boolean);
+      if (parts.length === 0) throw new Error('Invalid path.');
+
+      const filename = parts.pop();
+      let dirHandle = rootHandle;
+
+      for (const dirName of parts) {
+        dirHandle = await dirHandle.getDirectoryHandle(dirName, { create: true });
+      }
+
+      const fileHandle = await dirHandle.getFileHandle(filename, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(dataU8);
+      await writable.close();
+    }
+
+    downloadAllBtn.addEventListener('click', async () => {
+      clearError();
+      clearSuccess();
+      if (!extractedFiles || extractedFiles.length === 0) {
+        showError('Please upload ZIP files and extract them first.');
+        return;
+      }
+
+      if (typeof window.showDirectoryPicker !== 'function') {
+        showError('Folder download is currently supported in Chrome and Edge.');
+        return;
+      }
+
+      setProcessing(true);
+      Analytics.folderSaveStarted(extractedFiles.length);
+
+      try {
+        const rootHandle = await window.showDirectoryPicker();
+
+        progressText(`Saving 1/${extractedFiles.length}…`);
+
+        for (let i = 0; i < extractedFiles.length; i++) {
+          const entry = extractedFiles[i];
+          progressText(`Saving ${i + 1}/${extractedFiles.length}: ${entry.path}`);
+          await writeEntryToFolder(rootHandle, entry.path, entry.dataU8);
+        }
+
+        setSuccess(`Saved ${extractedFiles.length.toLocaleString()} file${extractedFiles.length === 1 ? '' : 's'} to your folder.`);
+        Analytics.folderSaveDone(extractedFiles.length);
+
+      } catch (err) {
+        const name = err && err.name ? err.name : '';
+        if (name === 'AbortError') {
+          // User cancelled the folder picker; exit silently.
+        } else {
+          const detail = err && err.message ? err.message : '';
+          showError(`Failed to write files to the selected folder.${detail ? ' ' + detail : ''}`);
+        }
+      } finally {
+        setProcessing(false);
+      }
+    });
+
+    // Used inside async handler before it's defined.
+    function progressText(message) {
+      if (!processingHint) return;
+      processingHint.style.display = 'block';
+      processingHint.textContent = message || '';
+    }
+
+    // ============================================================
+    // Related Tools Enhancement (local only)
+    // ============================================================
+    // The shared related-tools component is nav-group based; this tool isn't registered there.
+    // We still reuse the component container and append the requested links locally.
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const list = document.querySelector('.related-tools-list');
+        if (!list) return;
+
+        const base = '../';
+        const wanted = [
+          { href: base + 'split-csv/index.html', label: 'CSV Splitter' },
+          { href: base + 'json-formatter/index.html', label: 'JSON Formatter' },
+          { href: base + 'merge-csv/index.html', label: 'Merge CSV' },
+        ];
+
+        for (const item of wanted) {
+          // Avoid duplicating if the shared component already added it.
+          const exists = Array.from(list.querySelectorAll('a')).some(a => a.getAttribute('href') === item.href);
+          if (exists) continue;
+          const a = document.createElement('a');
+          a.href = item.href;
+          a.className = 'btn-secondary btn--sm';
+          a.textContent = item.label;
+          list.appendChild(a);
+        }
+      }, 0);
+    });
+
+  </script>
+</body>
+</html>
+

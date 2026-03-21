@@ -36,6 +36,10 @@
        Global Stylesheet
   ============================================================ -->
   <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section__heading { display: flex; flex-direction: column; gap: var(--space-4); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
 </head>
 <body>
 
@@ -150,6 +154,138 @@
             Files are processed entirely in your browser and are never uploaded to any server.
           </div>
 
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to convert JSON to TSV</h2>
+        <p class="section-body">Paste your JSON, convert it to TSV (tab-separated values), and download the result instantly. Everything runs in your browser with no uploads or data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste or upload your JSON</p>
+            <p class="step__desc">Paste JSON data into the input or upload a file.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Convert JSON to TSV</p>
+            <p class="step__desc">The tool automatically converts JSON objects into rows and fields into tab-separated columns.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Download the TSV file</p>
+            <p class="step__desc">Download the converted TSV or copy it to your clipboard.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">WHY USE THIS TOOL</p>
+        <h2 class="section-title" id="why-heading">Why convert JSON to TSV?</h2>
+        <p class="section-body">JSON is commonly used in APIs and applications, while TSV (tab-separated values) is widely used for spreadsheets and data processing. Converting JSON to TSV makes it easier to work with structured data in tabular formats.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 9h6M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Open in Excel or Sheets</p>
+              <p class="benefit__desc">Open TSV files directly in Excel or Google Sheets for easy viewing and editing.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 14V4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Analyze API data</p>
+              <p class="benefit__desc">Work with API data using filters, formulas, and charts in spreadsheet tools.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Structured data to table</p>
+              <p class="benefit__desc">Convert JSON objects into rows and columns for clearer organization.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <circle cx="12.5" cy="5.5" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Simple tab-separated format</p>
+              <p class="benefit__desc">Use TSV when you need a clean, delimiter-safe format without commas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="secure-heading">
+      <div class="container--wide">
+        <p class="section-label">PRIVACY</p>
+        <h2 class="section-title" id="secure-heading">Private and secure JSON to TSV conversion</h2>
+        <p class="section-body">Your JSON data is processed entirely in your browser. No files are uploaded, stored, or transmitted during conversion.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Data stays on your device</p>
+              <p class="benefit__desc">All processing happens locally in your browser with no server interaction.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 7h6M6 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 4h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Nothing stored or sent</p>
+              <p class="benefit__desc">No files, inputs, or outputs are saved or transmitted.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Fast and private</p>
+              <p class="benefit__desc">Conversion happens instantly in memory with no external dependencies.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -298,6 +434,8 @@
   const downloadLink = document.getElementById('downloadLink');
 
   let tsvBlobUrl = null;
+  let lastRunInputKey = '';
+  let hasRunCurrentInput = false;
 
   // ---- Friendly parse error (line/column when available) ----
   function getFriendlyParseError(err) {
@@ -403,26 +541,67 @@
     return (jsonInput.value || '').trim();
   }
 
-  function isInputValidForConvert() {
-    var text = getInputText();
-    if (!text) return false;
+  function getInputRunKey() {
+    return getInputText();
+  }
+
+  function resetRunState() {
+    hasRunCurrentInput = false;
+  }
+
+  function parseJsonWithRecovery(text) {
     try {
-      var data = JSON.parse(text);
-      if (Array.isArray(data)) {
-        if (data.length === 0) return false;
-        for (var i = 0; i < data.length; i++) {
-          var item = data[i];
-          if (item === null || typeof item !== 'object' || Array.isArray(item)) return false;
-        }
-        return getAllKeys(data).length > 0;
-      }
-      if (data !== null && typeof data === 'object' && !Array.isArray(data)) {
-        return Object.keys(data).length > 0;
-      }
-      return false;
-    } catch (e) {
-      return false;
+      return { data: JSON.parse(text), recovered: false };
+    } catch (err) {
+      const recoveredText = tryAutoCloseJson(text);
+      if (!recoveredText) throw err;
+      return { data: JSON.parse(recoveredText), recovered: true };
     }
+  }
+
+  function tryAutoCloseJson(text) {
+    const stack = [];
+    let inString = false;
+    let escaped = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (inString) {
+        if (escaped) {
+          escaped = false;
+        } else if (ch === '\\') {
+          escaped = true;
+        } else if (ch === '"') {
+          inString = false;
+        }
+        continue;
+      }
+
+      if (ch === '"') {
+        inString = true;
+        continue;
+      }
+      if (ch === '{' || ch === '[') {
+        stack.push(ch);
+        continue;
+      }
+      if (ch === '}' || ch === ']') {
+        const top = stack[stack.length - 1];
+        if ((ch === '}' && top === '{') || (ch === ']' && top === '[')) {
+          stack.pop();
+        } else {
+          return null;
+        }
+      }
+    }
+
+    if (inString || !stack.length) return null;
+
+    let suffix = '';
+    for (let i = stack.length - 1; i >= 0; i--) {
+      suffix += stack[i] === '{' ? '}' : ']';
+    }
+    return text + suffix;
   }
 
   var validationTimer = null;
@@ -433,13 +612,16 @@
   }
 
   function checkReady() {
-    var valid = isInputValidForConvert();
-    convertBtn.disabled = !valid;
+    var hasContent = getInputText().length > 0;
+    var runKey = getInputRunKey();
+    var alreadyRanThisInput = hasRunCurrentInput && runKey === lastRunInputKey;
+    convertBtn.disabled = !hasContent || alreadyRanThisInput;
     updateClearLinkState();
   }
 
   function setInputText(text) {
     jsonInput.value = text;
+    resetRunState();
     clearError();
     clearResult();
     updateClearLinkState();
@@ -482,11 +664,13 @@
   });
 
   jsonInput.addEventListener('input', function () {
+    resetRunState();
     updateClearLinkState();
     if (validationTimer) clearTimeout(validationTimer);
     validationTimer = setTimeout(checkReady, 300);
   });
   jsonInput.addEventListener('paste', function () {
+    resetRunState();
     setTimeout(function () {
       updateClearLinkState();
       if (validationTimer) clearTimeout(validationTimer);
@@ -506,22 +690,25 @@
     }
     setProcessing(true);
     try {
-      var data = JSON.parse(text);
+      var parsed = parseJsonWithRecovery(text);
+      var data = parsed.data;
       var rows = normalizeInput(data);
       var tsv = jsonToTsv(rows);
       resultSection.classList.add('visible');
       tsvOutput.value = tsv;
       var lineCount = tsv.split(/\r\n|\r|\n/).length;
-      resultMeta.textContent = lineCount.toLocaleString() + ' row' + (lineCount !== 1 ? 's' : '') + ' (including header)';
+      resultMeta.textContent = lineCount.toLocaleString() + ' row' + (lineCount !== 1 ? 's' : '');
       var blob = new Blob([tsv], { type: 'text/tab-separated-values;charset=utf-8' });
       if (tsvBlobUrl) URL.revokeObjectURL(tsvBlobUrl);
       tsvBlobUrl = URL.createObjectURL(blob);
       downloadLink.href = tsvBlobUrl;
       downloadLink.download = 'output.tsv';
       downloadLink.style.display = 'inline-flex';
+      lastRunInputKey = getInputRunKey();
+      hasRunCurrentInput = true;
     } catch (err) {
       if (err instanceof SyntaxError) {
-        showError(getFriendlyParseError(err));
+        showError('Invalid JSON. We can auto-fix simple missing closing brackets, but this input still has syntax issues.');
       } else {
         showError(err.message || 'Conversion failed.');
       }
@@ -535,10 +722,11 @@
     e.preventDefault();
     if (!(jsonInput.value || '').length) return;
     jsonInput.value = '';
+    resetRunState();
     clearError();
     clearResult();
     updateClearLinkState();
-    convertBtn.disabled = true;
+    checkReady();
     jsonInput.focus();
   });
 

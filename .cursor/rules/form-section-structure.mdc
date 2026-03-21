@@ -1,0 +1,34 @@
+# Form section structure and spacing
+
+Use a two-level pattern for tool forms:
+
+1. Top-level section stack uses `.form-body`
+2. Each individual section uses `.form-section`
+
+## Spacing intent
+
+- `.form-body` controls spacing **between sections** (larger rhythm, currently 24px).
+- `.form-section` controls spacing **inside a section** (tighter label/control spacing, currently 12px).
+
+Do **not** use `.form-section` as both the outer stack and inner section wrapper on the same form area.
+
+## Recommended markup pattern
+
+```html
+<div class="form-body">
+  <div class="form-section">
+    <!-- label + control(s) -->
+  </div>
+
+  <div class="form-section">
+    <!-- next section -->
+  </div>
+</div>
+```
+
+## Why
+
+This keeps vertical rhythm predictable:
+
+- tighter spacing within each control group
+- consistent larger spacing between distinct groups

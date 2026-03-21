@@ -31,6 +31,11 @@
   <link rel="stylesheet" href="../css/global.css" />
   <style>
     .column-checkbox-list { max-height: 180px; }
+    .result-section.visible {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
   </style>
 </head>
 <body>
@@ -168,28 +173,23 @@
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
         <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Deduplicate a CSV</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <h2 class="section-title" id="how-heading">How to remove duplicates from a CSV</h2>
+        <p class="section-body">Upload your CSV, choose how to identify duplicate rows, and download a deduplicated file. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
-            <p class="step__title">Paste CSV data or upload a file</p>
-            <p class="step__desc">Paste comma-separated data into the input box or upload a CSV file using the upload area.</p>
+            <p class="step__title">Upload or paste your CSV</p>
+            <p class="step__desc">Paste your CSV data or upload a file. The first row should contain your column headers.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
             <p class="step__title">Choose how to identify duplicates</p>
-            <p class="step__desc">Indicate whether the first row is a header, then choose exact duplicate rows or duplicates based on selected columns.</p>
+            <p class="step__desc">Select whether to remove exact duplicate rows or match duplicates based on specific columns.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Click Remove Duplicates</p>
-            <p class="step__desc">The tool keeps the first occurrence of each duplicate and shows a summary of rows removed.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Copy or download the cleaned CSV</p>
-            <p class="step__desc">Copy the result to your clipboard or download it as a CSV file.</p>
+            <p class="step__title">Download the deduplicated CSV</p>
+            <p class="step__desc">Remove duplicates and download the cleaned file instantly, or copy it to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -396,6 +396,13 @@
       let csvBlobUrl = null;
       let lastUploadFilename = '';
       let parsedData = null;
+      let lastRunKey = '';
+      let hasRunCurrentConfig = false;
+
+      function resetRunState() {
+        lastRunKey = '';
+        hasRunCurrentConfig = false;
+      }
 
       function formatNum(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 
@@ -479,6 +486,16 @@
         return indices;
       }
 
+      function getRunKey() {
+        var hasHeader = hasHeaderCheckbox.checked ? '1' : '0';
+        var mode = modeColumns.checked ? 'columns' : 'exact';
+        var selected = modeColumns.checked
+          ? getSelectedColumnIndices().slice().sort(function (a, b) { return a - b; }).join(',')
+          : '';
+        var headerSig = parsedData && parsedData.displayNames ? parsedData.displayNames.join('|') : '';
+        return hasHeader + '::' + mode + '::' + selected + '::' + headerSig;
+      }
+
       function parseAndUpdateColumns() {
         var text = getInputText();
         parsedData = null;
@@ -543,20 +560,21 @@
           var sel = getSelectedColumnIndices();
           if (sel.length === 0) { dedupeBtn.disabled = true; return; }
         }
+        if (hasRunCurrentConfig && getRunKey() === lastRunKey) { dedupeBtn.disabled = true; return; }
         dedupeBtn.disabled = false;
       }
 
       function dedupe() {
         var text = getInputText();
-        if (!text) { showError('Please paste CSV data or upload a file.'); csvInput.focus(); return; }
+        if (!text) { showError('Please paste CSV data or upload a file.'); csvInput.focus(); return false; }
 
         var rows = parseCSV(text);
-        if (!rows || rows.length === 0) { showError('The CSV appears to be empty.'); return; }
+        if (!rows || rows.length === 0) { showError('The CSV appears to be empty.'); return false; }
 
         var hasHeader = hasHeaderCheckbox.checked;
         var dataStart = hasHeader ? 1 : 0;
         var dataRows = rows.slice(dataStart);
-        if (dataRows.length === 0) { showError('No data rows to deduplicate.'); return; }
+        if (dataRows.length === 0) { showError('No data rows to deduplicate.'); return false; }
 
         var normalized = normalizeColumnCount(rows.map(function (r) { return r.slice(); }));
         var header = hasHeader ? [normalized[0]] : [];
@@ -565,7 +583,7 @@
         var keyIndices = null;
         if (modeColumns.checked && parsedData) {
           keyIndices = getSelectedColumnIndices();
-          if (keyIndices.length === 0) { showError('Please select at least one column for deduplication.'); return; }
+          if (keyIndices.length === 0) { showError('Please select at least one column for deduplication.'); return false; }
         }
 
         function rowKey(row) {
@@ -599,6 +617,7 @@
         var baseName = lastUploadFilename ? lastUploadFilename.replace(/\.[^/.]+$/, '') : '';
         downloadLink.download = baseName ? baseName + '-deduplicated.csv' : 'deduplicated.csv';
         downloadLink.style.display = 'inline-flex';
+        return true;
       }
 
       hasHeaderCheckbox.addEventListener('change', function () { parseAndUpdateColumns(); });
@@ -625,6 +644,7 @@
         if (!getInputText().length) return;
         csvInput.value = '';
         lastUploadFilename = '';
+        resetRunState();
         clearError();
         clearResult();
         parseAndUpdateColumns();
@@ -634,6 +654,7 @@
 
       csvInput.addEventListener('input', function () {
         lastUploadFilename = '';
+        resetRunState();
         clearError();
         clearResult();
         parseAndUpdateColumns();
@@ -666,11 +687,16 @@
         dedupeBtn.disabled = true;
         dedupeBtn.classList.add('spinning');
         dedupeBtn.setAttribute('aria-busy', 'true');
-        try { dedupe(); } finally {
+        var didRun = false;
+        try { didRun = dedupe(); } finally {
           dedupeBtn.classList.remove('spinning');
           dedupeBtn.removeAttribute('aria-busy');
+          if (didRun) {
+            lastRunKey = getRunKey();
+            hasRunCurrentConfig = true;
+          }
+          updateDedupeButtonState();
         }
-        dedupeBtn.disabled = true;
       });
 
       copyBtn.addEventListener('click', function () {

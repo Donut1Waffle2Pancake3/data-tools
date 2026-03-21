@@ -33,6 +33,7 @@
     .find-replace-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-12) var(--space-16); }
     @media (max-width: 640px) { .find-replace-grid { grid-template-columns: 1fr; } }
     .find-replace-field { display: flex; flex-direction: column; gap: var(--space-8); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
   </style>
 </head>
 <body>
@@ -139,29 +140,24 @@
 
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Find and Replace Text</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to find and replace text</h2>
+        <p class="section-body">Paste your text, enter what you want to find and replace, and get the updated result instantly. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
             <p class="step__title">Paste your text</p>
-            <p class="step__desc">Paste the text you want to modify into the input box.</p>
+            <p class="step__desc">Paste the text you want to modify into the input.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
             <p class="step__title">Enter find and replace values</p>
-            <p class="step__desc">Type the text to find and the replacement text. You can use plain text or regex for find.</p>
+            <p class="step__desc">Enter the text to find and the replacement text. You can also use options like case sensitivity or regex.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Set options and click Replace</p>
-            <p class="step__desc">Choose case-sensitive or replace all, then click Replace. The preview shows the updated text.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Copy the output</p>
-            <p class="step__desc">Copy the result to your clipboard for use in docs, code, or configs.</p>
+            <p class="step__title">Copy the updated text</p>
+            <p class="step__desc">Apply the changes and copy the updated text to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -277,38 +273,65 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-1-answer">
-              <span itemprop="name">How do I find and replace text in a document online without Word or uploading?</span>
+              <span itemprop="name">How do I find and replace text online?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="fr-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Paste your text, enter the find string and replacement text, set options (case-sensitive, replace all), then click Replace. Copy the result from the preview.</span>
+              <span itemprop="text">Paste your text, enter the text to find and the replacement, and apply the changes instantly. You can then copy the updated result.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-2-answer">
-              <span itemprop="name">Can I use regex or regular expressions to find and replace text?</span>
+              <span itemprop="name">What is the easiest way to find and replace text in a document?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="fr-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Check “Regex” so the find field is treated as a JavaScript regular expression. Invalid regex will show an error; fix the pattern and try again.</span>
+              <span itemprop="text">The easiest way is to use a browser-based find and replace tool. It lets you update text instantly without using Word, scripts, or uploading files.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-3-answer">
-              <span itemprop="name">Is my text sent to a server when I do find and replace in the browser?</span>
+              <span itemprop="name">Can I find and replace text without uploading my file?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="fr-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+              <span itemprop="text">Yes. This tool runs entirely in your browser, so your text is never uploaded or sent to a server.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-4-answer">
-              <span itemprop="name">What’s the difference between replacing the first match and replace all?</span>
+              <span itemprop="name">Can I use regex (regular expressions) for find and replace?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="fr-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">When “Replace all” is checked, every match in the text is replaced. When unchecked, only the first occurrence is replaced.</span>
+              <span itemprop="text">Yes. You can use regular expressions to match patterns and perform advanced find and replace operations.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-5-answer">
+              <span itemprop="name">What is the difference between replace and replace all?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="fr-faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Replace updates one match at a time, while replace all updates every matching instance in the text at once.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-6-answer">
+              <span itemprop="name">Can I do bulk find and replace across large text?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="fr-faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. You can quickly replace multiple instances of text in large documents, logs, or code blocks.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="fr-faq-7-answer">
+              <span itemprop="name">Is find and replace case-sensitive?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="fr-faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">You can choose whether matching is case-sensitive, allowing you to treat “Text” and “text” as the same or different.</span>
             </div>
           </div>
         </div>
@@ -349,10 +372,12 @@
       }
 
       function updateActionButtonState() {
-        var hasInput = (textInput.value || '').trim().length > 0;
-        actionBtn.disabled = !hasInput;
-        clearLink.classList.toggle('clear-link--enabled', hasInput);
-        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+        var hasTextInput = (textInput.value || '').trim().length > 0;
+        var hasFindValue = (findInput.value || '').trim().length > 0;
+        var hasReplaceValue = (replaceInput.value || '').trim().length > 0;
+        actionBtn.disabled = !(hasTextInput && hasFindValue && hasReplaceValue);
+        clearLink.classList.toggle('clear-link--enabled', hasTextInput);
+        clearLink.setAttribute('aria-disabled', hasTextInput ? 'false' : 'true');
       }
 
       function escapeRegExp(s) {
@@ -419,8 +444,8 @@
       });
 
       [findInput, replaceInput, caseSensitiveCheckbox, replaceAllCheckbox].forEach(function (el) {
-        el.addEventListener('input', function () { clearError(); clearResult(); });
-        el.addEventListener('change', function () { clearError(); clearResult(); });
+        el.addEventListener('input', function () { clearError(); clearResult(); updateActionButtonState(); });
+        el.addEventListener('change', function () { clearError(); clearResult(); updateActionButtonState(); });
       });
 
       actionBtn.addEventListener('click', function () {

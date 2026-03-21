@@ -34,6 +34,8 @@
     .tool-form__actions { display: flex; flex-wrap: wrap; gap: var(--space-12); }
     .filter-row__select { min-width: 140px; max-width: 220px; }
     .form-label-row__links { display: flex; align-items: center; gap: var(--space-12); }
+    .result-section__heading { display: flex; flex-direction: column; gap: var(--space-4); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
   </style>
 </head>
 <body>
@@ -154,13 +156,8 @@
               <p class="result-section__meta" id="resultMeta"></p>
             </div>
             <div class="result-section__body">
-            <div class="results-summary" id="resultsSummary" aria-label="Filter summary" hidden>
-              <span id="summaryProcessed"></span>
-              <span id="summaryKept"></span>
-              <span id="summaryRemoved"></span>
-            </div>
             <div class="form-group">
-              <label class="form-label" for="csvOutput">Filtered CSV output</label>
+              <label class="form-label" for="csvOutput">Output</label>
               <textarea id="csvOutput" class="form-input" readonly placeholder="Filtered CSV will appear here." aria-label="Filtered CSV preview" style="min-height: 120px;"></textarea>
             </div>
             <div class="result-actions">
@@ -194,29 +191,24 @@
 
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Filter Rows in a CSV</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to filter rows in a CSV</h2>
+        <p class="section-body">Upload your CSV, set your filter conditions, and download the filtered data. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
-            <p class="step__title">Paste CSV data or upload a file</p>
-            <p class="step__desc">Paste comma-separated data into the input box or upload a CSV file using the upload area.</p>
+            <p class="step__title">Upload or paste your CSV</p>
+            <p class="step__desc">Paste your CSV data or upload a file. The first row should contain your column headers.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Choose header and delimiter</p>
-            <p class="step__desc">Tell the tool whether the first row is a header and choose the delimiter if your CSV uses tabs, semicolons, or pipes.</p>
+            <p class="step__title">Set your filter conditions</p>
+            <p class="step__desc">Choose a column, operator, and value to filter rows. You can add multiple conditions and match all or any of them.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Add one or more filter conditions</p>
-            <p class="step__desc">Pick a column, an operator, and a value. You can add multiple conditions and choose whether to match all of them or any of them.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Filter rows and download the result</p>
-            <p class="step__desc">Click Filter Rows to generate a filtered CSV, then copy the output or download it as a file.</p>
+            <p class="step__title">Download the filtered CSV</p>
+            <p class="step__desc">Apply the filters and download the result instantly, or copy it to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -372,10 +364,6 @@
       const errorText = document.getElementById('errorText');
       const resultSection = document.getElementById('resultSection');
       const resultMeta = document.getElementById('resultMeta');
-      const resultsSummary = document.getElementById('resultsSummary');
-      const summaryProcessed = document.getElementById('summaryProcessed');
-      const summaryKept = document.getElementById('summaryKept');
-      const summaryRemoved = document.getElementById('summaryRemoved');
       const csvOutput = document.getElementById('csvOutput');
       const copyBtn = document.getElementById('copyBtn');
       const downloadLink = document.getElementById('downloadLink');
@@ -477,10 +465,6 @@
         resultSection.classList.remove('visible');
         csvOutput.value = '';
         resultMeta.textContent = '';
-        resultsSummary.hidden = true;
-        summaryProcessed.textContent = '';
-        summaryKept.textContent = '';
-        summaryRemoved.textContent = '';
         if (csvBlobUrl) {
           URL.revokeObjectURL(csvBlobUrl);
           csvBlobUrl = null;
@@ -503,11 +487,33 @@
 
       function updateFilterButtonState() {
         const hasText = getInputText().length > 0;
-        filterBtn.disabled = !hasText;
+        const canApplyFilters = hasText && parsedRows && parsedRows.length && areFiltersComplete();
+        filterBtn.disabled = !canApplyFilters;
         addFilterLink.classList.toggle('clear-link--enabled', hasText);
         addFilterLink.setAttribute('aria-disabled', hasText ? 'false' : 'true');
         clearLink.classList.toggle('clear-link--enabled', hasText);
         clearLink.setAttribute('aria-disabled', hasText ? 'false' : 'true');
+      }
+
+      function areFiltersComplete() {
+        const rows = filterContainer.querySelectorAll('.filter-row');
+        if (!rows.length) return false;
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          const colSelect = row.querySelector('.filter-column');
+          const opSelect = row.querySelector('.filter-operator');
+          const valueInput = row.querySelector('.filter-value');
+          if (!colSelect || !opSelect) return false;
+
+          const colIndex = parseInt(colSelect.value, 10);
+          const op = opSelect.value;
+          const value = valueInput ? (valueInput.value || '').trim() : '';
+          const needsValue = ['eq','neq','contains','not_contains','starts_with','ends_with','gt','lt','gte','lte'].indexOf(op) !== -1;
+
+          if (isNaN(colIndex)) return false;
+          if (needsValue && !value) return false;
+        }
+        return true;
       }
 
       function updateResetFiltersLinkState() {
@@ -519,6 +525,7 @@
       function clearFilters() {
         while (filterContainer.firstChild) filterContainer.removeChild(filterContainer.firstChild);
         updateResetFiltersLinkState();
+        updateFilterButtonState();
       }
 
       function createFilterRow(columnOptions) {
@@ -571,17 +578,22 @@
           const needsValue = ['eq','neq','contains','not_contains','starts_with','ends_with','gt','lt','gte','lte'].indexOf(op) !== -1;
           valueInput.disabled = !needsValue;
           if (!needsValue) valueInput.value = '';
+          updateFilterButtonState();
         });
+        columnSelect.addEventListener('change', updateFilterButtonState);
+        valueInput.addEventListener('input', updateFilterButtonState);
 
         if (removeBtn && removeBtn.parentNode) {
           removeBtn.addEventListener('click', function () {
             filterContainer.removeChild(row);
             updateResetFiltersLinkState();
+            updateFilterButtonState();
           });
         }
 
         filterContainer.appendChild(row);
         updateResetFiltersLinkState();
+        updateFilterButtonState();
       }
 
       function parseAndUpdateFilterUi() {
@@ -589,7 +601,10 @@
         clearFilters();
 
         const text = getInputText();
-        if (!text) return;
+        if (!text) {
+          updateFilterButtonState();
+          return;
+        }
 
         const delim = getDelimiterChar();
         let rows;
@@ -597,10 +612,12 @@
           rows = parseCSV(text, delim);
         } catch (err) {
           showError('Could not parse CSV. Please check the delimiter and structure.');
+          updateFilterButtonState();
           return;
         }
         if (!rows || !rows.length) {
           showError('No rows found. Please check your CSV input.');
+          updateFilterButtonState();
           return;
         }
 
@@ -614,6 +631,7 @@
         addFilterLink.classList.add('clear-link--enabled');
         addFilterLink.setAttribute('aria-disabled', 'false');
         createFilterRow(displayNames);
+        updateFilterButtonState();
       }
 
       function getFiltersFromUi() {
@@ -728,20 +746,13 @@
         csvOutput.value = csvText;
         resultSection.classList.add('visible');
 
-        const processedCount = dataRows.length;
         const keptCount = kept.length;
-        const removedCount = removed.length;
 
         resultMeta.textContent = keptCount === 0
           ? 'No matching rows. Header only.'
           : (hasHeader
-            ? formatNum(keptCount) + ' data rows kept'
+            ? formatNum(keptCount) + ' data row' + (keptCount === 1 ? '' : 's') + ' kept'
             : formatNum(keptCount) + ' rows kept');
-
-        resultsSummary.hidden = false;
-        summaryProcessed.textContent = 'Rows processed: ' + formatNum(processedCount);
-        summaryKept.textContent = 'Rows kept: ' + formatNum(keptCount);
-        summaryRemoved.textContent = 'Rows removed: ' + formatNum(removedCount);
 
         if (csvBlobUrl) {
           URL.revokeObjectURL(csvBlobUrl);

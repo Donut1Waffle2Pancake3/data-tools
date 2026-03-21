@@ -43,6 +43,13 @@ const NAV_GROUPS = [
       ],
     },
     {
+      label: 'File',
+      id: 'file-tools',
+      items: [
+        { id: 'zip-combiner', href: 'zip-combiner/index.html', label: 'Batch ZIP Extractor' },
+      ],
+    },
+    {
       label: 'Converters',
       id: 'converters',
       items: [
@@ -92,7 +99,7 @@ const RELATED_TOOL_OVERRIDES = {
         '<div class="nav-dropdown" id="navDropdown' + group.id + '">\n' +
         '        <button class="nav-dropdown__trigger" aria-haspopup="true" aria-expanded="false" aria-controls="' + menuId + '" id="' + triggerId + '">\n' +
         '          ' + group.label + '\n' +
-        '          <svg class="nav-dropdown__chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">\n' +
+        '          <svg class="nav-dropdown__chevron" width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">\n' +
         '            <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>\n' +
         '          </svg>\n' +
         '        </button>\n' +
@@ -628,6 +635,26 @@ function initDropZone(options) {
   });
 }
 
+/* ============================================================
+   CLICKABLE FORM OPTION ROWS
+   Make the full option wrapper clickable (including gap area)
+   for checkbox/radio rows that use wrapper + separate label/input.
+============================================================ */
+function initClickableFormOptionRows() {
+  document.addEventListener('click', function (e) {
+    // Let native controls/labels handle their own clicks.
+    if (e.target.closest('input, label, a, button, select, textarea')) return;
+
+    var row = e.target.closest('.column-checkbox-item, .form-option, .dedupe-mode__option');
+    if (!row) return;
+
+    var input = row.querySelector('input[type="checkbox"], input[type="radio"]');
+    if (!input || input.disabled) return;
+
+    input.click();
+  });
+}
+
 /**
  * Parse a CSV string into an array of row strings.
  * Handles quoted fields that contain commas or embedded newlines.
@@ -676,4 +703,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavDrawer();
   initFaqAccordion();
   movePrivacyNoteBelowToolCard();
+  initClickableFormOptionRows();
 });

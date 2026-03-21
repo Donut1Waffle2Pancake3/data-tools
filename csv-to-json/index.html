@@ -29,6 +29,9 @@
   <link rel="icon" href="../assets/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
 </head>
 <body>
 
@@ -105,9 +108,6 @@
                 </svg>
                 Download JSON
               </a>
-              <button class="btn-download" id="clearOutputBtn" type="button" aria-label="Clear output">
-                Clear
-              </button>
             </div>
             </div>
           </div>
@@ -126,29 +126,24 @@
 
     <section class="content-section content-section--centered" aria-labelledby="how-heading">
       <div class="container--wide">
-        <p class="section-label">How it works</p>
-        <h2 class="section-title" id="how-heading">How to Convert CSV to JSON</h2>
-        <p class="section-body">Everything runs in your browser. No account, no software, no data leaving your device.</p>
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to convert CSV to JSON</h2>
+        <p class="section-body">Paste your CSV, convert it to JSON, and download the result instantly. Everything runs in your browser with no uploads or data leaving your device.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
-            <p class="step__title">Paste your CSV data or upload a file</p>
-            <p class="step__desc">Paste comma-separated text into the input box or upload a CSV or text file using the upload area.</p>
+            <p class="step__title">Paste or upload your CSV</p>
+            <p class="step__desc">Paste CSV data into the input or upload a file. The first row should contain your column headers.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Click Convert to JSON</p>
-            <p class="step__desc">Click the convert button to generate a JSON array of objects from your CSV. The first row becomes the property names.</p>
+            <p class="step__title">Convert CSV to JSON</p>
+            <p class="step__desc">The tool automatically converts each row into a JSON object, using the header row as property names.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Review the JSON output</p>
-            <p class="step__desc">Check the preview to confirm the conversion looks correct.</p>
-          </article>
-          <article class="step" role="listitem">
-            <span class="step__number" aria-hidden="true">4</span>
-            <p class="step__title">Copy or download</p>
-            <p class="step__desc">Copy the JSON to your clipboard or download it as a JSON file for use in APIs, scripts, or databases.</p>
+            <p class="step__title">Download the JSON file</p>
+            <p class="step__desc">Download the converted JSON or copy it to your clipboard.</p>
           </article>
         </div>
       </div>
@@ -264,47 +259,74 @@
         <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
-              <span itemprop="name">How do I convert CSV to JSON?</span>
+              <span itemprop="name">How do I convert CSV to JSON online?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Paste your CSV or upload a file, then click Convert. The first row becomes the keys; each following row becomes one object in the output array. Download or copy the JSON.</span>
+              <span itemprop="text">Paste or upload your CSV file, and the tool will convert each row into a JSON object using the header row as keys. You can then download or copy the result.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">Can I do this without Excel or a script?</span>
+              <span itemprop="name">What is the easiest way to convert CSV to JSON?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Conversion runs in your browser. The output is standard JSON you can use in JavaScript, APIs, or databases.</span>
+              <span itemprop="text">The easiest way is to use a browser-based CSV to JSON converter. It automatically maps rows to objects and columns to properties without requiring Excel or code.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
-              <span itemprop="name">What happens to the header row?</span>
+              <span itemprop="name">Can I convert CSV to JSON without Excel or coding?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">The first row is used as property names (keys) for each JSON object. It is not repeated as a data row in the array.</span>
+              <span itemprop="text">Yes. This tool works entirely in your browser, so you can convert CSV to JSON instantly without using Excel, scripts, or installing software.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
-              <span itemprop="name">Does this tool keep my data private?</span>
+              <span itemprop="name">How does a CSV file map to JSON format?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. Processing runs locally in your browser. Nothing is uploaded or stored.</span>
+              <span itemprop="text">Each row in the CSV becomes a JSON object, and each column header becomes a key. The result is typically a JSON array of objects.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
-              <span itemprop="name">Does it handle CSV with commas or quotes inside values?</span>
+              <span itemprop="name">What happens to the header row in CSV to JSON conversion?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The parser respects quoted fields. Values with commas, quotes, or newlines are read as single cells and appear correctly in the JSON.</span>
+              <span itemprop="text">The first row is used as property names (keys) in the JSON output. If your CSV does not include headers, the tool may generate default keys.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">Does this tool handle commas, quotes, and delimiters in CSV files?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Properly formatted CSV files with quoted values and embedded commas are supported and parsed correctly.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">What if my CSV is malformed or invalid?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">If the CSV format is incorrect, the tool may show errors or produce unexpected results. Ensure your file follows standard CSV formatting.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
+              <span itemprop="name">Is my data private when converting CSV to JSON?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. All processing happens locally in your browser. Your data is never uploaded or sent to a server.</span>
             </div>
           </div>
         </div>
@@ -333,10 +355,11 @@
       const jsonOutput   = document.getElementById('jsonOutput');
       const copyBtn      = document.getElementById('copyBtn');
       const downloadLink = document.getElementById('downloadLink');
-      const clearOutputBtn = document.getElementById('clearOutputBtn');
 
       let jsonBlobUrl = null;
       let lastUploadFilename = '';
+      let lastRunInputKey = '';
+      let hasRunCurrentInput = false;
 
       /**
        * Parse CSV text into rows of cell values.
@@ -430,9 +453,18 @@
         return (csvInput.value || '').trim();
       }
 
+      function getInputRunKey() {
+        return getInputText();
+      }
+
+      function resetRunState() {
+        hasRunCurrentInput = false;
+      }
+
       function setInputText(text, filename) {
         csvInput.value = text;
         lastUploadFilename = filename || '';
+        resetRunState();
         clearError();
         clearResult();
         checkReady();
@@ -444,7 +476,9 @@
 
       function checkReady() {
         var valid = isInputValid();
-        convertBtn.disabled = !valid;
+        var runKey = getInputRunKey();
+        var alreadyRanThisInput = hasRunCurrentInput && runKey === lastRunInputKey;
+        convertBtn.disabled = !valid || alreadyRanThisInput;
         clearLink.classList.toggle('clear-link--enabled', valid);
         clearLink.setAttribute('aria-disabled', valid ? 'false' : 'true');
       }
@@ -462,14 +496,11 @@
         if (!isInputValid()) return;
         csvInput.value = '';
         lastUploadFilename = '';
+        resetRunState();
         clearError();
         clearResult();
         checkReady();
         csvInput.focus();
-      });
-
-      clearOutputBtn.addEventListener('click', function () {
-        clearResult();
       });
 
       dropZone.addEventListener('click', function (e) {
@@ -508,6 +539,7 @@
 
       csvInput.addEventListener('input', function () {
         lastUploadFilename = '';
+        resetRunState();
         checkReady();
       });
 
@@ -536,6 +568,8 @@
           downloadLink.href = jsonBlobUrl;
           downloadLink.download = getDownloadFilename();
           downloadLink.style.display = 'inline-flex';
+          lastRunInputKey = getInputRunKey();
+          hasRunCurrentInput = true;
         } catch (err) {
           showError(err.message || 'Conversion failed. Check that your input is valid CSV with a header row.');
         } finally {
