@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Text Case Converter - Free Online Tool | TinyDataTool</title>
+  <meta name="description" content="Convert text case online instantly. Generate uppercase, lowercase, title case, and sentence case from one input in your browser." />
+  <link rel="canonical" href="https://tinydatatool.com/text-case-converter/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Text Case Converter - Free Online Tool | TinyDataTool" />
+  <meta property="og:description" content="Convert text to uppercase, lowercase, title case, and sentence case instantly." />
+  <meta property="og:url" content="https://tinydatatool.com/text-case-converter/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Text Case Converter - Free Online Tool | TinyDataTool" />
+  <meta name="twitter:description" content="Change text case online with a private in-browser workflow." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Text Case Converter","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/text-case-converter/","description":"Convert text between uppercase, lowercase, title case, and sentence case directly in your browser. Free, private, and no uploads required."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .case-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }
+    .case-card { border: 1px solid var(--grey-6); border-radius: var(--radius); padding: var(--space-12); background: var(--grey-1); display: flex; flex-direction: column; gap: var(--space-8); }
+    .case-label { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .04em; }
+    .case-value { min-height: 56px; font-family: var(--font-body); font-size: 15px; line-height: var(--line-height-loose); white-space: pre-wrap; word-break: break-word; }
+    .case-actions { display: flex; justify-content: flex-end; }
+    @media (max-width: 768px) { .case-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="site-header-root" data-base="../" data-active="text-case-converter"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">Text Case Converter</h1>
+        <p class="hero__sub">Paste text and instantly convert it to uppercase, lowercase, title case, and sentence case. Everything runs in your browser with no uploads.</p>
+      </div>
+    </section>
+
+    <section aria-label="Text case converter" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="Text case converter tool">
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="textInput">Text input</label>
+              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+            </div>
+            <textarea id="textInput" class="form-input" placeholder="Paste text here to convert case." spellcheck="false"></textarea>
+          </div>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <section class="result-section" id="resultSection" aria-live="polite">
+            <header class="result-section__heading">
+              <div>
+                <p class="result-section__title">Results</p>
+                <p class="result-section__meta" id="resultMeta"></p>
+              </div>
+            </header>
+
+            <div class="case-grid">
+              <article class="case-card">
+                <p class="case-label">UPPERCASE</p>
+                <div class="case-value" id="upperValue"></div>
+                <div class="case-actions"><button class="btn-download" id="copyUpperBtn" type="button" disabled>Copy UPPERCASE</button></div>
+              </article>
+              <article class="case-card">
+                <p class="case-label">lowercase</p>
+                <div class="case-value" id="lowerValue"></div>
+                <div class="case-actions"><button class="btn-download" id="copyLowerBtn" type="button" disabled>Copy lowercase</button></div>
+              </article>
+              <article class="case-card">
+                <p class="case-label">Title Case</p>
+                <div class="case-value" id="titleValue"></div>
+                <div class="case-actions"><button class="btn-download" id="copyTitleBtn" type="button" disabled>Copy Title Case</button></div>
+              </article>
+              <article class="case-card">
+                <p class="case-label">Sentence case</p>
+                <div class="case-value" id="sentenceValue"></div>
+                <div class="case-actions"><button class="btn-download" id="copySentenceBtn" type="button" disabled>Copy Sentence case</button></div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to convert text case</h2>
+        <p class="section-body">Paste your text, generate multiple case formats, and copy the version you need. Everything runs in your browser with no uploads or data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste your text</p>
+            <p class="step__desc">Enter the text you want to transform into different letter cases.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Generate case outputs</p>
+            <p class="step__desc">The tool creates uppercase, lowercase, title case, and sentence case variants instantly.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy your preferred version</p>
+            <p class="step__desc">Use copy buttons to grab exactly the text style needed for your workflow.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">WHY USE THIS TOOL</p>
+        <h2 class="section-title" id="why-heading">Why use this text case converter?</h2>
+        <p class="section-body">Manual case editing is repetitive and error-prone. This tool generates common case formats in one pass so you can copy the exact style you need.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5"/></svg></div><div><p class="benefit__title">Multiple outputs at once</p><p class="benefit__desc">View uppercase, lowercase, title case, and sentence case together.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Fast copy workflow</p><p class="benefit__desc">Copy any specific case variant with one click.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12.5" cy="5.5" r="1" fill="currentColor"/></svg></div><div><p class="benefit__title">Useful for content editing</p><p class="benefit__desc">Prepare headings, labels, and text snippets in the right case format quickly.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Private browser processing</p><p class="benefit__desc">Text stays local on your device without uploads or server storage.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="privacy-heading">
+      <div class="container--wide">
+        <p class="section-label">PRIVACY</p>
+        <h2 class="section-title" id="privacy-heading">Private and secure case conversion</h2>
+        <p class="section-body">All text conversion happens locally in your browser session. No uploads, no storage, and no server-side processing.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Data stays on device</p><p class="benefit__desc">Your text is transformed in browser memory on your machine.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">No uploads or storage</p><p class="benefit__desc">Input and output text are never sent to remote infrastructure.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Runs in browser</p><p class="benefit__desc">Use the converter instantly without installing additional tools.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">How do I change text case online?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste your text into a case converter to generate uppercase, lowercase, title case, and sentence case instantly. Then copy the version you need.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">What is the easiest way to convert text to uppercase or lowercase?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Use a browser-based text case converter that returns all case formats in one view. It is faster than manually retyping or editing each character.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Can I convert text case without Word or coding?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. This tool runs directly in your browser with no Word shortcuts, scripts, or software installation.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">How does title case conversion work?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Title case capitalizes the first character of each word while lowercasing the rest. It is commonly used for headings and titles.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">What happens to punctuation and numbers during case conversion?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Punctuation and numeric characters are preserved as-is. Only alphabetic character casing is transformed.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What is a text case converter?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">A text case converter is a tool that changes letter casing, such as uppercase, lowercase, title case, or sentence case.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Is my text uploaded or stored when converting case?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. Conversion happens locally in your browser with no uploads and no server-side storage.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="text-case-converter"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var textInput = document.getElementById('textInput');
+      var clearLink = document.getElementById('clearLink');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var upperValue = document.getElementById('upperValue');
+      var lowerValue = document.getElementById('lowerValue');
+      var titleValue = document.getElementById('titleValue');
+      var sentenceValue = document.getElementById('sentenceValue');
+      var copyUpperBtn = document.getElementById('copyUpperBtn');
+      var copyLowerBtn = document.getElementById('copyLowerBtn');
+      var copyTitleBtn = document.getElementById('copyTitleBtn');
+      var copySentenceBtn = document.getElementById('copySentenceBtn');
+
+      function showError(message) {
+        errorText.textContent = message;
+        errorMsg.classList.add('visible');
+      }
+      function clearError() {
+        errorText.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+
+      function toTitleCase(text) {
+        return text.toLowerCase().replace(/\b([a-z])/g, function (m) { return m.toUpperCase(); });
+      }
+
+      function toSentenceCase(text) {
+        var lower = text.toLowerCase();
+        return lower.replace(/(^\s*[a-z])|([.!?]\s+[a-z])/g, function (m) { return m.toUpperCase(); });
+      }
+
+      function setCopyEnabled(enabled) {
+        copyUpperBtn.disabled = !enabled;
+        copyLowerBtn.disabled = !enabled;
+        copyTitleBtn.disabled = !enabled;
+        copySentenceBtn.disabled = !enabled;
+      }
+
+      function render() {
+        clearError();
+        var input = textInput.value || '';
+        var hasInput = input.length > 0;
+        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+
+        if (!hasInput) {
+          resultSection.classList.remove('visible');
+          upperValue.textContent = '';
+          lowerValue.textContent = '';
+          titleValue.textContent = '';
+          sentenceValue.textContent = '';
+          setCopyEnabled(false);
+          return;
+        }
+
+        try {
+          var upper = input.toUpperCase();
+          var lower = input.toLowerCase();
+          var title = toTitleCase(input);
+          var sentence = toSentenceCase(input);
+
+          upperValue.textContent = upper;
+          lowerValue.textContent = lower;
+          titleValue.textContent = title;
+          sentenceValue.textContent = sentence;
+          resultMeta.textContent = input.length.toLocaleString() + ' characters converted';
+          setCopyEnabled(true);
+          resultSection.classList.add('visible');
+        } catch (err) {
+          showError('Unable to convert text case.');
+          resultSection.classList.remove('visible');
+          setCopyEnabled(false);
+        }
+      }
+
+      function copyFrom(el, btn) {
+        var text = el.textContent || '';
+        if (!text) return;
+        var original = btn.innerHTML;
+        navigator.clipboard.writeText(text).then(function () {
+          btn.innerHTML = 'Copied!';
+          window.setTimeout(function () { btn.innerHTML = original; }, 1000);
+        }).catch(function () {
+          showError('Copy failed. Please copy manually.');
+        });
+      }
+
+      textInput.addEventListener('input', render);
+      clearLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (clearLink.getAttribute('aria-disabled') === 'true') return;
+        textInput.value = '';
+        render();
+      });
+      copyUpperBtn.addEventListener('click', function () { copyFrom(upperValue, copyUpperBtn); });
+      copyLowerBtn.addEventListener('click', function () { copyFrom(lowerValue, copyLowerBtn); });
+      copyTitleBtn.addEventListener('click', function () { copyFrom(titleValue, copyTitleBtn); });
+      copySentenceBtn.addEventListener('click', function () { copyFrom(sentenceValue, copySentenceBtn); });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

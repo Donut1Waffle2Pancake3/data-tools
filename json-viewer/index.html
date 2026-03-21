@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>JSON Viewer &amp; Tree Explorer | Secure Online JSON Formatter</title>
+  <meta name="description" content="View and format JSON with a 100% client-side JSON tree explorer. Secure nested data navigation, readable structure, and no uploads." />
+  <link rel="canonical" href="https://tinydatatool.com/json-viewer/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="JSON Viewer &amp; Tree Explorer | Secure Online JSON Formatter" />
+  <meta property="og:description" content="Explore and format JSON with 100% client-side processing and secure nested data navigation. No uploads, no storage, no server processing." />
+  <meta property="og:url" content="https://tinydatatool.com/json-viewer/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+  <meta property="og:image" content="https://tinydatatool.com/assets/json-viewer-og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="JSON Viewer and Tree Explorer — 100% client-side, private, fast in-browser processing" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="JSON Viewer &amp; Tree Explorer | Secure Online JSON Formatter" />
+  <meta name="twitter:description" content="100% client-side JSON viewing and formatting with secure nested data navigation. Explore JSON instantly in your browser." />
+  <meta name="twitter:image" content="https://tinydatatool.com/assets/json-viewer-og.png" />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"JSON Viewer & Tree Explorer","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/json-viewer/","description":"Online JSON formatter and beautifier with 100% client-side processing, secure nested data navigation, and no uploads.","featureList":["Collapsible JSON tree view for nested objects and arrays","Code view with formatted JSON output","100% client-side JSON parsing and rendering","Secure nested data navigation with no server upload","Copy JSON Path by clicking tree nodes for faster debugging","Drag-and-drop and file upload support for JSON files","Copy formatted JSON output to clipboard","Download formatted JSON output as a file","Fast in-browser processing with no account or installation"]}
+  </script>
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I view JSON in a readable format?","acceptedAnswer":{"@type":"Answer","text":"Paste or upload your JSON into the viewer. The tool automatically formats your data and displays it as a structured tree so you can quickly scan keys, values, and nested objects."}},{"@type":"Question","name":"How can I expand and explore nested JSON data?","acceptedAnswer":{"@type":"Answer","text":"The viewer converts your JSON into a collapsible tree. Click on objects or arrays to expand and inspect nested data without scrolling through raw text."}},{"@type":"Question","name":"Why is my JSON not displaying in the viewer?","acceptedAnswer":{"@type":"Answer","text":"If nothing appears, your JSON is likely invalid. Common issues include missing commas, extra or missing brackets, or incorrect quotes. Fix the error and try again. This tool only displays valid JSON."}},{"@type":"Question","name":"How do I find errors in my JSON file?","acceptedAnswer":{"@type":"Answer","text":"This viewer requires valid JSON to render results. If your data is not working, check for syntax errors like missing commas or unmatched brackets. For detailed error messages, use a JSON validator tool."}},{"@type":"Question","name":"Can this tool handle large JSON files?","acceptedAnswer":{"@type":"Answer","text":"Yes, it can handle moderately large files directly in your browser. Performance depends on your device and browser, so very large files may take longer to render or expand."}},{"@type":"Question","name":"What is a JSON tree view?","acceptedAnswer":{"@type":"Answer","text":"A JSON tree view organizes data into a hierarchical structure. Instead of reading raw text, you can expand and collapse sections to quickly understand relationships between objects and arrays."}},{"@type":"Question","name":"Is this JSON viewer safe for sensitive data?","acceptedAnswer":{"@type":"Answer","text":"Yes. All processing happens in your browser. Your JSON is not uploaded, stored, or sent to any server."}},{"@type":"Question","name":"Do I need to install anything to use this JSON viewer?","acceptedAnswer":{"@type":"Answer","text":"No. This is a browser-based tool. You can paste or upload JSON and view it instantly without installing software or creating an account."}}]}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .json-tree-wrap {
+      border: none;
+      border-radius: var(--radius);
+      background: var(--grey-2);
+      padding: var(--space-16);
+      max-height: 420px;
+      overflow: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      display: none;
+    }
+    .json-tree-wrap.visible { display: block; }
+    .json-tree, .json-tree ul {
+      margin: 0;
+      padding-left: var(--space-16);
+      list-style: none;
+    }
+    .json-tree { padding-left: 0; }
+    .json-tree details { margin: 0; }
+    .json-tree summary {
+      cursor: pointer;
+      list-style: none;
+      display: inline-flex;
+      gap: var(--space-8);
+      align-items: baseline;
+      color: var(--text-primary);
+    }
+    .json-tree summary::-webkit-details-marker { display: none; }
+    .json-tree summary::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      margin-right: 4px;
+      border-right: 2px solid var(--text-secondary);
+      border-bottom: 2px solid var(--text-secondary);
+      transform: rotate(-45deg);
+      transform-origin: center;
+      transition: transform 120ms ease;
+      align-self: center;
+      flex: 0 0 auto;
+      margin-top: 2px;
+    }
+    .json-tree details[open] > summary::before {
+      transform: rotate(45deg);
+    }
+    .json-key { color: var(--text-primary); font-weight: 600; }
+    .json-type { color: #475569; }
+    .json-value--string { color: #166534; }
+    .json-value--number { color: #1d4ed8; }
+    .json-value--boolean { color: #6b21a8; }
+    .json-value--null { color: #475569; font-style: italic; }
+    .json-leaf { margin: 0 0 var(--space-4); }
+    .path-bar {
+      position: static;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-12);
+      padding: 0;
+      margin-bottom: 8px;
+      border-radius: 0;
+      background: transparent;
+      border: none;
+    }
+    .path-bar__text {
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: #1e293b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .view-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-12);
+    }
+    .output-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-12);
+    }
+    .copy-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 32px;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.3;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 120ms ease;
+      z-index: 1000;
+    }
+    .copy-toast.visible { opacity: 1; }
+    @media (max-width: 640px) {
+      .output-actions .btn-download { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="site-header-root" data-base="../" data-active="json-viewer"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">JSON Viewer &amp; Tree Explorer</h1>
+        <p class="hero__sub">Use this online JSON formatter and beautifier to view JSON in a readable tree format. Open JSON files, paste raw data, and explore nested structures instantly in your browser.</p>
+      </div>
+    </section>
+
+    <section aria-label="JSON viewer" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="JSON viewer tool">
+          <div class="form-body">
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="jsonInput">JSON input</label>
+                <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true" title="Clear JSON input">Clear</a>
+              </div>
+              <textarea id="jsonInput" class="form-input" placeholder='Paste JSON here, for example: {"name":"Ada","roles":["admin","editor"]}' spellcheck="false"></textarea>
+            </div>
+
+            <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="JSON file upload area. Click to select a file or drag and drop it here." aria-describedby="drop-hint">
+              <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+              </svg>
+              <p class="drop-zone__label">Or upload a JSON file</p>
+              <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+              <input type="file" id="fileInput" accept=".json,application/json,text/plain" aria-label="Select JSON file" />
+            </div>
+
+            <div class="status-message status-message--error" id="errorMsg" role="alert" aria-live="polite">
+              <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
+                <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+              <span id="errorText"></span>
+            </div>
+
+            <section class="result-section" id="resultSection" aria-label="Results">
+              <header class="result-section__heading">
+                <div>
+                  <p class="result-section__title">JSON Tree View</p>
+                  <p class="result-section__meta" id="resultMeta">Parsed JSON appears below.</p>
+                </div>
+              </header>
+
+              <div class="view-controls">
+                <div class="tool-tabs" role="tablist" aria-label="JSON output view mode">
+                  <button type="button" class="tab active" role="tab" id="tab-tree-view" aria-selected="true" aria-controls="treeWrap" data-view-mode="tree">Tree view</button>
+                  <button type="button" class="tab" role="tab" id="tab-code-view" aria-selected="false" aria-controls="jsonOutput" data-view-mode="code">Code</button>
+                </div>
+              </div>
+
+              <div>
+                <div class="path-bar" id="pathBar">
+                  <p class="path-bar__text" id="pathBarText">Path: root</p>
+                  <a href="#" class="clear-link clear-link--enabled" id="copyPathBtn" role="button" title="Copy current JSON path">Copy Path</a>
+                </div>
+                <div class="json-tree-wrap" id="treeWrap">
+                  <div id="treeOutput"></div>
+                </div>
+                <textarea id="jsonOutput" class="form-input" readonly spellcheck="false" style="display:none;"></textarea>
+              </div>
+              <div class="output-actions">
+                <button class="btn-download" id="copyBtn" type="button" disabled>
+                  <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                    <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"></path>
+                  </svg>
+                  <span>Copy JSON</span>
+                </button>
+                <button class="btn-download" id="downloadBtn" type="button" disabled>
+                  <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                    <path d="M64 392C81.7 392 96 406.3 96 424L96 512L544 512L544 424C544 406.3 558.3 392 576 392C593.7 392 608 406.3 608 424L608 528C608 563.3 579.3 592 544 592L96 592C60.7 592 32 563.3 32 528L32 424C32 406.3 46.3 392 64 392zM297.4 438.6C309.9 451.1 330.2 451.1 342.7 438.6L470.7 310.6C483.2 298.1 483.2 277.8 470.7 265.3C458.2 252.8 437.9 252.8 425.4 265.3L352 338.7L352 80C352 62.3 337.7 48 320 48C302.3 48 288 62.3 288 80L288 338.7L214.6 265.4C202.1 252.9 181.8 252.9 169.3 265.4C156.8 277.9 156.8 298.2 169.3 310.7L297.3 438.7z"></path>
+                  </svg>
+                  <span>Download JSON</span>
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to debug JSON with an online viewer</h2>
+        <p class="section-body">Paste your JSON, view it in a readable tree, and copy or download the formatted result. Everything runs in your browser with no uploads or data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste or upload JSON</p>
+            <p class="step__desc">Paste your JSON or upload a .json file.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">View in tree format</p>
+            <p class="step__desc">Your data is displayed as an expandable tree.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy or download</p>
+            <p class="step__desc">Copy the result or download it as a file.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">WHY USE THIS TOOL</p>
+        <h2 class="section-title" id="why-heading">Why developers use this JSON viewer and formatter</h2>
+        <p class="section-body">JSON can be difficult to read when it is minified or deeply nested. This viewer helps you quickly understand structure and inspect data without scanning raw text.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem">
+            <div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5"/></svg></div>
+            <div><p class="benefit__title">Visualize nested hierarchies without losing context</p><p class="benefit__desc">Expand objects and arrays to inspect keys and values in a structured tree.</p></div>
+          </div>
+          <div class="benefit" role="listitem">
+            <div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div><p class="benefit__title">Pretty-print minified code for faster debugging</p><p class="benefit__desc">Switch to a formatted view when you need a clean, copy-friendly version.</p></div>
+          </div>
+          <div class="benefit" role="listitem">
+            <div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div><p class="benefit__title">Open JSON instantly without installing tools</p><p class="benefit__desc">Paste your data and view it immediately in your browser.</p></div>
+          </div>
+          <div class="benefit" role="listitem">
+            <div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12.5" cy="5.5" r="1" fill="currentColor"/></svg></div>
+            <div><p class="benefit__title">Copy JSON paths and structured output</p><p class="benefit__desc">Click tree nodes to copy JSON paths, then export formatted output for debugging, sharing, or documentation.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="privacy-heading">
+      <div class="container--wide">
+        <p class="section-label">PRIVACY</p>
+        <h2 class="section-title" id="privacy-heading">Secure client-side JSON viewing for sensitive data</h2>
+        <p class="section-body">Your JSON is processed entirely in your browser. No data is uploaded, stored, or transmitted.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem">
+            <div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div><p class="benefit__title">Data stays on your device</p><p class="benefit__desc">All parsing and rendering happen locally in your browser session.</p></div>
+          </div>
+          <div class="benefit" role="listitem">
+            <div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div><p class="benefit__title">No uploads or storage</p><p class="benefit__desc">Your input and output are never sent to a server or saved remotely.</p></div>
+          </div>
+          <div class="benefit" role="listitem">
+            <div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div><p class="benefit__title">No setup required</p><p class="benefit__desc">Use the viewer instantly with no backend processing or account needed.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">JSON viewer troubleshooting FAQs</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">How do I view JSON in a readable format?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste or upload your JSON into the viewer. The tool automatically formats your data and displays it as a structured tree so you can quickly scan keys, values, and nested objects.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">How can I expand and explore nested JSON data?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The viewer converts your JSON into a collapsible tree. Click on objects or arrays to expand and inspect nested data without scrolling through raw text.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Why is my JSON not displaying in the viewer?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">If nothing appears, your JSON is likely invalid. Common issues include missing commas, extra or missing brackets, or incorrect quotes. Fix the error and try again. This tool only displays valid JSON.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">How do I find errors in my JSON file?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">This viewer requires valid JSON to render results. If your data is not working, check for syntax errors like missing commas or unmatched brackets. For detailed error messages, use a JSON validator tool.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">Can this tool handle large JSON files?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes, it can handle moderately large files directly in your browser. Performance depends on your device and browser, so very large files may take longer to render or expand.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What is a JSON tree view?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">A JSON tree view organizes data into a hierarchical structure. Instead of reading raw text, you can expand and collapse sections to quickly understand relationships between objects and arrays.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Is this JSON viewer safe for sensitive data?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. All processing happens in your browser. Your JSON is not uploaded, stored, or sent to any server.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
+              <span itemprop="name">Do I need to install anything to use this JSON viewer?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. This is a browser-based tool. You can paste or upload JSON and view it instantly without installing software or creating an account.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="json-viewer"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <div class="copy-toast" id="copyToast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var jsonInput = document.getElementById('jsonInput');
+      var fileInput = document.getElementById('fileInput');
+      var dropZone = document.getElementById('dropZone');
+      var clearLink = document.getElementById('clearLink');
+      var viewModeTabs = document.querySelectorAll('[data-view-mode]');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var treeWrap = document.getElementById('treeWrap');
+      var treeOutput = document.getElementById('treeOutput');
+      var jsonOutput = document.getElementById('jsonOutput');
+      var pathBar = document.getElementById('pathBar');
+      var pathBarText = document.getElementById('pathBarText');
+      var copyPathBtn = document.getElementById('copyPathBtn');
+      var copyBtn = document.getElementById('copyBtn');
+      var downloadBtn = document.getElementById('downloadBtn');
+      var copyToast = document.getElementById('copyToast');
+
+      var parsedData = null;
+      var formattedOutput = '';
+      var autoName = 'json-viewer-output.json';
+      var autoRenderTimer = null;
+      var outputMode = 'tree';
+      var toastTimer = null;
+      var currentPath = 'root';
+
+      function updateUiState() {
+        var hasInput = (jsonInput.value || '').trim().length > 0;
+        clearLink.classList.toggle('clear-link--enabled', hasInput);
+        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+      }
+
+      function showError(message) {
+        errorText.textContent = message;
+        errorMsg.classList.add('visible');
+        resultSection.classList.remove('visible');
+        copyBtn.disabled = true;
+        downloadBtn.disabled = true;
+      }
+
+      function hideError() {
+        errorText.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+
+      function countNodes(value) {
+        if (value === null || typeof value !== 'object') return 1;
+        var total = 1;
+        if (Array.isArray(value)) {
+          for (var i = 0; i < value.length; i += 1) total += countNodes(value[i]);
+          return total;
+        }
+        var keys = Object.keys(value);
+        for (var j = 0; j < keys.length; j += 1) total += countNodes(value[keys[j]]);
+        return total;
+      }
+
+      function valueClass(value) {
+        if (value === null) return 'json-value--null';
+        switch (typeof value) {
+          case 'string': return 'json-value--string';
+          case 'number': return 'json-value--number';
+          case 'boolean': return 'json-value--boolean';
+          default: return '';
+        }
+      }
+
+      function valueText(value) {
+        if (typeof value === 'string') return '"' + value + '"';
+        if (value === null) return 'null';
+        return String(value);
+      }
+
+      function formatPathForCopy(path) {
+        return path || 'root';
+      }
+
+      function buildChildPath(parentPath, key, isIndex) {
+        if (isIndex) return (parentPath || '') + '[' + key + ']';
+        if (!parentPath) return key;
+        return parentPath + '.' + key;
+      }
+
+      function showToast(message) {
+        if (!copyToast) return;
+        copyToast.textContent = message;
+        copyToast.classList.add('visible');
+        if (toastTimer) window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(function () {
+          copyToast.classList.remove('visible');
+        }, 1200);
+      }
+
+      function updatePathBar(path) {
+        currentPath = formatPathForCopy(path);
+        if (pathBarText) pathBarText.textContent = 'Path: ' + currentPath;
+      }
+
+      function showInlineCopied(button) {
+        if (!button) return;
+        var original = button.textContent;
+        button.textContent = 'Copied!';
+        window.setTimeout(function () {
+          button.textContent = original;
+        }, 900);
+      }
+
+      function createTreeNode(key, value, depth, path) {
+        if (value === null || typeof value !== 'object') {
+          var leaf = document.createElement('p');
+          leaf.className = 'json-leaf';
+          leaf.setAttribute('data-json-path', formatPathForCopy(path));
+          var keyEl = document.createElement('span');
+          keyEl.className = 'json-key';
+          keyEl.textContent = key + ': ';
+          keyEl.setAttribute('data-json-path', formatPathForCopy(path));
+          var valEl = document.createElement('span');
+          valEl.className = valueClass(value);
+          valEl.textContent = valueText(value);
+          valEl.setAttribute('data-json-path', formatPathForCopy(path));
+          leaf.appendChild(keyEl);
+          leaf.appendChild(valEl);
+          return leaf;
+        }
+
+        var details = document.createElement('details');
+        details.open = depth < 2;
+
+        var summary = document.createElement('summary');
+        summary.setAttribute('data-json-path', formatPathForCopy(path));
+        var keySpan = document.createElement('span');
+        keySpan.className = 'json-key';
+        keySpan.textContent = key;
+        keySpan.setAttribute('data-json-path', formatPathForCopy(path));
+
+        var typeSpan = document.createElement('span');
+        typeSpan.className = 'json-type';
+        if (Array.isArray(value)) {
+          typeSpan.textContent = 'Array(' + value.length + ')';
+        } else {
+          typeSpan.textContent = 'Object(' + Object.keys(value).length + ')';
+        }
+        typeSpan.setAttribute('data-json-path', formatPathForCopy(path));
+
+        summary.appendChild(keySpan);
+        summary.appendChild(typeSpan);
+        details.appendChild(summary);
+
+        var children = document.createElement('ul');
+        if (Array.isArray(value)) {
+          for (var i = 0; i < value.length; i += 1) {
+            var liArray = document.createElement('li');
+            liArray.appendChild(createTreeNode('[' + i + ']', value[i], depth + 1, buildChildPath(path, i, true)));
+            children.appendChild(liArray);
+          }
+        } else {
+          var keys = Object.keys(value);
+          for (var j = 0; j < keys.length; j += 1) {
+            var childKey = keys[j];
+            var liObj = document.createElement('li');
+            liObj.appendChild(createTreeNode(childKey, value[childKey], depth + 1, buildChildPath(path, childKey, false)));
+            children.appendChild(liObj);
+          }
+        }
+        details.appendChild(children);
+        return details;
+      }
+
+      function renderTree(value) {
+        treeOutput.innerHTML = '';
+        var rootList = document.createElement('ul');
+        rootList.className = 'json-tree';
+        var rootItem = document.createElement('li');
+        rootItem.appendChild(createTreeNode('root', value, 0, ''));
+        rootList.appendChild(rootItem);
+        treeOutput.appendChild(rootList);
+      }
+
+      function setOutputMode(mode) {
+        outputMode = mode === 'code' ? 'code' : 'tree';
+        for (var i = 0; i < viewModeTabs.length; i += 1) {
+          var tab = viewModeTabs[i];
+          var isActive = tab.getAttribute('data-view-mode') === outputMode;
+          tab.classList.toggle('active', isActive);
+          tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        }
+      }
+
+      function showOutput() {
+        var showTree = outputMode === 'tree';
+        if (pathBar) pathBar.style.display = showTree ? 'flex' : 'none';
+        if (showTree) {
+          try {
+            renderTree(parsedData);
+            treeWrap.classList.add('visible');
+            jsonOutput.style.display = 'none';
+            return;
+          } catch (err) {
+            // Tree rendering fallback to formatted text.
+            setOutputMode('code');
+          }
+        }
+        treeWrap.classList.remove('visible');
+        jsonOutput.style.display = 'block';
+      }
+
+      function updateResultMeta(data) {
+        var nodes = countNodes(data);
+        resultMeta.textContent = nodes.toLocaleString() + ' node' + (nodes === 1 ? '' : 's');
+      }
+
+      function renderJson() {
+        var text = (jsonInput.value || '').trim();
+        updateUiState();
+        if (!text) {
+          hideError();
+          resultSection.classList.remove('visible');
+          copyBtn.disabled = true;
+          downloadBtn.disabled = true;
+          parsedData = null;
+          formattedOutput = '';
+          treeOutput.innerHTML = '';
+          jsonOutput.value = '';
+          updatePathBar('root');
+          treeWrap.classList.remove('visible');
+          jsonOutput.style.display = 'none';
+          return;
+        }
+
+        try {
+          parsedData = JSON.parse(text);
+          formattedOutput = JSON.stringify(parsedData, null, 2);
+          jsonOutput.value = formattedOutput;
+          hideError();
+          updateResultMeta(parsedData);
+          updatePathBar('root');
+          showOutput();
+          resultSection.classList.add('visible');
+          copyBtn.disabled = false;
+          downloadBtn.disabled = false;
+        } catch (err) {
+          parsedData = null;
+          formattedOutput = '';
+          showError('Invalid JSON. Check commas, quotes, and brackets, then try again.');
+        }
+      }
+
+      function scheduleAutoRender() {
+        if (autoRenderTimer) window.clearTimeout(autoRenderTimer);
+        autoRenderTimer = window.setTimeout(renderJson, 250);
+      }
+
+      function setInputFromFile(file) {
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          jsonInput.value = String(event.target.result || '');
+          autoName = (file.name || 'json-viewer-output').replace(/\.[^.]+$/, '') + '-viewed.json';
+          scheduleAutoRender();
+        };
+        reader.readAsText(file);
+      }
+
+      jsonInput.addEventListener('input', function () {
+        updateUiState();
+        scheduleAutoRender();
+      });
+
+      for (var i = 0; i < viewModeTabs.length; i += 1) {
+        viewModeTabs[i].addEventListener('click', function () {
+          setOutputMode(this.getAttribute('data-view-mode'));
+          if (!formattedOutput) return;
+          showOutput();
+        });
+      }
+
+      clearLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (clearLink.getAttribute('aria-disabled') === 'true') return;
+        jsonInput.value = '';
+        fileInput.value = '';
+        autoName = 'json-viewer-output.json';
+        renderJson();
+      });
+
+      fileInput.addEventListener('change', function (event) {
+        var file = event.target.files && event.target.files[0];
+        setInputFromFile(file);
+      });
+
+      dropZone.addEventListener('click', function (event) {
+        if (event.target === fileInput) return;
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('click', function (event) {
+        event.stopPropagation();
+      });
+
+      dropZone.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      dropZone.addEventListener('dragover', function (event) {
+        event.preventDefault();
+        dropZone.classList.add('is-dragover');
+      });
+
+      dropZone.addEventListener('dragleave', function () {
+        dropZone.classList.remove('is-dragover');
+      });
+
+      dropZone.addEventListener('drop', function (event) {
+        event.preventDefault();
+        dropZone.classList.remove('is-dragover');
+        var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+        setInputFromFile(file);
+      });
+
+      treeOutput.addEventListener('click', function (event) {
+        var target = event.target;
+        if (!target) return;
+        var pathHolder = target.closest('[data-json-path]');
+        if (!pathHolder) return;
+        var path = pathHolder.getAttribute('data-json-path');
+        if (!path) return;
+        updatePathBar(path);
+      });
+
+      copyPathBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        navigator.clipboard.writeText(currentPath).then(function () {
+          showInlineCopied(copyPathBtn);
+          showToast('Copied path: ' + currentPath);
+        }).catch(function () {
+          showError('Path copy failed. Please copy manually.');
+        });
+      });
+
+      copyBtn.addEventListener('click', async function () {
+        if (!formattedOutput) return;
+        try {
+          await navigator.clipboard.writeText(formattedOutput);
+          showToast('Copied!');
+        } catch (err) {
+          showError('Copy failed. Please copy manually.');
+        }
+      });
+
+      downloadBtn.addEventListener('click', function () {
+        if (!formattedOutput) return;
+        var blob = new Blob([formattedOutput], { type: 'application/json;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = autoName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      });
+
+      updateUiState();
+      setOutputMode('tree');
+      hideError();
+    })();
+  </script>
+</body>
+</html>

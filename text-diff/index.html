@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Text Diff Checker - Free Online Tool | TinyDataTool</title>
+  <meta name="description" content="Compare text online with a side-by-side diff checker. Paste two text blocks, highlight additions and removals, and copy the diff result instantly." />
+  <link rel="canonical" href="https://tinydatatool.com/text-diff/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Text Diff Checker - Free Online Tool | TinyDataTool" />
+  <meta property="og:description" content="Compare two text blocks and highlight differences instantly in your browser." />
+  <meta property="og:url" content="https://tinydatatool.com/text-diff/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Text Diff Checker - Free Online Tool | TinyDataTool" />
+  <meta name="twitter:description" content="Compare text online and spot changes fast. Free and private." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Text Diff Checker","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/text-diff/","description":"Compare two blocks of text and highlight additions and removals in your browser. Free, private, and no uploads required."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .diff-inputs { display: grid; grid-template-columns: 1fr; gap: var(--space-16); }
+    .diff-side { display: flex; flex-direction: column; gap: var(--space-8); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .diff-wrap {
+      border: 1px solid var(--grey-6);
+      border-radius: var(--radius);
+      overflow: auto;
+      max-height: 460px;
+      background: var(--grey-1);
+    }
+    .diff-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 560px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .diff-table th,
+    .diff-table td {
+      padding: var(--space-8) var(--space-12);
+      border-bottom: 1px solid var(--grey-6);
+      vertical-align: top;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .diff-table th {
+      position: sticky;
+      top: 0;
+      background: var(--grey-2);
+      z-index: 1;
+      text-align: left;
+      font-weight: 600;
+    }
+    .diff-row--same td { background: transparent; }
+    .diff-row--add td { background: #ecfdf3; }
+    .diff-row--remove td { background: #fef2f2; }
+    .diff-row--change td { background: #fffbeb; }
+    .diff-line-number { color: var(--text-secondary); width: 56px; }
+    .diff-actions { display: flex; gap: var(--space-12); flex-wrap: wrap; }
+    @media (max-width: 768px) {
+      .diff-inputs { grid-template-columns: 1fr; }
+      .diff-actions .btn-download { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="site-header-root" data-base="../" data-active="text-diff"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">Text Diff Checker</h1>
+        <p class="hero__sub">Paste two text blocks and compare them instantly. Highlight additions, removals, and changed lines in your browser with no uploads.</p>
+      </div>
+    </section>
+
+    <section aria-label="Text diff checker" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="Text diff checker tool">
+          <div class="form-body">
+            <div class="diff-inputs">
+              <div class="diff-side">
+                <div class="form-label-row">
+                  <label class="form-label" for="leftInput">Original text</label>
+                </div>
+                <textarea id="leftInput" class="form-input" placeholder="Paste original text here." spellcheck="false"></textarea>
+              </div>
+              <div class="diff-side">
+                <div class="form-label-row">
+                  <label class="form-label" for="rightInput">Updated text</label>
+                  <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+                </div>
+                <textarea id="rightInput" class="form-input" placeholder="Paste updated text here." spellcheck="false"></textarea>
+              </div>
+            </div>
+
+            <button class="btn-primary" id="compareBtn" type="button" aria-label="Compare text" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span id="compareBtnLabel">Compare Text</span>
+              <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
+              </svg>
+            </button>
+
+            <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+              <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
+                <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+              <span id="errorText"></span>
+            </div>
+
+            <section class="result-section" id="resultSection" aria-live="polite">
+              <header class="result-section__heading">
+                <div>
+                  <p class="result-section__title">Results</p>
+                  <p class="result-section__meta" id="resultMeta"></p>
+                </div>
+                <div class="diff-actions">
+                  <button class="btn-download" id="copyBtn" type="button" disabled>
+                    <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                      <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"></path>
+                    </svg>
+                    <span>Copy Diff</span>
+                  </button>
+                </div>
+              </header>
+              <div class="diff-wrap" id="diffWrap"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to compare text online</h2>
+        <p class="section-body">Paste your original and updated text, compare differences, and copy the diff result. Everything runs in your browser with no uploads or data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste two text versions</p>
+            <p class="step__desc">Paste the original text in the top box and the updated text in the bottom box.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Compare text differences</p>
+            <p class="step__desc">Run the diff checker to highlight added, removed, and changed lines.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy the diff output</p>
+            <p class="step__desc">Copy a plain-text diff summary for sharing, review, or documentation.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">WHY USE THIS TOOL</p>
+        <h2 class="section-title" id="why-heading">Why use this text diff checker?</h2>
+        <p class="section-body">Manual comparison is slow and error-prone. A side-by-side diff view helps you identify exactly what changed line by line.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5"/></svg></div><div><p class="benefit__title">Clear line-by-line view</p><p class="benefit__desc">See both versions in a single comparison view to review edits without switching between documents.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12.5" cy="5.5" r="1" fill="currentColor"/></svg></div><div><p class="benefit__title">Highlight real changes</p><p class="benefit__desc">Additions, removals, and modified lines are visually marked for faster review.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Works for any text</p><p class="benefit__desc">Compare notes, documents, logs, code snippets, or generated output in seconds.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Private browser processing</p><p class="benefit__desc">All comparison happens locally, so your content never leaves your device.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="privacy-heading">
+      <div class="container--wide">
+        <p class="section-label">PRIVACY</p>
+        <h2 class="section-title" id="privacy-heading">Private and secure text comparison</h2>
+        <p class="section-body">Your text is compared locally in your browser. No uploads, no storage, and no server-side processing.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Data stays on device</p><p class="benefit__desc">Both text blocks are processed directly on your machine in browser memory.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">No uploads or storage</p><p class="benefit__desc">Your input and diff output are never sent to a server or saved remotely.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Runs in browser</p><p class="benefit__desc">Start comparing immediately with no install, account, or external dependency.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">How do I compare two text files online?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste the original text and updated text into the two input fields, then run the diff checker. The tool highlights changed, added, and removed lines immediately.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">What is the easiest way to find differences between two texts?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The easiest way is to use a side-by-side text diff checker that marks changes per line. It avoids manual scanning and makes edits obvious.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Can I compare text without installing software?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. This browser-based diff checker works without downloads, IDE plugins, or command-line tools.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">How does a text diff checker work?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">It compares each line from both inputs and aligns matching content to identify additions, deletions, and edits. The output presents differences in a readable review format.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">What if one version has extra lines?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Extra lines are shown as added or removed depending on which side they appear. This makes insertions and deletions easy to spot.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What is a text diff?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">A text diff is a comparison that shows how one text version differs from another. It highlights inserted, deleted, and modified lines.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Is my text uploaded or stored during comparison?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. All comparison runs locally in your browser with no uploads and no server storage.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="text-diff"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var leftInput = document.getElementById('leftInput');
+      var rightInput = document.getElementById('rightInput');
+      var clearLink = document.getElementById('clearLink');
+      var compareBtn = document.getElementById('compareBtn');
+      var compareBtnLabel = document.getElementById('compareBtnLabel');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var diffWrap = document.getElementById('diffWrap');
+      var copyBtn = document.getElementById('copyBtn');
+
+      var diffTextOutput = '';
+
+      function updateButtonState() {
+        var hasLeft = (leftInput.value || '').length > 0;
+        var hasRight = (rightInput.value || '').length > 0;
+        compareBtn.disabled = !(hasLeft && hasRight);
+        clearLink.setAttribute('aria-disabled', hasLeft || hasRight ? 'false' : 'true');
+      }
+
+      function setBusy(isBusy) {
+        compareBtn.classList.toggle('spinning', !!isBusy);
+        compareBtn.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+        compareBtnLabel.textContent = isBusy ? 'Comparing...' : 'Compare Text';
+        if (!isBusy) updateButtonState();
+      }
+
+      function showError(message) {
+        errorText.textContent = message;
+        errorMsg.classList.add('visible');
+        resultSection.classList.remove('visible');
+        copyBtn.disabled = true;
+      }
+
+      function hideError() {
+        errorText.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+
+      function splitLines(text) {
+        return String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      }
+
+      function buildLineDiff(a, b) {
+        var n = a.length;
+        var m = b.length;
+        var maxCells = 1500000;
+        if ((n + 1) * (m + 1) > maxCells) {
+          return buildFastFallbackDiff(a, b);
+        }
+
+        var dp = new Array(n + 1);
+        for (var i = 0; i <= n; i += 1) {
+          dp[i] = new Array(m + 1);
+          for (var j = 0; j <= m; j += 1) dp[i][j] = 0;
+        }
+
+        for (var ai = n - 1; ai >= 0; ai -= 1) {
+          for (var bj = m - 1; bj >= 0; bj -= 1) {
+            if (a[ai] === b[bj]) dp[ai][bj] = dp[ai + 1][bj + 1] + 1;
+            else dp[ai][bj] = Math.max(dp[ai + 1][bj], dp[ai][bj + 1]);
+          }
+        }
+
+        var out = [];
+        var x = 0;
+        var y = 0;
+        while (x < n && y < m) {
+          if (a[x] === b[y]) {
+            out.push({ type: 'same', left: a[x], right: b[y] });
+            x += 1;
+            y += 1;
+          } else if (dp[x + 1][y] >= dp[x][y + 1]) {
+            out.push({ type: 'remove', left: a[x], right: '' });
+            x += 1;
+          } else {
+            out.push({ type: 'add', left: '', right: b[y] });
+            y += 1;
+          }
+        }
+        while (x < n) { out.push({ type: 'remove', left: a[x], right: '' }); x += 1; }
+        while (y < m) { out.push({ type: 'add', left: '', right: b[y] }); y += 1; }
+
+        // Pair adjacent remove/add as change rows for readability.
+        var merged = [];
+        for (var k = 0; k < out.length; k += 1) {
+          var cur = out[k];
+          var next = out[k + 1];
+          if (cur && next && cur.type === 'remove' && next.type === 'add') {
+            merged.push({ type: 'change', left: cur.left, right: next.right });
+            k += 1;
+          } else {
+            merged.push(cur);
+          }
+        }
+        return merged;
+      }
+
+      function buildFastFallbackDiff(a, b) {
+        var max = Math.max(a.length, b.length);
+        var out = [];
+        for (var i = 0; i < max; i += 1) {
+          var left = a[i] || '';
+          var right = b[i] || '';
+          if (left === right) out.push({ type: 'same', left: left, right: right });
+          else if (!left) out.push({ type: 'add', left: '', right: right });
+          else if (!right) out.push({ type: 'remove', left: left, right: '' });
+          else out.push({ type: 'change', left: left, right: right });
+        }
+        return out;
+      }
+
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function renderDiffTable(rows) {
+        var leftLine = 0;
+        var rightLine = 0;
+        var added = 0;
+        var removed = 0;
+        var changed = 0;
+        var same = 0;
+
+        var html = '<table class="diff-table"><thead><tr><th colspan="2">Original text</th><th colspan="2">Updated text</th></tr></thead><tbody>';
+        var plain = [];
+
+        for (var i = 0; i < rows.length; i += 1) {
+          var row = rows[i];
+          var leftNo = '';
+          var rightNo = '';
+          if (row.type === 'same' || row.type === 'remove' || row.type === 'change') {
+            leftLine += 1;
+            leftNo = String(leftLine);
+          }
+          if (row.type === 'same' || row.type === 'add' || row.type === 'change') {
+            rightLine += 1;
+            rightNo = String(rightLine);
+          }
+
+          if (row.type === 'add') added += 1;
+          if (row.type === 'remove') removed += 1;
+          if (row.type === 'change') changed += 1;
+          if (row.type === 'same') same += 1;
+
+          html += '<tr class="diff-row--' + row.type + '">';
+          html += '<td class="diff-line-number">' + escapeHtml(leftNo) + '</td>';
+          html += '<td>' + escapeHtml(row.left) + '</td>';
+          html += '<td class="diff-line-number">' + escapeHtml(rightNo) + '</td>';
+          html += '<td>' + escapeHtml(row.right) + '</td>';
+          html += '</tr>';
+
+          var marker = ' ';
+          if (row.type === 'add') marker = '+';
+          else if (row.type === 'remove') marker = '-';
+          else if (row.type === 'change') marker = '~';
+          plain.push(marker + ' ' + row.left + (row.type === 'change' ? '  =>  ' + row.right : (row.type === 'add' ? row.right : '')));
+        }
+        html += '</tbody></table>';
+
+        return {
+          html: html,
+          stats: { added: added, removed: removed, changed: changed, same: same, total: rows.length },
+          plain: plain.join('\n')
+        };
+      }
+
+      function compareTexts() {
+        var left = leftInput.value || '';
+        var right = rightInput.value || '';
+        if (!left.length || !right.length) {
+          showError('Enter text in both fields to compare.');
+          return;
+        }
+
+        setBusy(true);
+        window.setTimeout(function () {
+          try {
+            var leftLines = splitLines(left);
+            var rightLines = splitLines(right);
+            var rows = buildLineDiff(leftLines, rightLines);
+            var rendered = renderDiffTable(rows);
+
+            diffWrap.innerHTML = rendered.html;
+            resultMeta.textContent = rendered.stats.added + ' added · ' + rendered.stats.removed + ' removed · ' + rendered.stats.changed + ' changed';
+            diffTextOutput = rendered.plain;
+            copyBtn.disabled = false;
+            hideError();
+            resultSection.classList.add('visible');
+          } catch (err) {
+            showError('Could not compare text. Please try again with smaller input.');
+          } finally {
+            setBusy(false);
+          }
+        }, 0);
+      }
+
+      leftInput.addEventListener('input', updateButtonState);
+      rightInput.addEventListener('input', updateButtonState);
+      compareBtn.addEventListener('click', compareTexts);
+
+      clearLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (clearLink.getAttribute('aria-disabled') === 'true') return;
+        leftInput.value = '';
+        rightInput.value = '';
+        diffWrap.innerHTML = '';
+        diffTextOutput = '';
+        resultSection.classList.remove('visible');
+        copyBtn.disabled = true;
+        hideError();
+        updateButtonState();
+      });
+
+      copyBtn.addEventListener('click', function () {
+        if (!diffTextOutput) return;
+        var original = copyBtn.innerHTML;
+        navigator.clipboard.writeText(diffTextOutput).then(function () {
+          copyBtn.innerHTML = '<span>Copied!</span>';
+          window.setTimeout(function () { copyBtn.innerHTML = original; }, 1200);
+        }).catch(function () {
+          showError('Copy failed. Please copy manually.');
+        });
+      });
+
+      updateButtonState();
+      hideError();
+    })();
+  </script>
+</body>
+</html>

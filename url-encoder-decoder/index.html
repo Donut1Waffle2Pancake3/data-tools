@@ -74,6 +74,24 @@
       white-space: pre-wrap;
       word-break: break-all;
     }
+    .copy-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 32px;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.3;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 120ms ease;
+      z-index: 1000;
+    }
+    .copy-toast.visible { opacity: 1; }
   </style>
 </head>
 <body>
@@ -368,6 +386,7 @@
   </main>
 
   <div id="site-footer-root"></div>
+  <div class="copy-toast" id="copyToast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <script src="../js/site.js" defer></script>
 
@@ -386,6 +405,7 @@
       const copyOutputBtn = document.getElementById('copyOutputBtn');
       const copyOutputBtnIcon = document.getElementById('copyOutputBtnIcon');
       const copyTooltip = document.getElementById('copyTooltip');
+      const copyToast = document.getElementById('copyToast');
       const copyIconSvg = copyOutputBtnIcon ? copyOutputBtnIcon.innerHTML : '';
       const checkmarkIconSvg = '<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M534 132.5C544.8 140.2 547.2 155.2 539.5 166L275.5 534C271.4 539.7 265 543.4 258 543.9C251 544.4 244 542 239 537L103 401C93.6 391.6 93.6 376.4 103 367.1C112.4 357.8 127.6 357.7 136.9 367.1L253 483L500.5 138C508.2 127.2 523.2 124.8 534 132.5z" fill="currentColor"/></svg>';
 
@@ -395,6 +415,17 @@
       const errorText = document.getElementById('errorText');
 
       let copyTooltipTimer = null;
+      let copyToastTimer = null;
+
+      function showCopyToast(message) {
+        if (!copyToast) return;
+        copyToast.textContent = message;
+        copyToast.classList.add('visible');
+        if (copyToastTimer) clearTimeout(copyToastTimer);
+        copyToastTimer = setTimeout(function () {
+          copyToast.classList.remove('visible');
+        }, 1200);
+      }
 
       function setBusy(btn, isBusy) {
         if (!btn) return;
@@ -664,6 +695,7 @@
           if (copyOutputBtnIcon) copyOutputBtnIcon.innerHTML = checkmarkIconSvg;
           copyOutputBtn.setAttribute('aria-label', 'Copied');
           copyOutputBtn.classList.add('is-copied');
+          showCopyToast('Copied!');
           if (copyTooltip) {
             copyTooltip.textContent = 'Copied!';
             copyTooltip.classList.add('is-visible');

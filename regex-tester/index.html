@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Regex Tester - Free Online Tool | TinyDataTool</title>
+  <meta name="description" content="Test regular expressions online and highlight matches instantly. Paste your regex pattern and text input, then review matched results in real time." />
+  <link rel="canonical" href="https://tinydatatool.com/regex-tester/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Regex Tester - Free Online Tool | TinyDataTool" />
+  <meta property="og:description" content="Test regex patterns against text input with instant highlighted matches." />
+  <meta property="og:url" content="https://tinydatatool.com/regex-tester/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Regex Tester - Free Online Tool | TinyDataTool" />
+  <meta name="twitter:description" content="Run regex tests online with instant match highlighting." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Regex Tester","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/regex-tester/","description":"Test regular expressions in your browser and highlight matches instantly. Free, private, and no uploads required."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .regex-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }
+    .regex-output {
+      min-height: 180px;
+      border: 1px solid var(--grey-6);
+      border-radius: var(--radius);
+      background: var(--grey-1);
+      padding: var(--space-12);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .regex-match { background: #fff2b8; color: #1f2937; }
+    .regex-empty { color: var(--text-secondary); }
+    .action-row { display: flex; flex-wrap: wrap; gap: var(--space-12); }
+    @media (max-width: 768px) { .regex-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="site-header-root" data-base="../" data-active="regex-tester"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">Regex Tester</h1>
+        <p class="hero__sub">Paste a regex pattern and test text to highlight matches instantly. Everything runs locally in your browser with no uploads or data leaving your device.</p>
+      </div>
+    </section>
+
+    <section aria-label="Regex tester" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="Regex tester tool">
+          <div class="form-body">
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="regexInput">Regex pattern</label>
+                <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+              </div>
+              <input id="regexInput" class="form-input field-lg" type="text" placeholder="Example: \\b\\w{4}\\b" spellcheck="false" />
+            </div>
+
+            <div class="form-section">
+              <span class="form-section__label">Options</span>
+              <div class="form-inline-row">
+                <label class="form-option">
+                  <input type="checkbox" id="caseInsensitive" />
+                  <span>Case-insensitive</span>
+                </label>
+                <label class="form-option">
+                  <input type="checkbox" id="multiline" />
+                  <span>Multiline</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="textInput">Text input</label>
+              <textarea id="textInput" class="form-input" placeholder="Paste text to test your regex pattern." spellcheck="false"></textarea>
+            </div>
+
+            <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+              <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
+                <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+              <span id="errorText"></span>
+            </div>
+
+            <section class="result-section" id="resultSection" aria-live="polite">
+              <header class="result-section__heading">
+                <div>
+                  <p class="result-section__title">Results</p>
+                  <p class="result-section__meta" id="resultMeta"></p>
+                </div>
+                <div class="action-row">
+                  <button class="btn-download" id="copyBtn" type="button" disabled>
+                    <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                      <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"></path>
+                    </svg>
+                    <span>Copy Matches</span>
+                  </button>
+                </div>
+              </header>
+
+              <div class="regex-grid">
+                <div class="form-group">
+                  <label class="form-label" for="matchOutput">Match list</label>
+                  <textarea id="matchOutput" class="form-input" readonly placeholder="Matches will appear here." spellcheck="false"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="previewOutput">Preview</label>
+                  <div id="previewOutput" class="regex-output" aria-label="Regex highlighted preview"><span class="regex-empty">Matches will be highlighted here.</span></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to test regex online</h2>
+        <p class="section-body">Paste your regex pattern, test it against text input, and review matches instantly. Everything runs in your browser with no uploads or data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste your regex pattern</p>
+            <p class="step__desc">Enter the regular expression you want to test in the regex input field.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Paste text to test</p>
+            <p class="step__desc">Add the text content you want to match against and adjust options like case-insensitive mode.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Review highlighted matches</p>
+            <p class="step__desc">See each match listed and highlighted in preview, then copy matches as needed.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">WHY USE THIS TOOL</p>
+        <h2 class="section-title" id="why-heading">Why use this regex tester?</h2>
+        <p class="section-body">Regex patterns are hard to verify by inspection alone. This tool helps you validate matches quickly before using patterns in code, logs, or data cleanup.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Instant match feedback</p><p class="benefit__desc">See match results update immediately while editing your pattern or input text.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5"/></svg></div><div><p class="benefit__title">Highlighted preview output</p><p class="benefit__desc">Visual highlighting helps confirm exactly where each regex match occurs.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12.5" cy="5.5" r="1" fill="currentColor"/></svg></div><div><p class="benefit__title">Simple testing options</p><p class="benefit__desc">Toggle basic flags like case-insensitive and multiline without extra complexity.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Private browser workflow</p><p class="benefit__desc">Run regex tests locally with no uploads, accounts, or server processing.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="privacy-heading">
+      <div class="container--wide">
+        <p class="section-label">PRIVACY</p>
+        <h2 class="section-title" id="privacy-heading">Private and secure regex testing</h2>
+        <p class="section-body">All regex evaluation happens in your browser. No text or patterns are uploaded, stored, or transmitted.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Data stays on device</p><p class="benefit__desc">Your input text and regex pattern are processed only in local browser memory.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">No uploads or storage</p><p class="benefit__desc">Content is never sent to a remote server and not saved outside your session.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Runs in browser</p><p class="benefit__desc">Use the tester instantly with no installation, plugin, or account needed.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">How do I test regex online?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste your regex pattern and input text into the regex tester, then review highlighted matches instantly. You can adjust options and see updates in real time.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">What is the easiest way to check a regex pattern?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The easiest way is to use a browser-based regex tester with live match highlighting. It shows where your expression matches before you use it in production.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Can I test regex without coding software?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. This online regex tool runs fully in your browser without IDEs, scripts, or installed software.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">How does regex matching work?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Regex uses patterns to match character sequences in text, such as emails, numbers, or specific words. The tester runs your pattern and returns each matching segment.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">What happens if my regex pattern is invalid?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">If a pattern is invalid, the tester shows a regex syntax error message so you can fix it quickly. Results update automatically once the pattern is valid.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What is a regex tester?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">A regex tester is a tool that runs regular expression patterns against sample text and shows what matches. It helps validate patterns before using them in apps or scripts.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Is my text uploaded when I test regex?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. All regex processing happens locally in your browser with no uploads and no server-side storage.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="regex-tester"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var regexInput = document.getElementById('regexInput');
+      var textInput = document.getElementById('textInput');
+      var caseInsensitive = document.getElementById('caseInsensitive');
+      var multiline = document.getElementById('multiline');
+      var clearLink = document.getElementById('clearLink');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var matchOutput = document.getElementById('matchOutput');
+      var previewOutput = document.getElementById('previewOutput');
+      var copyBtn = document.getElementById('copyBtn');
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function showError(message) {
+        errorText.textContent = message;
+        errorMsg.classList.add('visible');
+      }
+
+      function hideError() {
+        errorText.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+
+      function updateClearState() {
+        var hasAny = (regexInput.value || '').length > 0 || (textInput.value || '').length > 0;
+        clearLink.setAttribute('aria-disabled', hasAny ? 'false' : 'true');
+      }
+
+      function render() {
+        updateClearState();
+        var pattern = regexInput.value || '';
+        var text = textInput.value || '';
+        hideError();
+
+        if (!pattern.trim() || !text.length) {
+          resultSection.classList.remove('visible');
+          copyBtn.disabled = true;
+          matchOutput.value = '';
+          previewOutput.innerHTML = '<span class="regex-empty">Matches will be highlighted here.</span>';
+          return;
+        }
+
+        var flags = 'g';
+        if (caseInsensitive.checked) flags += 'i';
+        if (multiline.checked) flags += 'm';
+
+        var regex;
+        try {
+          regex = new RegExp(pattern, flags);
+        } catch (err) {
+          showError('Invalid regex: ' + err.message);
+          resultSection.classList.remove('visible');
+          copyBtn.disabled = true;
+          return;
+        }
+
+        var matches = [];
+        var html = '';
+        var lastIndex = 0;
+        var m;
+        var safety = 0;
+        while ((m = regex.exec(text)) !== null && safety < 50000) {
+          safety += 1;
+          var full = m[0];
+          var index = m.index;
+          var end = index + full.length;
+
+          html += escapeHtml(text.slice(lastIndex, index));
+          html += '<mark class="regex-match">' + escapeHtml(full) + '</mark>';
+          lastIndex = end;
+
+          matches.push(full);
+          if (full === '') regex.lastIndex += 1;
+        }
+        html += escapeHtml(text.slice(lastIndex));
+
+        previewOutput.innerHTML = matches.length ? html : '<span class="regex-empty">No matches found for this pattern.</span>';
+        matchOutput.value = matches.length ? matches.join('\n') : '';
+        resultMeta.textContent = matches.length.toLocaleString() + ' match' + (matches.length === 1 ? '' : 'es');
+        copyBtn.disabled = matches.length === 0;
+        resultSection.classList.add('visible');
+      }
+
+      regexInput.addEventListener('input', render);
+      textInput.addEventListener('input', render);
+      caseInsensitive.addEventListener('change', render);
+      multiline.addEventListener('change', render);
+
+      clearLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (clearLink.getAttribute('aria-disabled') === 'true') return;
+        regexInput.value = '';
+        textInput.value = '';
+        caseInsensitive.checked = false;
+        multiline.checked = false;
+        render();
+      });
+
+      copyBtn.addEventListener('click', function () {
+        var content = matchOutput.value || '';
+        if (!content) return;
+        var original = copyBtn.innerHTML;
+        navigator.clipboard.writeText(content).then(function () {
+          copyBtn.innerHTML = '<span>Copied!</span>';
+          window.setTimeout(function () { copyBtn.innerHTML = original; }, 1200);
+        }).catch(function () {
+          showError('Copy failed. Please copy manually.');
+        });
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

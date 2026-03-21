@@ -8,6 +8,7 @@ const NAV_GROUPS = [
       label: 'CSV',
       id: 'csv',
       items: [
+        { id: 'csv-viewer', href: 'csv-viewer/index.html', label: 'CSV Viewer' },
         { id: 'split-csv', href: 'split-csv/index.html', label: 'Split CSV' },
         { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
         { id: 'csv-column-remover', href: 'csv-column-remover/index.html', label: 'CSV Column Remover' },
@@ -16,14 +17,17 @@ const NAV_GROUPS = [
         { id: 'csv-deduplicator', href: 'csv-deduplicator/index.html', label: 'CSV Deduplicator' },
         { id: 'csv-row-filter', href: 'csv-row-filter/index.html', label: 'CSV Row Filter' },
         { id: 'csv-sorter', href: 'csv-sorter/index.html', label: 'CSV Sorter' },
+        { id: 'csv-cleaner', href: 'csv-cleaner/index.html', label: 'CSV Cleaner' },
       ],
     },
     {
       label: 'JSON',
       id: 'json',
       items: [
+        { id: 'json-viewer', href: 'json-viewer/index.html', label: 'JSON Viewer' },
         { id: 'json-validator', href: 'json-validator/index.html', label: 'JSON Validator' },
         { id: 'json-formatter', href: 'json-formatter/index.html', label: 'JSON Formatter' },
+        { id: 'json-minifier', href: 'json-minifier/index.html', label: 'JSON Minifier' },
         { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON → CSV' },
         { id: 'json-to-tsv', href: 'json-to-tsv/index.html', label: 'JSON → TSV' },
         { id: 'csv-to-json', href: 'csv-to-json/index.html', label: 'CSV → JSON' },
@@ -33,11 +37,15 @@ const NAV_GROUPS = [
       label: 'Text',
       id: 'text',
       items: [
+        { id: 'text-diff', href: 'text-diff/index.html', label: 'Text Diff Checker' },
         { id: 'remove-duplicate-lines', href: 'remove-duplicate-lines/index.html', label: 'Remove Duplicate Lines' },
         { id: 'sort-lines', href: 'sort-lines/index.html', label: 'Sort Lines' },
         { id: 'text-counter', href: 'text-counter/index.html', label: 'Word, Line, and Character Counter' },
         { id: 'find-and-replace-text', href: 'find-and-replace-text/index.html', label: 'Find and Replace' },
         { id: 'trim-whitespace', href: 'trim-whitespace/index.html', label: 'Trim Whitespace' },
+        { id: 'base64-encoder-decoder', href: 'base64-encoder-decoder/index.html', label: 'Base64 Encoder / Decoder' },
+        { id: 'regex-tester', href: 'regex-tester/index.html', label: 'Regex Tester' },
+        { id: 'text-case-converter', href: 'text-case-converter/index.html', label: 'Text Case Converter' },
         { id: 'url-encoder-decoder', href: 'url-encoder-decoder/index.html', label: 'URL Encoder / Decoder' },
         { id: 'html-encoder-decoder', href: 'html-encoder-decoder/index.html', label: 'HTML Encoder / Decoder' },
       ],
@@ -53,17 +61,53 @@ const NAV_GROUPS = [
       label: 'Converters',
       id: 'converters',
       items: [
+        { id: 'csv-to-excel', href: 'csv-to-excel/index.html', label: 'CSV → Excel' },
+        { id: 'json-to-excel', href: 'json-to-excel/index.html', label: 'JSON → Excel' },
         { id: 'csv-to-tsv', href: 'csv-to-tsv/index.html', label: 'CSV → TSV' },
         { id: 'tsv-to-csv', href: 'tsv-to-csv/index.html', label: 'TSV → CSV' },
       ],
     },
   ];
 
+const PRODUCTION_HIDDEN_TOOL_IDS = new Set([
+  'csv-viewer',
+  'text-diff',
+  'base64-encoder-decoder',
+  'regex-tester',
+  'csv-to-excel',
+  'json-to-excel',
+  'csv-cleaner',
+  'json-minifier',
+  'text-case-converter',
+]);
+
+const ACTIVE_NAV_GROUPS = NAV_GROUPS.map(function (group) {
+  return {
+    label: group.label,
+    id: group.id,
+    items: group.items.filter(function (item) {
+      return !PRODUCTION_HIDDEN_TOOL_IDS.has(item.id);
+    }),
+  };
+}).filter(function (group) {
+  return group.items.length > 0;
+});
+
 /* ============================================================
    TinyDataTool — Cross-category related tools (optional)
    Adds a few additional relevant tools without changing layout.
 ============================================================ */
 const RELATED_TOOL_OVERRIDES = {
+  'csv-viewer': ['csv-to-json', 'csv-column-remover', 'csv-row-filter'],
+  'json-viewer': ['json-formatter', 'json-validator', 'json-to-csv'],
+  'json-minifier': ['json-formatter', 'json-validator', 'json-viewer'],
+  'text-diff': ['remove-duplicate-lines', 'sort-lines', 'find-and-replace-text'],
+  'regex-tester': ['find-and-replace-text', 'text-diff', 'remove-duplicate-lines'],
+  'text-case-converter': ['trim-whitespace', 'find-and-replace-text', 'remove-duplicate-lines'],
+  'base64-encoder-decoder': ['url-encoder-decoder', 'json-formatter', 'html-encoder-decoder'],
+  'csv-to-excel': ['csv-to-json', 'csv-viewer', 'csv-to-tsv'],
+  'json-to-excel': ['json-to-csv', 'csv-to-excel', 'json-viewer'],
+  'csv-cleaner': ['csv-column-remover', 'csv-row-filter', 'csv-sorter'],
   'remove-duplicate-lines': ['sort-lines', 'trim-whitespace', 'csv-deduplicator'],
   'sort-lines': ['remove-duplicate-lines', 'csv-sorter', 'trim-whitespace'],
   'text-counter': ['trim-whitespace', 'json-formatter'],
@@ -86,7 +130,7 @@ const RELATED_TOOL_OVERRIDES = {
     const homeHref = baseSlash ? baseSlash + 'index.html' : 'index.html';
     const logoSrc = baseSlash + 'assets/TinyDataTool Logo@2x.png';
 
-    const dropdownsHtml = NAV_GROUPS.map(function (group) {
+    const dropdownsHtml = ACTIVE_NAV_GROUPS.map(function (group) {
       const triggerId = 'navDropdown' + group.id + 'Trigger';
       const menuId = 'navDropdown' + group.id + 'Menu';
       const itemsHtml = group.items.map(function (item) {
@@ -112,7 +156,7 @@ const RELATED_TOOL_OVERRIDES = {
 
     const drawerParts = [];
     drawerParts.push('<a href="' + baseSlash + 'tools/index.html" class="nav-drawer__item' + (active === 'all-tools' ? ' nav-drawer__item--active' : '') + '"' + (active === 'all-tools' ? ' aria-current="page"' : '') + '>All Tools</a>');
-    NAV_GROUPS.forEach(function (group, idx) {
+    ACTIVE_NAV_GROUPS.forEach(function (group, idx) {
       drawerParts.push('<span class="nav-drawer__group-label">' + group.label + '</span>');
       group.items.forEach(function (item) {
         const isActive = item.id === active;
@@ -244,8 +288,8 @@ const RELATED_TOOL_OVERRIDES = {
   const INTRO = 'More tools in this category.';
 
   function getGroupForToolId(id) {
-    for (var g = 0; g < NAV_GROUPS.length; g++) {
-      var group = NAV_GROUPS[g];
+    for (var g = 0; g < ACTIVE_NAV_GROUPS.length; g++) {
+      var group = ACTIVE_NAV_GROUPS[g];
       for (var i = 0; i < group.items.length; i++) {
         if (group.items[i].id === id) return group;
       }
@@ -254,8 +298,8 @@ const RELATED_TOOL_OVERRIDES = {
   }
 
   function getToolById(id) {
-    for (var g = 0; g < NAV_GROUPS.length; g++) {
-      var group = NAV_GROUPS[g];
+    for (var g = 0; g < ACTIVE_NAV_GROUPS.length; g++) {
+      var group = ACTIVE_NAV_GROUPS[g];
       for (var i = 0; i < group.items.length; i++) {
         if (group.items[i].id === id) return group.items[i];
       }

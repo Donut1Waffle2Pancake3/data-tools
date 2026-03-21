@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Base64 Encoder Decoder - Free Online Tool | TinyDataTool</title>
+  <meta name="description" content="Encode or decode Base64 online instantly. Paste text or Base64 data, auto-detect mode, and copy the result. Fast, private, and browser-based." />
+  <link rel="canonical" href="https://tinydatatool.com/base64-encoder-decoder/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Base64 Encoder Decoder - Free Online Tool | TinyDataTool" />
+  <meta property="og:description" content="Encode and decode Base64 strings instantly in your browser with auto-detect mode." />
+  <meta property="og:url" content="https://tinydatatool.com/base64-encoder-decoder/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Base64 Encoder Decoder - Free Online Tool | TinyDataTool" />
+  <meta name="twitter:description" content="Encode or decode Base64 text online. Free and private." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Base64 Encoder Decoder","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/base64-encoder-decoder/","description":"Encode or decode Base64 strings directly in your browser. Free, private, and no uploads required."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .action-row { display: flex; flex-wrap: wrap; gap: var(--space-12); }
+    @media (max-width: 640px) {
+      .action-row .btn-download { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="site-header-root" data-base="../" data-active="base64-encoder-decoder"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">Base64 Encoder Decoder</h1>
+        <p class="hero__sub">Paste plain text or Base64 and convert instantly. The tool auto-detects whether to encode or decode, then shows the transformed result in your browser.</p>
+      </div>
+    </section>
+
+    <section aria-label="Base64 encoder decoder" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="Base64 encoder decoder tool">
+          <div class="form-body">
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="textInput">Input</label>
+                <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+              </div>
+              <textarea id="textInput" class="form-input" placeholder="Paste plain text or Base64 here." spellcheck="false"></textarea>
+            </div>
+
+            <button class="btn-primary" id="convertBtn" type="button" aria-label="Convert Base64 input" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span id="convertBtnLabel">Convert</span>
+              <svg class="btn-icon" width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
+              </svg>
+            </button>
+
+            <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+              <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
+                <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+              <span id="errorText"></span>
+            </div>
+
+            <section class="result-section" id="resultSection" aria-live="polite">
+              <header class="result-section__heading">
+                <div>
+                  <p class="result-section__title">Results</p>
+                  <p class="result-section__meta" id="resultMeta"></p>
+                </div>
+                <div class="action-row">
+                  <button class="btn-download" id="copyBtn" type="button" disabled>
+                    <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                      <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"></path>
+                    </svg>
+                    <span>Copy Output</span>
+                  </button>
+                </div>
+              </header>
+              <div class="form-group">
+                <label class="form-label" for="textOutput">Output</label>
+                <textarea id="textOutput" class="form-input" readonly spellcheck="false"></textarea>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to encode or decode Base64</h2>
+        <p class="section-body">Paste your text, convert it with Base64 encode or decode, and copy the output. Everything runs in your browser with no uploads or data leaving your device.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste your input</p>
+            <p class="step__desc">Paste plain text or an existing Base64 string into the input box.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Auto-detect and convert</p>
+            <p class="step__desc">The tool detects whether to encode or decode and applies the right conversion.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy the output</p>
+            <p class="step__desc">Copy the transformed output for APIs, tokens, payloads, or debugging workflows.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">WHY USE THIS TOOL</p>
+        <h2 class="section-title" id="why-heading">Why use this Base64 tool?</h2>
+        <p class="section-body">Base64 is commonly used in APIs, authentication flows, and data transport. This tool helps you switch between readable text and Base64 quickly.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12.5" cy="5.5" r="1" fill="currentColor"/></svg></div><div><p class="benefit__title">Auto mode detection</p><p class="benefit__desc">Paste input and convert without manually picking encode or decode each time.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5"/></svg></div><div><p class="benefit__title">Unicode-safe conversion</p><p class="benefit__desc">Handle plain UTF-8 text correctly when encoding and decoding Base64 values.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Fast browser workflow</p><p class="benefit__desc">Run conversions instantly in your browser with no sign-up or setup.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Useful for API debugging</p><p class="benefit__desc">Inspect encoded payloads, headers, and tokens while troubleshooting integrations.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="privacy-heading">
+      <div class="container--wide">
+        <p class="section-label">PRIVACY</p>
+        <h2 class="section-title" id="privacy-heading">Private and secure Base64 conversion</h2>
+        <p class="section-body">Your input is processed entirely in browser memory. No uploads, no storage, and no server-side processing.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Data stays on device</p><p class="benefit__desc">Encoding and decoding happen locally on your machine within the current tab.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">No uploads or storage</p><p class="benefit__desc">Your input and output are never transmitted or stored on remote servers.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Runs in browser</p><p class="benefit__desc">Open the page and convert instantly without installing software.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">How do I encode or decode Base64 online?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste your input into the Base64 encoder decoder and run convert. The tool auto-detects mode and returns encoded or decoded output instantly.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">What is the easiest way to convert Base64 strings?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The easiest way is to use a browser-based Base64 converter with auto-detection. It removes guesswork between encoding and decoding.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Can I decode Base64 without coding tools?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. This tool runs in your browser and decodes Base64 text instantly without scripts, libraries, or command-line usage.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">How does Base64 encoding work?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Base64 converts binary or text data into ASCII characters using a 64-character set. It is used when systems require text-safe data transport.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">What if my Base64 string is invalid?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">If the input is not valid Base64, decoding fails and the tool falls back to encoding mode. You can then verify or correct the original encoded value.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
+              <span itemprop="name">What is Base64 used for?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Base64 is often used in email content, JWT segments, API payloads, and embedded file data. It helps systems transfer data safely in text form.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
+              <span itemprop="name">Is my data uploaded or stored when converting Base64?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. All conversion happens locally in your browser with no uploads and no remote storage.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="base64-encoder-decoder"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var textInput = document.getElementById('textInput');
+      var clearLink = document.getElementById('clearLink');
+      var convertBtn = document.getElementById('convertBtn');
+      var convertBtnLabel = document.getElementById('convertBtnLabel');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var textOutput = document.getElementById('textOutput');
+      var copyBtn = document.getElementById('copyBtn');
+      var outputValue = '';
+
+      function showError(message) {
+        errorText.textContent = message;
+        errorMsg.classList.add('visible');
+      }
+
+      function hideError() {
+        errorText.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+
+      function updateButtonState() {
+        var hasInput = (textInput.value || '').trim().length > 0;
+        convertBtn.disabled = !hasInput;
+        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+      }
+
+      function setBusy(isBusy) {
+        convertBtn.classList.toggle('spinning', !!isBusy);
+        convertBtn.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+        convertBtnLabel.textContent = isBusy ? 'Converting...' : 'Convert';
+        if (!isBusy) updateButtonState();
+      }
+
+      function bytesToBase64(bytes) {
+        var chunkSize = 32768;
+        var binary = '';
+        for (var i = 0; i < bytes.length; i += chunkSize) {
+          var chunk = bytes.subarray(i, i + chunkSize);
+          binary += String.fromCharCode.apply(null, chunk);
+        }
+        return btoa(binary);
+      }
+
+      function base64ToBytes(base64) {
+        var cleaned = base64.replace(/\s+/g, '');
+        if (!/^[A-Za-z0-9+/]*={0,2}$/.test(cleaned) || cleaned.length % 4 !== 0) {
+          throw new Error('Invalid Base64 format.');
+        }
+        var binary = atob(cleaned);
+        var bytes = new Uint8Array(binary.length);
+        for (var i = 0; i < binary.length; i += 1) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        return bytes;
+      }
+
+      function decodeBase64(base64) {
+        var bytes = base64ToBytes(base64);
+        var decoder = new TextDecoder('utf-8', { fatal: false });
+        return decoder.decode(bytes);
+      }
+
+      function encodeBase64(text) {
+        var bytes = new TextEncoder().encode(text);
+        return bytesToBase64(bytes);
+      }
+
+      function isLikelyBase64(text) {
+        var sample = text.replace(/\s+/g, '');
+        return sample.length > 0 && sample.length % 4 === 0 && /^[A-Za-z0-9+/]*={0,2}$/.test(sample);
+      }
+
+      function convert() {
+        var input = textInput.value || '';
+        if (!input.trim()) {
+          showError('Paste text or Base64 input to convert.');
+          return;
+        }
+
+        hideError();
+        setBusy(true);
+
+        window.setTimeout(function () {
+          try {
+            var mode = 'Encode';
+            var out = '';
+            if (isLikelyBase64(input)) {
+              try {
+                out = decodeBase64(input);
+                mode = 'Decode';
+              } catch (err) {
+                out = encodeBase64(input);
+                mode = 'Encode';
+              }
+            } else {
+              out = encodeBase64(input);
+              mode = 'Encode';
+            }
+
+            outputValue = out;
+            textOutput.value = out;
+            resultMeta.textContent = mode + ' mode · ' + out.length.toLocaleString() + ' characters';
+            resultSection.classList.add('visible');
+            copyBtn.disabled = false;
+          } catch (err) {
+            showError('Unable to convert this input. Please check the text and try again.');
+            resultSection.classList.remove('visible');
+            copyBtn.disabled = true;
+          } finally {
+            setBusy(false);
+          }
+        }, 0);
+      }
+
+      textInput.addEventListener('input', updateButtonState);
+      convertBtn.addEventListener('click', convert);
+
+      clearLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (clearLink.getAttribute('aria-disabled') === 'true') return;
+        textInput.value = '';
+        textOutput.value = '';
+        outputValue = '';
+        copyBtn.disabled = true;
+        resultSection.classList.remove('visible');
+        hideError();
+        updateButtonState();
+      });
+
+      copyBtn.addEventListener('click', function () {
+        if (!outputValue) return;
+        var original = copyBtn.innerHTML;
+        navigator.clipboard.writeText(outputValue).then(function () {
+          copyBtn.innerHTML = '<span>Copied!</span>';
+          window.setTimeout(function () { copyBtn.innerHTML = original; }, 1200);
+        }).catch(function () {
+          showError('Copy failed. Please copy manually.');
+        });
+      });
+
+      updateButtonState();
+      hideError();
+    })();
+  </script>
+</body>
+</html>
