@@ -29,3 +29,8 @@ When you **finish** a task, move it from **To do** to **Completed** and set chec
 <!-- Audits append new lines below. Format:
 - [ ] **T-YYYYMMDD-HHMMSS-n** `pending` — (path) Task title
 -->
+
+- [ ] **T-20260322-214952-1** `pending` — (csv-sorter/index.html) Add specific line-number reporting for CSV parse errors
+- [ ] **T-20260322-214952-2** `pending` — (csv-sorter/index.html) Implement a 'Download as Excel' (XLSX) export option
+- [ ] **T-20260322-214952-3** `pending` — (csv-sorter/index.html) Add a 'Preview' limit (truncate display for massive files to prevent browser hang)
+- [ ] **T-20260322-214952-4** `pending` — (csv-sorter/index.html) Improve auto-detect logic for mixed-type columns
