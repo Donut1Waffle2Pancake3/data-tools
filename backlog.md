@@ -31,6 +31,11 @@ When you **finish** a task, move it from **To do** to **Completed** and set chec
 -->
 
 
+
+- [ ] **T-20260322-220112-1** `pending` — (csv-sorter/index.html) Implement specific error messaging for malformed CSV parsing
+- [ ] **T-20260322-220112-2** `pending` — (csv-sorter/index.html) Add support for multi-column sorting (secondary/tertiary keys)
+- [ ] **T-20260322-220112-3** `pending` — (csv-sorter/index.html) Add a 'Download as Excel' (XLSX) export option using a library like SheetJS
+- [ ] **T-20260322-220112-4** `pending` — (csv-sorter/index.html) Add keyboard support for navigating the result preview textarea
 - [ ] **T-20260322-215017-1** `pending` — (csv-sorter/index.html) Add multi-column sorting support
 - [ ] **T-20260322-215017-2** `pending` — (csv-sorter/index.html) Implement content-based CSV validation before parsing
 - [ ] **T-20260322-215017-3** `pending` — (csv-sorter/index.html) Add support for custom date formats (e.g., DD/MM/YYYY)

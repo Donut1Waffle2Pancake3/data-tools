@@ -60,3 +60,28 @@ The CSV Sorter is a high-quality, privacy-first utility with excellent performan
 - The 'Auto-detect' logic for data types is a strong feature, though it could be improved by providing a manual override for specific columns rather than just the whole file.
 - The file upload validation is currently limited to extension checks; it does not verify if the file content is actually valid CSV before processing.
 
+---
+
+## `csv-sorter/index.html` — 2026-03-22T22:01:12Z
+
+**Run ID:** `20260322-220112`
+
+| Dimension | Score (1–10) |
+|-----------|---------------|
+| Features | 9 |
+| SEO | 9 |
+| UX | 9 |
+| Error handling | 8 |
+
+
+### Summary
+
+The CSV Sorter is a highly polished, privacy-first utility with excellent UX and robust client-side processing. It handles edge cases like quoted fields and custom delimiters well, though it could benefit from more granular error reporting for malformed CSV structures.
+
+### Detailed findings
+
+- Excellent use of client-side processing; the UI remains responsive even during heavy operations due to requestAnimationFrame usage.
+- The drop zone implementation is very strong, with clear visual states and accessibility attributes (aria-busy, role=button).
+- The custom delimiter logic is flexible, but the error handling for malformed CSVs (e.g., mismatched quotes) is currently silent or generic.
+- SEO metadata and structured data (Schema.org) are well-implemented and follow best practices for utility tools.
+
