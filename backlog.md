@@ -1,6 +1,6 @@
 # Site improvement backlog
 
-Tasks come from **scheduled audits** (`audit-results.md` has scores and narrative). Each item has an **ID** and **status** so you know what to implement next.
+Tasks can be **manual** or left over from **past audits** (`audit-results.md` has older scores and narrative). Each item has an **ID** and **status** so you know what to implement next.
 
 ## Status reference
 

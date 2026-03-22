@@ -1,4 +1,6 @@
-# Automated audit results
+# Audit results (archive)
+
+**Scheduled GitHub Actions audits are disabled** for this repo. New entries require running `scripts/site-audit/audit.py` locally (see that folder’s README).
 
 Each run scores **one queue entry** (see `audit-queue.md`) on four dimensions **1–10** (higher is better), then logs notes and backlog tasks in `backlog.md`.
 
