@@ -5,7 +5,7 @@ appends scores to audit-results.md, appends tasks to backlog.md, rotates the que
 
 Env:
   GEMINI_API_KEY   (required) — from https://aistudio.google.com/apikey
-  GEMINI_MODEL     (optional, default gemini-2.0-flash)
+  GEMINI_MODEL     (optional, default gemini-3.1-flash-lite-preview)
   REPO_ROOT        (optional, default cwd)
   MAX_FILE_CHARS   (optional, default 120000) per file before truncation
 """
@@ -43,7 +43,7 @@ QUEUE_PATH = REPO_ROOT / "audit-queue.md"
 BACKLOG_PATH = REPO_ROOT / "backlog.md"
 RESULTS_PATH = REPO_ROOT / "audit-results.md"
 API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
-MODEL = (os.environ.get("GEMINI_MODEL") or "gemini-2.0-flash").strip() or "gemini-2.0-flash"
+MODEL = (os.environ.get("GEMINI_MODEL") or "gemini-3.1-flash-lite-preview").strip() or "gemini-3.1-flash-lite-preview"
 MAX_FILE_CHARS = int(os.environ.get("MAX_FILE_CHARS", "120000"))
 
 

@@ -3,7 +3,7 @@
 ## What it does
 
 1. Reads **`audit-queue.md`**: first non-comment path (comma-separated = multiple files in one audit).
-2. Calls **Google Gemini** (`GEMINI_MODEL`, default `gemini-2.0-flash`) with **JSON** output:
+2. Calls **Google Gemini** (`GEMINI_MODEL`, default `gemini-3.1-flash-lite-preview`) with **JSON** output:
    - Scores **1–10** for: features, SEO, UX, error handling.
    - Summary, detailed findings, and suggested **backlog tasks** (with `pending` / `ready` / etc.).
 3. Appends a section to **`audit-results.md`** (scores + narrative).
@@ -13,7 +13,7 @@
 ## GitHub setup
 
 1. **Repository secret:** `GEMINI_API_KEY` — create a key at [Google AI Studio](https://aistudio.google.com/apikey) (or Google Cloud console for production keys).
-2. **Optional repository variable:** `GEMINI_MODEL` — e.g. `gemini-2.0-flash`, `gemini-1.5-flash`, `gemini-1.5-pro` (if unset, the script uses `gemini-2.0-flash`).
+2. **Optional repository variable:** `GEMINI_MODEL` — e.g. `gemini-3.1-flash-lite-preview`, `gemini-2.5-flash` (if unset, the script uses `gemini-3.1-flash-lite-preview`).
 
 Remove or ignore any old **`OPENAI_API_KEY`** / **`AUDIT_MODEL`** secrets; they are no longer used by this workflow.
 
