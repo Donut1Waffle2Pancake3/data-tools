@@ -30,6 +30,12 @@ When you **finish** a task, move it from **To do** to **Completed** and set chec
 - [ ] **T-YYYYMMDD-HHMMSS-n** `pending` — (path) Task title
 -->
 
+
+- [ ] **T-20260322-215017-1** `pending` — (csv-sorter/index.html) Add multi-column sorting support
+- [ ] **T-20260322-215017-2** `pending` — (csv-sorter/index.html) Implement content-based CSV validation before parsing
+- [ ] **T-20260322-215017-3** `pending` — (csv-sorter/index.html) Add support for custom date formats (e.g., DD/MM/YYYY)
+- [ ] **T-20260322-215017-4** `pending` — (csv-sorter/index.html) Add 'Export to JSON' feature as an alternative output format
+- [ ] **T-20260322-215017-5** `pending` — (csv-sorter/index.html) Improve mobile responsiveness for the result preview textarea
 - [ ] **T-20260322-214952-1** `pending` — (csv-sorter/index.html) Add specific line-number reporting for CSV parse errors
 - [ ] **T-20260322-214952-2** `pending` — (csv-sorter/index.html) Implement a 'Download as Excel' (XLSX) export option
 - [ ] **T-20260322-214952-3** `pending` — (csv-sorter/index.html) Add a 'Preview' limit (truncate display for massive files to prevent browser hang)
