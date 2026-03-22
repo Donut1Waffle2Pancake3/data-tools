@@ -14,11 +14,29 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
+
+# Queue lines must look like repo paths, not free-form docs (see audit-queue.md).
+_QUEUE_SINGLE = re.compile(r"^[\w.\-]+\.\w{1,16}$")
+
+
+def looks_like_queue_entry(line: str) -> bool:
+    s = line.strip()
+    if not s or s.startswith("#") or s.startswith("-"):
+        return False
+    if " " in s and "," not in s:
+        return False
+    if "," in s:
+        parts = [p.strip() for p in s.split(",") if p.strip()]
+        return len(parts) > 0 and all(looks_like_queue_entry(p) for p in parts)
+    if "/" in s:
+        return True
+    return bool(_QUEUE_SINGLE.match(s))
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", os.getcwd())).resolve()
 QUEUE_PATH = REPO_ROOT / "audit-queue.md"
@@ -38,8 +56,7 @@ def split_queue(text: str) -> tuple[list[str], list[str]]:
     lines = text.splitlines()
     first_path_idx = None
     for i, line in enumerate(lines):
-        s = line.strip()
-        if s and not s.startswith("#"):
+        if looks_like_queue_entry(line):
             first_path_idx = i
             break
     if first_path_idx is None:
@@ -47,9 +64,8 @@ def split_queue(text: str) -> tuple[list[str], list[str]]:
     header_lines = lines[:first_path_idx]
     paths: list[str] = []
     for line in lines[first_path_idx:]:
-        s = line.strip()
-        if s and not s.startswith("#"):
-            paths.append(s)
+        if looks_like_queue_entry(line):
+            paths.append(line.strip())
     return header_lines, paths
 
 
