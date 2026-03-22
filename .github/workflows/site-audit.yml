@@ -1,0 +1,53 @@
+# Scheduled LLM audit: rotates audit-queue.md, appends scores to audit-results.md
+# and tasks to backlog.md. Requires repository secret OPENAI_API_KEY.
+#
+# Default schedule: 30 minutes past each hour UTC (stagger from on-the-hour jobs).
+# Change `cron` below for a different pattern (times are always UTC).
+
+name: Site audit (rotate queue)
+
+on:
+  schedule:
+    - cron: "30 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: site-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r scripts/site-audit/requirements.txt
+
+      - name: Run audit
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Optional repo variable AUDIT_MODEL (e.g. gpt-4o); script defaults to gpt-4o-mini if unset
+          AUDIT_MODEL: ${{ vars.AUDIT_MODEL }}
+        run: python scripts/site-audit/audit.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit-queue.md backlog.md audit-results.md
+          if git diff --staged --quiet; then
+            echo "No file changes."
+          else
+            git commit -m "chore(audit): results + backlog + queue rotation [skip ci]"
+            git push
+          fi

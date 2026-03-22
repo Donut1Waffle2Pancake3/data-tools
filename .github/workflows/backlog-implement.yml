@@ -1,0 +1,18 @@
+# Placeholder for a future "implement from backlog" automation.
+# Running an LLM that edits the repo without review is risky — use PRs or manual PRs first.
+#
+# Trigger manually from the Actions tab when you want to extend this (e.g. open a PR from `ready` tasks).
+
+name: Backlog implement (manual stub)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain
+        run: |
+          echo "Extend this workflow to e.g. parse backlog.md for tasks marked \`ready\`,"
+          echo "then open a pull request or run a codex/cli step. Not enabled on a schedule by default."
