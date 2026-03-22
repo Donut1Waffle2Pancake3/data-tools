@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Site audit runner for GitHub Actions: reads audit-queue.md, audits first entry via OpenAI,
+Site audit runner for GitHub Actions: reads audit-queue.md, audits first entry via Google Gemini,
 appends scores to audit-results.md, appends tasks to backlog.md, rotates the queue.
 
 Env:
-  OPENAI_API_KEY   (required)
-  AUDIT_MODEL      (optional, default gpt-4o-mini)
+  GEMINI_API_KEY   (required) — from https://aistudio.google.com/apikey
+  GEMINI_MODEL     (optional, default gemini-2.0-flash)
   REPO_ROOT        (optional, default cwd)
   MAX_FILE_CHARS   (optional, default 120000) per file before truncation
 """
@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -25,8 +24,8 @@ REPO_ROOT = Path(os.environ.get("REPO_ROOT", os.getcwd())).resolve()
 QUEUE_PATH = REPO_ROOT / "audit-queue.md"
 BACKLOG_PATH = REPO_ROOT / "backlog.md"
 RESULTS_PATH = REPO_ROOT / "audit-results.md"
-API_KEY = os.environ.get("OPENAI_API_KEY", "").strip()
-MODEL = (os.environ.get("AUDIT_MODEL") or "gpt-4o-mini").strip() or "gpt-4o-mini"
+API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
+MODEL = (os.environ.get("GEMINI_MODEL") or "gemini-2.0-flash").strip() or "gemini-2.0-flash"
 MAX_FILE_CHARS = int(os.environ.get("MAX_FILE_CHARS", "120000"))
 
 
@@ -109,8 +108,22 @@ Rules:
 - Do not include tasks that are already perfect; focus on gaps and risks."""
 
 
-def call_openai(files_blob: str, page_label: str) -> dict:
-    user = f"""Audit target (repo-relative): {page_label}
+def _parse_json_from_gemini_text(text: str) -> dict:
+    text = (text or "").strip()
+    if not text:
+        die("Empty model response", 3)
+    if text.startswith("```"):
+        lines = text.split("\n")
+        if lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        text = "\n".join(lines).strip()
+    return json.loads(text)
+
+
+def call_gemini(files_blob: str, page_label: str) -> dict:
+    user_text = f"""Audit target (repo-relative): {page_label}
 
 Evaluate: **features** (capability vs a CSV sorter), **SEO** (titles, meta, semantics, structured data if present), **UX** (layout, clarity, loading states, mobile), **error handling** (empty input, bad files, edge cases in JS).
 
@@ -118,26 +131,39 @@ Source files:
 
 {files_blob}
 """
-    url = "https://api.openai.com/v1/chat/completions"
-    headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
+    params = {"key": API_KEY}
     body = {
-        "model": MODEL,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user},
+        "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+        "contents": [
+            {
+                "role": "user",
+                "parts": [{"text": user_text}],
+            }
         ],
-        "temperature": 0.3,
-        "response_format": {"type": "json_object"},
+        "generationConfig": {
+            "temperature": 0.3,
+            "responseMimeType": "application/json",
+        },
     }
-    r = requests.post(url, headers=headers, json=body, timeout=120)
+    r = requests.post(url, params=params, json=body, timeout=120)
     if r.status_code != 200:
-        die(f"OpenAI API error {r.status_code}: {r.text[:2000]}", 3)
+        die(f"Gemini API error {r.status_code}: {r.text[:2000]}", 3)
     data = r.json()
+    if not data.get("candidates"):
+        die(f"No candidates in Gemini response: {json.dumps(data)[:2000]}", 3)
+    cand = data["candidates"][0]
+    if cand.get("finishReason") and cand["finishReason"] not in ("STOP", "MAX_TOKENS"):
+        die(f"Gemini finishReason={cand.get('finishReason')}: {json.dumps(data)[:2000]}", 3)
     try:
-        content = data["choices"][0]["message"]["content"]
-    except (KeyError, IndexError) as e:
-        die(f"Unexpected API response: {e}", 3)
-    return json.loads(content)
+        parts = cand["content"]["parts"]
+        raw_text = "".join(p.get("text", "") for p in parts)
+    except (KeyError, TypeError) as e:
+        die(f"Unexpected Gemini response shape: {e}: {json.dumps(data)[:2000]}", 3)
+    try:
+        return _parse_json_from_gemini_text(raw_text)
+    except json.JSONDecodeError as e:
+        die(f"Invalid JSON from model: {e}\n---\n{raw_text[:3000]}", 3)
 
 
 def validate_payload(obj: dict) -> dict:
@@ -146,8 +172,14 @@ def validate_payload(obj: dict) -> dict:
     out_scores = {}
     for k in required:
         v = scores.get(k)
+        if isinstance(v, bool):
+            die(f"Invalid score for {k}: {v!r}", 3)
+        if isinstance(v, float) and v == int(v):
+            v = int(v)
+        if isinstance(v, str) and v.isdigit():
+            v = int(v)
         if not isinstance(v, int) or not (1 <= v <= 10):
-            die(f"Invalid or missing score for {k}: {v!r}", 3)
+            die(f"Invalid or missing score for {k}: {scores.get(k)!r}", 3)
         out_scores[k] = v
     summary = (obj.get("summary") or "").strip()
     if not summary:
@@ -247,7 +279,7 @@ def append_backlog_tasks(
 
 def main() -> None:
     if not API_KEY:
-        die("OPENAI_API_KEY is not set", 2)
+        die("GEMINI_API_KEY is not set", 2)
 
     if not QUEUE_PATH.is_file():
         die(f"Missing {QUEUE_PATH}", 2)
@@ -265,8 +297,8 @@ def main() -> None:
     iso_ts = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     run_id = now.strftime("%Y%m%d-%H%M%S")
 
-    print(f"Auditing: {page_label} (run {run_id})")
-    raw = call_openai(files_blob, page_label)
+    print(f"Auditing: {page_label} (run {run_id}) [model {MODEL}]")
+    raw = call_gemini(files_blob, page_label)
     payload = validate_payload(raw)
 
     append_audit_results(RESULTS_PATH, page_label, iso_ts, run_id, payload)

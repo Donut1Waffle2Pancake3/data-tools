@@ -3,7 +3,7 @@
 ## What it does
 
 1. Reads **`audit-queue.md`**: first non-comment path (comma-separated = multiple files in one audit).
-2. Calls **OpenAI** (`AUDIT_MODEL`, default `gpt-4o-mini`) with JSON output:
+2. Calls **Google Gemini** (`GEMINI_MODEL`, default `gemini-2.0-flash`) with **JSON** output:
    - Scores **1–10** for: features, SEO, UX, error handling.
    - Summary, detailed findings, and suggested **backlog tasks** (with `pending` / `ready` / etc.).
 3. Appends a section to **`audit-results.md`** (scores + narrative).
@@ -12,19 +12,22 @@
 
 ## GitHub setup
 
-1. **Repository secret:** `OPENAI_API_KEY` — your OpenAI API key.
-2. **Optional repository variable:** `AUDIT_MODEL` — e.g. `gpt-4o-mini` or `gpt-4o` (if unset, the script uses `gpt-4o-mini`).
+1. **Repository secret:** `GEMINI_API_KEY` — create a key at [Google AI Studio](https://aistudio.google.com/apikey) (or Google Cloud console for production keys).
+2. **Optional repository variable:** `GEMINI_MODEL` — e.g. `gemini-2.0-flash`, `gemini-1.5-flash`, `gemini-1.5-pro` (if unset, the script uses `gemini-2.0-flash`).
+
+Remove or ignore any old **`OPENAI_API_KEY`** / **`AUDIT_MODEL`** secrets; they are no longer used by this workflow.
 
 Workflow file: `.github/workflows/site-audit.yml`  
 Default schedule: **`:30` every hour UTC**. Edit the `cron` expression to change that.
 
 ## Local run
 
-From repo root (requires `OPENAI_API_KEY` in the environment):
+From repo root (requires `GEMINI_API_KEY` in the environment):
 
 ```bash
 pip install -r scripts/site-audit/requirements.txt
-set OPENAI_API_KEY=sk-...   # Windows
+export GEMINI_API_KEY=...   # macOS/Linux
+set GEMINI_API_KEY=...      # Windows CMD
 python scripts/site-audit/audit.py
 ```
 

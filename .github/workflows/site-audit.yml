@@ -1,5 +1,5 @@
 # Scheduled LLM audit: rotates audit-queue.md, appends scores to audit-results.md
-# and tasks to backlog.md. Requires repository secret OPENAI_API_KEY.
+# and tasks to backlog.md. Requires repository secret GEMINI_API_KEY (Google AI Studio).
 #
 # Default schedule: 30 minutes past each hour UTC (stagger from on-the-hour jobs).
 # Change `cron` below for a different pattern (times are always UTC).
@@ -35,9 +35,9 @@ jobs:
 
       - name: Run audit
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          # Optional repo variable AUDIT_MODEL (e.g. gpt-4o); script defaults to gpt-4o-mini if unset
-          AUDIT_MODEL: ${{ vars.AUDIT_MODEL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Optional repo variable GEMINI_MODEL (e.g. gemini-2.0-flash, gemini-1.5-flash)
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
         run: python scripts/site-audit/audit.py
 
       - name: Commit and push if changed
