@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>JSON Viewer &amp; Tree Explorer | Secure Online JSON Formatter</title>
-  <meta name="description" content="View and format JSON with a 100% client-side JSON tree explorer. Secure nested data navigation, readable structure, and no uploads." />
+  <title>JSON Viewer | Free &amp; Private | TinyDataTool</title>
+  <meta name="description" content="Explore JSON in an interactive tree—format, fold, and copy data. Private, client-side processing in your browser—your data never leaves your device. No signup required. Free." />
   <link rel="canonical" href="https://tinydatatool.com/json-viewer/" />
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="JSON Viewer &amp; Tree Explorer | Secure Online JSON Formatter" />
-  <meta property="og:description" content="Explore and format JSON with 100% client-side processing and secure nested data navigation. No uploads, no storage, no server processing." />
+  <meta property="og:title" content="JSON Viewer | Free &amp; Private | TinyDataTool" />
+  <meta property="og:description" content="Explore JSON in an interactive tree—format, fold, and copy data. Private, client-side processing in your browser—your data never leaves your device. No signup required. Free." />
   <meta property="og:url" content="https://tinydatatool.com/json-viewer/" />
   <meta property="og:site_name" content="TinyDataTool" />
   <meta property="og:image" content="https://tinydatatool.com/assets/json-viewer-og.png" />
@@ -19,8 +19,8 @@
   <meta property="og:image:alt" content="JSON Viewer and Tree Explorer — 100% client-side, private, fast in-browser processing" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="JSON Viewer &amp; Tree Explorer | Secure Online JSON Formatter" />
-  <meta name="twitter:description" content="100% client-side JSON viewing and formatting with secure nested data navigation. Explore JSON instantly in your browser." />
+  <meta name="twitter:title" content="JSON Viewer | Free &amp; Private | TinyDataTool" />
+  <meta name="twitter:description" content="View JSON in your browser. Private, client-side. No signup." />
   <meta name="twitter:image" content="https://tinydatatool.com/assets/json-viewer-og.png" />
 
   <script type="application/ld+json">
@@ -45,7 +45,6 @@
       "description": "Online JSON formatter and beautifier with 100% client-side processing, secure nested data navigation, and no uploads.",
       "featureList": [
         "Collapsible JSON tree view for nested objects and arrays",
-        "Code view with formatted JSON output",
         "100% client-side JSON parsing and rendering",
         "Secure nested data navigation with no server upload",
         "Copy JSON Path by clicking tree nodes for faster debugging",
@@ -181,11 +180,11 @@
       transform: rotate(45deg);
     }
     .json-key { color: var(--text-primary); font-weight: 600; }
-    .json-type { color: #475569; }
-    .json-value--string { color: #166534; }
-    .json-value--number { color: #1d4ed8; }
-    .json-value--boolean { color: #6b21a8; }
-    .json-value--null { color: #475569; font-style: italic; }
+    .json-type { color: var(--json-type); }
+    .json-value--string { color: var(--json-string); }
+    .json-value--number { color: var(--json-number); }
+    .json-value--boolean { color: var(--json-boolean); }
+    .json-value--null { color: var(--json-null); font-style: italic; }
     .json-leaf { margin: 0 0 var(--space-4); }
     .path-bar {
       position: static;
@@ -202,30 +201,31 @@
     .path-bar__text {
       margin: 0;
       font-family: var(--font-body);
-      font-size: 13px;
-      color: #1e293b;
+      font-size: var(--text-sm);
+      line-height: var(--line-height-tight);
+      color: var(--text-secondary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .view-controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--space-12);
-    }
     .output-actions {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: var(--space-12);
+      width: 100%;
+    }
+    .output-actions .btn-download {
+      flex: 1 1 0;
+      min-width: 0;
+      justify-content: center;
     }
     .copy-toast {
       position: fixed;
       left: 50%;
       bottom: 32px;
       transform: translateX(-50%);
-      background: #111827;
-      color: #ffffff;
+      background: var(--toast-bg);
+      color: var(--toast-fg);
       padding: 10px 14px;
       border-radius: 8px;
       font-size: 15px;
@@ -237,9 +237,6 @@
       z-index: 1000;
     }
     .copy-toast.visible { opacity: 1; }
-    @media (max-width: 640px) {
-      .output-actions .btn-download { width: 100%; justify-content: center; }
-    }
   </style>
 </head>
 <body>
@@ -261,7 +258,7 @@
             <div class="form-group">
               <div class="form-label-row">
                 <label class="form-label" for="jsonInput">JSON input</label>
-                <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true" title="Clear JSON input">Clear</a>
+                <button type="button" class="clear-link" id="clearLink" disabled title="Clear JSON input">Clear</button>
               </div>
               <textarea id="jsonInput" class="form-input" placeholder='Paste JSON here, for example: {"name":"Ada","roles":["admin","editor"]}' spellcheck="false"></textarea>
             </div>
@@ -291,22 +288,14 @@
                 </div>
               </header>
 
-              <div class="view-controls">
-                <div class="tool-tabs" role="tablist" aria-label="JSON output view mode">
-                  <button type="button" class="tab active" role="tab" id="tab-tree-view" aria-selected="true" aria-controls="treeWrap" data-view-mode="tree">Tree view</button>
-                  <button type="button" class="tab" role="tab" id="tab-code-view" aria-selected="false" aria-controls="jsonOutput" data-view-mode="code">Code</button>
-                </div>
-              </div>
-
               <div>
                 <div class="path-bar" id="pathBar">
                   <p class="path-bar__text" id="pathBarText">Path: root</p>
-                  <a href="#" class="clear-link clear-link--enabled" id="copyPathBtn" role="button" title="Copy current JSON path">Copy Path</a>
+                  <button type="button" class="clear-link clear-link--enabled" id="copyPathBtn" title="Copy current JSON path">Copy Path</button>
                 </div>
                 <div class="json-tree-wrap" id="treeWrap">
                   <div id="treeOutput"></div>
                 </div>
-                <textarea id="jsonOutput" class="form-input" readonly spellcheck="false" style="display:none;"></textarea>
               </div>
               <div class="output-actions">
                 <button class="btn-download" id="copyBtn" type="button" disabled>
@@ -365,7 +354,7 @@
           </div>
           <div class="benefit" role="listitem">
             <div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-            <div><p class="benefit__title">Pretty-print minified code for faster debugging</p><p class="benefit__desc">Switch to a formatted view when you need a clean, copy-friendly version.</p></div>
+            <div><p class="benefit__title">Pretty-print minified code for faster debugging</p><p class="benefit__desc">Copy or download formatted JSON when you need a clean, shareable version.</p></div>
           </div>
           <div class="benefit" role="listitem">
             <div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
@@ -495,14 +484,12 @@
       var fileInput = document.getElementById('fileInput');
       var dropZone = document.getElementById('dropZone');
       var clearLink = document.getElementById('clearLink');
-      var viewModeTabs = document.querySelectorAll('[data-view-mode]');
       var errorMsg = document.getElementById('errorMsg');
       var errorText = document.getElementById('errorText');
       var resultSection = document.getElementById('resultSection');
       var resultMeta = document.getElementById('resultMeta');
       var treeWrap = document.getElementById('treeWrap');
       var treeOutput = document.getElementById('treeOutput');
-      var jsonOutput = document.getElementById('jsonOutput');
       var pathBar = document.getElementById('pathBar');
       var pathBarText = document.getElementById('pathBarText');
       var copyPathBtn = document.getElementById('copyPathBtn');
@@ -514,14 +501,17 @@
       var formattedOutput = '';
       var autoName = 'json-viewer-output.json';
       var autoRenderTimer = null;
-      var outputMode = 'tree';
       var toastTimer = null;
       var currentPath = 'root';
+
+      function clearElementChildren(el) {
+        while (el.firstChild) el.removeChild(el.firstChild);
+      }
 
       function updateUiState() {
         var hasInput = (jsonInput.value || '').trim().length > 0;
         clearLink.classList.toggle('clear-link--enabled', hasInput);
-        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+        clearLink.disabled = !hasInput;
       }
 
       function showError(message) {
@@ -599,6 +589,7 @@
         }, 900);
       }
 
+      /* Tree UI: bind all user-derived strings with .textContent only — never innerHTML. */
       function createTreeNode(key, value, depth, path) {
         if (value === null || typeof value !== 'object') {
           var leaf = document.createElement('p');
@@ -661,7 +652,7 @@
       }
 
       function renderTree(value) {
-        treeOutput.innerHTML = '';
+        clearElementChildren(treeOutput);
         var rootList = document.createElement('ul');
         rootList.className = 'json-tree';
         var rootItem = document.createElement('li');
@@ -670,32 +661,17 @@
         treeOutput.appendChild(rootList);
       }
 
-      function setOutputMode(mode) {
-        outputMode = mode === 'code' ? 'code' : 'tree';
-        for (var i = 0; i < viewModeTabs.length; i += 1) {
-          var tab = viewModeTabs[i];
-          var isActive = tab.getAttribute('data-view-mode') === outputMode;
-          tab.classList.toggle('active', isActive);
-          tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        }
-      }
-
       function showOutput() {
-        var showTree = outputMode === 'tree';
-        if (pathBar) pathBar.style.display = showTree ? 'flex' : 'none';
-        if (showTree) {
-          try {
-            renderTree(parsedData);
-            treeWrap.classList.add('visible');
-            jsonOutput.style.display = 'none';
-            return;
-          } catch (err) {
-            // Tree rendering fallback to formatted text.
-            setOutputMode('code');
-          }
+        if (pathBar) pathBar.style.display = 'flex';
+        try {
+          renderTree(parsedData);
+          treeWrap.classList.add('visible');
+          return true;
+        } catch (err) {
+          treeWrap.classList.remove('visible');
+          showError('Could not render tree. Your JSON parsed but the tree view failed.');
+          return false;
         }
-        treeWrap.classList.remove('visible');
-        jsonOutput.style.display = 'block';
       }
 
       function updateResultMeta(data) {
@@ -713,22 +689,23 @@
           downloadBtn.disabled = true;
           parsedData = null;
           formattedOutput = '';
-          treeOutput.innerHTML = '';
-          jsonOutput.value = '';
+          clearElementChildren(treeOutput);
           updatePathBar('root');
           treeWrap.classList.remove('visible');
-          jsonOutput.style.display = 'none';
           return;
         }
 
         try {
           parsedData = JSON.parse(text);
           formattedOutput = JSON.stringify(parsedData, null, 2);
-          jsonOutput.value = formattedOutput;
           hideError();
           updateResultMeta(parsedData);
           updatePathBar('root');
-          showOutput();
+          if (!showOutput()) {
+            copyBtn.disabled = true;
+            downloadBtn.disabled = true;
+            return;
+          }
           resultSection.classList.add('visible');
           copyBtn.disabled = false;
           downloadBtn.disabled = false;
@@ -760,17 +737,7 @@
         scheduleAutoRender();
       });
 
-      for (var i = 0; i < viewModeTabs.length; i += 1) {
-        viewModeTabs[i].addEventListener('click', function () {
-          setOutputMode(this.getAttribute('data-view-mode'));
-          if (!formattedOutput) return;
-          showOutput();
-        });
-      }
-
-      clearLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        if (clearLink.getAttribute('aria-disabled') === 'true') return;
+      clearLink.addEventListener('click', function () {
         jsonInput.value = '';
         fileInput.value = '';
         autoName = 'json-viewer-output.json';
@@ -824,8 +791,7 @@
         updatePathBar(path);
       });
 
-      copyPathBtn.addEventListener('click', function (event) {
-        event.preventDefault();
+      copyPathBtn.addEventListener('click', function () {
         navigator.clipboard.writeText(currentPath).then(function () {
           showInlineCopied(copyPathBtn);
           showToast('Copied path: ' + currentPath);
@@ -858,7 +824,6 @@
       });
 
       updateUiState();
-      setOutputMode('tree');
       hideError();
     })();
   </script>
