@@ -24,22 +24,24 @@
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="CSV Sorter Online | Free, Private &amp; No-Upload | TinyDataTool" />
   <meta name="twitter:description" content="Sort CSV online in your browser. Free, private, no signup, no upload." />
+  <meta name="twitter:image" content="https://tinydatatool.com/assets/csv-sorter-og.png" />
+  <meta name="twitter:image:alt" content="CSV Sorter Online — free, private, no upload, sort CSV files in your browser" />
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
+    "@type": "WebApplication",
     "name": "CSV Sorter Online",
-    "operatingSystem": "Any",
-    "applicationCategory": "UtilityApplication",
-    "browserRequirements": "Requires JavaScript",
     "url": "https://tinydatatool.com/csv-sorter/",
     "description": "A high-performance, privacy-focused online tool to sort CSV, TSV, and delimited text files. Supports custom separators (semicolons, tabs), auto-detects data types (Date, Number, Text), and processes all data locally in-browser for maximum security.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Web",
     "offers": {
       "@type": "Offer",
-      "price": "0.00",
+      "price": "0",
       "priceCurrency": "USD"
     },
+    "browserRequirements": "Requires JavaScript",
     "featureList": [
       "100% Private Client-Side Processing",
       "Custom Delimiter Support (Comma, Semicolon, Tab)",
@@ -70,6 +72,59 @@
       width: 128px;
       flex-shrink: 0;
       border-radius: var(--radius-sm);
+    }
+
+    .output-options {
+      margin-top: var(--space-16);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      background: var(--surface-secondary);
+    }
+    .output-options__summary {
+      cursor: pointer;
+      padding: var(--space-12) var(--space-16);
+      font-weight: 600;
+      font-size: var(--text-sm);
+      list-style: none;
+    }
+    .output-options__summary::-webkit-details-marker { display: none; }
+    .output-options__body {
+      padding: 0 var(--space-16) var(--space-16);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-16);
+    }
+    .output-options .form-section { margin: 0; }
+    .output-options .form-label { display: block; margin-bottom: var(--space-8); }
+
+    .sort-keys-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-12);
+    }
+    .sort-key-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-8) var(--space-12);
+    }
+    .sort-key-row .field-md { flex: 0 1 auto; min-width: 120px; }
+    .sort-key-remove { flex-shrink: 0; }
+    .sort-keys-add-row {
+      margin-top: var(--space-12);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+      align-items: flex-start;
+    }
+    .detected-type-hint {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      line-height: var(--line-height-normal);
+      max-width: 100%;
     }
 
     .example-chips {
@@ -111,7 +166,7 @@
       border-color: rgba(21, 128, 61, 0.55);
       background: color-mix(in srgb, var(--success-bg) 92%, var(--success) 8%);
     }
-    #tool #dropZone.has-file:focus-visible {
+    #tool #dropZone.has-file:has(#fileInput:focus-visible) {
       outline: 2px solid rgba(21, 128, 61, 0.4);
       outline-offset: 4px;
     }
@@ -128,8 +183,8 @@
       background: var(--surface-secondary);
       border-color: var(--border-strong);
     }
-    #tool #dropZone.file-reading:focus-visible,
-    #tool #dropZone.has-file.file-processing:focus-visible {
+    #tool #dropZone.file-reading:has(#fileInput:focus-visible),
+    #tool #dropZone.has-file.file-processing:has(#fileInput:focus-visible) {
       outline: 2px solid var(--border-strong);
       outline-offset: 4px;
     }
@@ -171,9 +226,29 @@
       color: var(--text-muted-on-surface);
     }
 
-    /* Drop zone + file details (file input underlay; prompt passes clicks through) */
-    #dropZone #fileInput {
-      z-index: 1;
+    /* File input: sr-only; clicks/keyboard use <label for="fileInput"> (overrides global .drop-zone file overlay) */
+    #tool #dropZone #fileInput {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+      inset: auto;
+      opacity: 0;
+      pointer-events: none;
+      cursor: default;
+      z-index: 0;
+    }
+    #tool #dropZone > .drop-zone-activator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      cursor: pointer;
     }
     #dropZone #dropZonePrompt {
       position: relative;
@@ -277,6 +352,12 @@
 </head>
 <body>
 
+  <noscript>
+    <div style="background-color: yellow; color: #111111; padding: 1rem; text-align: center; font-family: sans-serif;">
+      <p style="margin: 0;">CSV Sorter requires JavaScript to run. Please enable JavaScript in your browser settings, or download a free CSV tool such as <a href="https://www.libreoffice.org/discover/calc/" target="_blank" rel="noopener noreferrer" style="color: #111111; text-decoration: underline;">LibreOffice Calc (free download)</a>.</p>
+    </div>
+  </noscript>
+
   <div id="site-header-root" data-base="../" data-active="csv-sorter"></div>
 
   <div id="privacy-banner-root"></div>
@@ -297,7 +378,7 @@
           <div class="form-group">
             <div class="form-label-row">
               <label class="form-label" for="csvInput">Paste CSV</label>
-              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+              <button type="button" class="clear-link" id="clearBtn" disabled>Clear</button>
             </div>
             <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, columns separated by commas." spellcheck="false"></textarea>
             <div class="example-chips" aria-label="Example CSV samples">
@@ -308,32 +389,34 @@
             </div>
           </div>
 
-          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
+          <div class="drop-zone" id="dropZone">
             <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
-            <div class="drop-zone__busy" aria-hidden="true">
-              <span class="drop-zone__spinner"></span>
-              <p class="drop-zone__busy-label">Loading file…</p>
-            </div>
-            <div id="dropZonePrompt" class="drop-zone__prompt">
-              <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
-              </svg>
-              <p class="drop-zone__label">Or upload a CSV or text file</p>
-              <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
-            </div>
-            <div id="fileInfo" class="drop-zone__file-details" aria-live="polite">
-              <div class="drop-zone__file-name-row-wrap">
-                <div class="drop-zone__file-name-row">
-                  <p class="drop-zone__file-name" id="fileInfoName"></p>
-                  <button class="btn-clear-file" id="clearFileBtn" type="button" aria-label="Remove selected file" title="Remove file">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                      <path d="M14.793 6.27L11.043 10.02L14.762 13.738C15.074 14.02 15.074 14.488 14.762 14.77C14.48 15.082 14.012 15.082 13.73 14.77L9.98 11.05L6.262 14.77C5.98 15.082 5.512 15.082 5.23 14.77C4.918 14.488 4.918 14.02 5.23 13.707L8.949 9.988L5.23 6.27C4.918 5.988 4.918 5.52 5.23 5.207C5.512 4.926 5.98 4.926 6.293 5.207L10.012 8.957L13.73 5.238C14.012 4.926 14.48 4.926 14.793 5.238C15.074 5.52 15.074 5.988 14.793 6.27Z" fill="currentColor"/>
-                    </svg>
-                  </button>
-                </div>
+            <label class="drop-zone-activator" for="fileInput" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
+              <div class="drop-zone__busy" aria-hidden="true">
+                <span class="drop-zone__spinner"></span>
+                <p class="drop-zone__busy-label">Loading file…</p>
               </div>
-              <p class="drop-zone__file-meta" id="fileInfoSize"></p>
-            </div>
+              <div id="dropZonePrompt" class="drop-zone__prompt">
+                <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+                </svg>
+                <p class="drop-zone__label">Or upload a CSV or text file</p>
+                <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+              </div>
+              <div id="fileInfo" class="drop-zone__file-details" aria-live="polite">
+                <div class="drop-zone__file-name-row-wrap">
+                  <div class="drop-zone__file-name-row">
+                    <p class="drop-zone__file-name" id="fileInfoName"></p>
+                    <button class="btn-clear-file" id="clearFileBtn" type="button" aria-label="Remove selected file" title="Remove file">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                        <path d="M14.793 6.27L11.043 10.02L14.762 13.738C15.074 14.02 15.074 14.488 14.762 14.77C14.48 15.082 14.012 15.082 13.73 14.77L9.98 11.05L6.262 14.77C5.98 15.082 5.512 15.082 5.23 14.77C4.918 14.488 4.918 14.02 5.23 13.707L8.949 9.988L5.23 6.27C4.918 5.988 4.918 5.52 5.23 5.207C5.512 4.926 5.98 4.926 6.293 5.207L10.012 8.957L13.73 5.238C14.012 4.926 14.48 4.926 14.793 5.238C15.074 5.52 15.074 5.988 14.793 6.27Z" fill="currentColor"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <p class="drop-zone__file-meta" id="fileInfoSize"></p>
+              </div>
+            </label>
           </div>
 
           <div class="sort-options is-hidden" id="sortOptions">
@@ -344,45 +427,12 @@
                 <span>First row is a header</span>
               </label>
             </div>
-            <div class="form-section">
-              <span class="form-section__label" id="sort-sort-label">Sort settings</span>
-              <div class="form-inline-row">
-                <select id="sortColumnSelect" class="field-md" aria-labelledby="sort-sort-label">
-                  <option value="0">Column 1</option>
-                </select>
-                <fieldset class="sort-options__radio-group" aria-label="Sort order">
-                  <label class="form-option">
-                    <input type="radio" name="sortOrder" id="orderAsc" value="asc" checked />
-                    <span>Asc</span>
-                  </label>
-                  <label class="form-option">
-                    <input type="radio" name="sortOrder" id="orderDesc" value="desc" />
-                    <span>Desc</span>
-                  </label>
-                </fieldset>
-              </div>
-            </div>
-            <div class="form-section" role="group" aria-labelledby="sort-type-label">
-              <span class="form-section__label" id="sort-type-label">Type</span>
-              <div class="form-inline-row">
-                <fieldset class="sort-options__radio-group" aria-label="Sort type">
-                  <label class="form-option">
-                    <input type="radio" name="valueType" id="typeAuto" value="auto" checked />
-                    <span>Auto</span>
-                  </label>
-                  <label class="form-option">
-                    <input type="radio" name="valueType" id="typeText" value="text" />
-                    <span>Text</span>
-                  </label>
-                  <label class="form-option">
-                    <input type="radio" name="valueType" id="typeNumber" value="number" />
-                    <span>Number</span>
-                  </label>
-                  <label class="form-option">
-                    <input type="radio" name="valueType" id="typeDate" value="date" />
-                    <span>Date</span>
-                  </label>
-                </fieldset>
+            <div class="form-section" role="group" aria-labelledby="sort-sort-label">
+              <span class="form-section__label" id="sort-sort-label">Sort keys</span>
+              <ol id="sortKeysList" class="sort-keys-list" aria-label="Sort keys in order"></ol>
+              <div class="sort-keys-add-row">
+                <button type="button" class="btn-secondary btn--sm" id="addSortKeyBtn" disabled>+ Add sort key</button>
+                <span id="detectedTypeHint" class="detected-type-hint" aria-live="polite"></span>
               </div>
             </div>
             <div class="form-section">
@@ -430,6 +480,14 @@
             <span id="errorText"></span>
           </div>
 
+          <div class="status-message status-message--warning" id="warningMsg" role="status" aria-live="polite" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1.5L14.5 13H1.5L8 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M8 6v3M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="warningText"></span>
+          </div>
+
           <div class="result-section" id="resultSection" aria-live="polite">
             <div class="result-section__heading">
               <p class="result-section__title">Results</p>
@@ -440,6 +498,36 @@
               <label class="form-label" for="csvOutput">Preview</label>
               <textarea id="csvOutput" class="form-input" readonly placeholder="Sorted CSV will appear here." aria-label="Sorted CSV preview" style="min-height: 120px;"></textarea>
             </div>
+            <details class="output-options" id="outputOptionsDetails">
+              <summary class="output-options__summary">Output options</summary>
+              <div class="output-options__body">
+                <div class="form-section">
+                  <label class="form-label" for="outDelimSelect">Output delimiter</label>
+                  <select id="outDelimSelect" class="field-md" aria-label="Output delimiter">
+                    <option value="same">Same as input</option>
+                    <option value=",">Comma ( , )</option>
+                    <option value="&#9;">Tab ( \t )</option>
+                    <option value=";">Semicolon ( ; )</option>
+                    <option value="|">Pipe ( | )</option>
+                  </select>
+                </div>
+                <div class="form-section">
+                  <label class="form-label" for="outQuoteSelect">Quoting policy</label>
+                  <select id="outQuoteSelect" class="field-md" aria-label="Quoting policy">
+                    <option value="minimal">Minimal (only when needed)</option>
+                    <option value="all">Quote all fields</option>
+                    <option value="nonnumeric">Quote non-numeric fields</option>
+                  </select>
+                </div>
+                <div class="form-section">
+                  <label class="form-label" for="outNewlineSelect">Line endings</label>
+                  <select id="outNewlineSelect" class="field-md" aria-label="Line endings">
+                    <option value="crlf">Windows (CRLF)</option>
+                    <option value="lf" selected>Unix/Mac (LF)</option>
+                  </select>
+                </div>
+              </div>
+            </details>
             <div class="result-actions">
               <button class="btn-download" id="copyBtn" type="button" aria-label="Copy CSV to clipboard">
                 <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -602,77 +690,77 @@
       <div class="container--wide">
         <p class="section-label">FAQ</p>
         <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
-        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <div class="faq-list">
+          <div class="faq-item">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
-              <span itemprop="name">How do I sort a CSV file online?</span>
+              <span>How do I sort a CSV file online?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Paste your CSV data into the input box or upload a file, select the column you want to sort by, choose ascending or descending order, and click &quot;Sort CSV.&quot; The sorted result appears instantly and can be copied or downloaded.</span>
+            <div class="faq-answer" id="faq-1-answer">
+              <span>Paste your CSV data into the input box or upload a file, select the column you want to sort by, choose ascending or descending order, and click &quot;Sort CSV.&quot; The sorted result appears instantly and can be copied or downloaded.</span>
             </div>
           </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-item">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
-              <span itemprop="name">Can I sort a CSV by a specific column?</span>
+              <span>Can I sort a CSV by a specific column?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. After loading your data, select any column from the dropdown menu. The tool will reorder all rows based on the values in that column while keeping the rest of your data intact.</span>
+            <div class="faq-answer" id="faq-2-answer">
+              <span>Yes. After loading your data, select any column from the dropdown menu. The tool will reorder all rows based on the values in that column while keeping the rest of your data intact.</span>
             </div>
           </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-item">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
-              <span itemprop="name">Can I sort a CSV alphabetically, numerically, or by date?</span>
+              <span>Can I sort a CSV alphabetically, numerically, or by date?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The tool can automatically detect whether your data is text, numbers, or dates. You can also manually select the type to ensure accurate sorting for names, numeric values, or timestamps.</span>
+            <div class="faq-answer" id="faq-3-answer">
+              <span>Yes. The tool can automatically detect whether your data is text, numbers, or dates. You can also manually select the type to ensure accurate sorting for names, numeric values, or timestamps.</span>
             </div>
           </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-item">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
-              <span itemprop="name">How do I sort a CSV without Excel or Google Sheets?</span>
+              <span>How do I sort a CSV without Excel or Google Sheets?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">You can use this tool directly in your browser—no spreadsheet software required. Paste or upload your CSV, configure your sort settings, and download the result instantly.</span>
+            <div class="faq-answer" id="faq-4-answer">
+              <span>You can use this tool directly in your browser—no spreadsheet software required. Paste or upload your CSV, configure your sort settings, and download the result instantly.</span>
             </div>
           </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-item">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
-              <span itemprop="name">Does this handle complex CSV files with quotes and commas?</span>
+              <span>Does this handle complex CSV files with quotes and commas?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. The parser correctly handles standard CSV edge cases, including quoted fields, embedded commas, and line breaks, so your data structure remains intact after sorting.</span>
+            <div class="faq-answer" id="faq-5-answer">
+              <span>Yes. The parser correctly handles standard CSV edge cases, including quoted fields, embedded commas, and line breaks, so your data structure remains intact after sorting.</span>
             </div>
           </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-item">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-6-answer">
-              <span itemprop="name">What happens to empty cells or missing data?</span>
+              <span>What happens to empty cells or missing data?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-answer" id="faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">You can choose how empty values are handled. Enable the &quot;Empty values last&quot; option to push rows with missing data to the bottom of the sorted results.</span>
+            <div class="faq-answer" id="faq-6-answer">
+              <span>You can choose how empty values are handled. Enable the &quot;Empty values last&quot; option to push rows with missing data to the bottom of the sorted results.</span>
             </div>
           </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-item">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-7-answer">
-              <span itemprop="name">Is there a limit to how much data I can sort?</span>
+              <span>Is there a limit to how much data I can sort?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-answer" id="faq-7-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">There is no fixed limit. Because processing happens locally in your browser, performance depends on your device&apos;s memory. Most modern devices can handle large files with tens of thousands of rows.</span>
+            <div class="faq-answer" id="faq-7-answer">
+              <span>There is no fixed limit. Because processing happens locally in your browser, performance depends on your device&apos;s memory. Most modern devices can handle large files with tens of thousands of rows.</span>
             </div>
           </div>
-          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <div class="faq-item">
             <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
-              <span itemprop="name">Is this CSV sorter private and secure?</span>
+              <span>Is this CSV sorter private and secure?</span>
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. All processing happens locally in your browser. Your data is never uploaded, stored, or transmitted to any server.</span>
+            <div class="faq-answer" id="faq-8-answer">
+              <span>Yes. All processing happens locally in your browser. Your data is never uploaded, stored, or transmitted to any server.</span>
             </div>
           </div>
         </div>
@@ -701,13 +789,10 @@
       const dropZone = document.getElementById('dropZone');
       const sortOptions = document.getElementById('sortOptions');
       const hasHeaderCheckbox = document.getElementById('hasHeaderCheckbox');
-      const sortColumnSelect = document.getElementById('sortColumnSelect');
-      const orderAsc = document.getElementById('orderAsc');
-      const orderDesc = document.getElementById('orderDesc');
-      const typeText = document.getElementById('typeText');
-      const typeNumber = document.getElementById('typeNumber');
-      const typeDate = document.getElementById('typeDate');
-      const typeAuto = document.getElementById('typeAuto');
+      const sortKeysList = document.getElementById('sortKeysList');
+      const addSortKeyBtn = document.getElementById('addSortKeyBtn');
+      const detectedTypeHint = document.getElementById('detectedTypeHint');
+      const MAX_SORT_KEYS = 5;
       const caseInsensitiveCheckbox = document.getElementById('caseInsensitiveCheckbox');
       const emptyLastCheckbox = document.getElementById('emptyLastCheckbox');
       const delimiterSelect = document.getElementById('delimiterSelect');
@@ -720,17 +805,24 @@
       /** Row count (deferred) + column parse must both finish before hiding the file busy overlay. */
       var fileLoadProcessing = { rowsReady: false, parseReady: false };
       const sortBtn = document.getElementById('sortBtn');
-      const clearLink = document.getElementById('clearLink');
+      const clearBtn = document.getElementById('clearBtn');
       const errorMsg = document.getElementById('errorMsg');
       const errorText = document.getElementById('errorText');
+      const warningMsg = document.getElementById('warningMsg');
+      const warningText = document.getElementById('warningText');
       const resultSection = document.getElementById('resultSection');
       const resultMeta = document.getElementById('resultMeta');
       const csvOutput = document.getElementById('csvOutput');
       const copyBtn = document.getElementById('copyBtn');
       const copyBtnLabel = document.getElementById('copyBtnLabel');
       const downloadLink = document.getElementById('downloadLink');
+      const outDelimSelect = document.getElementById('outDelimSelect');
+      const outQuoteSelect = document.getElementById('outQuoteSelect');
+      const outNewlineSelect = document.getElementById('outNewlineSelect');
 
       let csvBlobUrl = null;
+      let lastSortedOutRows = null;
+      let lastSortInputDelim = ',';
       let lastUploadFilename = '';
       let parsedData = null;
       let lastRunKey = '';
@@ -834,6 +926,12 @@
         }
         row.push(cell);
         rows.push(row);
+        if (inQuotes) {
+          throw new Error(
+            'CSV appears malformed: a quoted field was never closed. ' +
+            'Check for a stray quote character, or try a different delimiter.'
+          );
+        }
         return rows;
       }
 
@@ -853,29 +951,84 @@
         return rows;
       }
 
-      function fieldNeedsQuoting(str, delimiter) {
+      /** Before padding: warn if many data rows disagree with the first data row width (reference = header row when present). */
+      function warnIfInconsistentColumnCounts(rows, dataStart) {
+        if (!rows || rows.length <= dataStart) return;
+        var refLen = rows[dataStart].length;
+        var total = 0;
+        var bad = 0;
+        for (var r = dataStart; r < rows.length; r++) {
+          total++;
+          if (rows[r].length !== refLen) bad++;
+        }
+        if (total === 0) return;
+        if (bad / total > 0.2) {
+          showError(
+            'Warning: some rows have a different number of columns than the header. ' +
+            'Your CSV may have formatting issues. Sort results may be incomplete.'
+          );
+        }
+      }
+
+      function fieldNeedsQuotingMinimal(str, delimiter) {
         if (/[\r\n"]/.test(str)) return true;
         if (delimiter && str.indexOf(delimiter) !== -1) return true;
         return false;
       }
 
-      function escapeCsvCell(val, delimiter) {
-        var delim = delimiter || ',';
-        if (val === null || val === undefined) return '';
-        var str = String(val);
-        if (fieldNeedsQuoting(str, delim)) return '"' + str.replace(/"/g, '""') + '"';
+      function isTrimmedFiniteNumber(s) {
+        var t = String(s).trim();
+        if (t === '') return false;
+        var n = Number(t);
+        return Number.isFinite(n);
+      }
+
+      function escapeCsvCell(val, delimiter, quotePolicy) {
+        var str = val === null || val === undefined ? '' : String(val);
+        var needQuote = false;
+        if (quotePolicy === 'all') {
+          needQuote = true;
+        } else if (quotePolicy === 'nonnumeric') {
+          needQuote = !isTrimmedFiniteNumber(str);
+        } else {
+          needQuote = fieldNeedsQuotingMinimal(str, delimiter);
+        }
+        if (needQuote) return '"' + str.replace(/"/g, '""') + '"';
         return str;
       }
 
-      function rowsToCsv(rows, delimiter) {
-        var delim = delimiter || ',';
+      function rowsToCsv(rows, options = {}) {
+        const { delimiter: delimOpt, quotePolicy: qpOpt, newline: nlOpt } = options;
+        const delimiter = delimOpt != null ? delimOpt : ',';
+        const quotePolicy = qpOpt || 'minimal';
+        const rowJoin = nlOpt === 'crlf' ? '\r\n' : '\n';
         return rows.map(function (cells) {
-          return cells.map(function (cell) { return escapeCsvCell(cell, delim); }).join(delim);
-        }).join('\n');
+          return cells.map(function (cell) {
+            return escapeCsvCell(cell, delimiter, quotePolicy);
+          }).join(delimiter);
+        }).join(rowJoin);
       }
 
-      function isEmpty(val) {
-        return (val === null || val === undefined || String(val).trim() === '');
+      function getOutputSerializeOptions(inputDelimiter) {
+        var inDelim = inputDelimiter != null ? inputDelimiter : ',';
+        var d = outDelimSelect ? outDelimSelect.value : 'same';
+        var delimiter = d === 'same' ? inDelim : d;
+        return {
+          delimiter: delimiter,
+          quotePolicy: outQuoteSelect ? outQuoteSelect.value : 'minimal',
+          newline: outNewlineSelect && outNewlineSelect.value === 'crlf' ? 'crlf' : 'lf'
+        };
+      }
+
+      function applySortedOutputToDom() {
+        if (!lastSortedOutRows || !lastSortedOutRows.length) return;
+        var csvOut = rowsToCsv(lastSortedOutRows, getOutputSerializeOptions(lastSortInputDelim));
+        csvOutput.value = csvOut;
+        var blob = new Blob([csvOut], { type: 'text/csv;charset=utf-8' });
+        if (csvBlobUrl) URL.revokeObjectURL(csvBlobUrl);
+        csvBlobUrl = URL.createObjectURL(blob);
+        downloadLink.href = csvBlobUrl;
+        downloadLink.style.display = 'inline-flex';
       }
 
       function detectValueType(values) {
@@ -891,6 +1044,169 @@
         if (numeric / sample >= 0.8) return 'number';
         if (dateLike / sample >= 0.6) return 'date';
         return 'text';
+      }
+
+      function valueMatchesDetectedType(v, type) {
+        var t = String(v).trim();
+        if (type === 'number') {
+          return !isNaN(parseFloat(t)) && /^-?\d*\.?\d*$/.test(t);
+        }
+        if (type === 'date') {
+          return /^\d{4}-\d{2}-\d{2}/.test(t) || /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(t);
+        }
+        return true;
+      }
+
+      function getSampleConfidence(sample, type) {
+        if (!sample.length) return 0;
+        var matches = 0;
+        for (var i = 0; i < sample.length; i++) {
+          if (valueMatchesDetectedType(sample[i], type)) matches++;
+        }
+        return Math.round((matches / sample.length) * 100);
+      }
+
+      function readSortKeysSpecFromDom() {
+        var out = [];
+        if (!sortKeysList) return out;
+        var rows = sortKeysList.querySelectorAll('li.sort-key-row');
+        for (var i = 0; i < rows.length; i++) {
+          var row = rows[i];
+          var colEl = row.querySelector('.sort-key-col');
+          var ordEl = row.querySelector('.sort-key-order');
+          var typEl = row.querySelector('.sort-key-type');
+          if (!colEl || !ordEl || !typEl) continue;
+          out.push({
+            colIndex: parseInt(colEl.value, 10) || 0,
+            order: ordEl.value === 'desc' ? 'desc' : 'asc',
+            type: typEl.value || 'auto'
+          });
+        }
+        return out;
+      }
+
+      function getFirstSortKeyColSelect() {
+        return sortKeysList ? sortKeysList.querySelector('.sort-key-col') : null;
+      }
+
+      function updateSortKeyRemoveButtons() {
+        if (!sortKeysList) return;
+        var rows = sortKeysList.querySelectorAll('li.sort-key-row');
+        var show = rows.length > 1;
+        for (var i = 0; i < rows.length; i++) {
+          var btn = rows[i].querySelector('.sort-key-remove');
+          if (btn) btn.hidden = !show;
+        }
+      }
+
+      function syncAddSortKeyButton() {
+        if (!addSortKeyBtn) return;
+        var n = sortKeysList ? sortKeysList.querySelectorAll('li.sort-key-row').length : 0;
+        addSortKeyBtn.disabled = !parsedData || n >= MAX_SORT_KEYS;
+      }
+
+      function createSortKeyRow(spec, index, displayNames, numCols) {
+        var li = document.createElement('li');
+        li.className = 'sort-key-row';
+
+        var colSel = document.createElement('select');
+        colSel.className = 'sort-key-col field-md';
+        colSel.setAttribute('aria-label', 'Sort column for key ' + (index + 1));
+        for (var c = 0; c < numCols; c++) {
+          var opt = document.createElement('option');
+          opt.value = String(c);
+          opt.textContent = displayNames[c];
+          colSel.appendChild(opt);
+        }
+        var rawCi = parseInt(spec.colIndex, 10);
+        if (isNaN(rawCi)) rawCi = 0;
+        var ci = Math.max(0, Math.min(rawCi, numCols - 1));
+        colSel.value = String(ci);
+
+        var ordSel = document.createElement('select');
+        ordSel.className = 'sort-key-order field-md';
+        ordSel.setAttribute('aria-label', 'Sort direction for key ' + (index + 1));
+        var ordPairs = [['asc', 'Ascending'], ['desc', 'Descending']];
+        for (var oi = 0; oi < ordPairs.length; oi++) {
+          var oOpt = document.createElement('option');
+          oOpt.value = ordPairs[oi][0];
+          oOpt.textContent = ordPairs[oi][1];
+          ordSel.appendChild(oOpt);
+        }
+        ordSel.value = spec.order === 'desc' ? 'desc' : 'asc';
+
+        var typSel = document.createElement('select');
+        typSel.className = 'sort-key-type field-md';
+        typSel.setAttribute('aria-label', 'Value type for key ' + (index + 1));
+        var typPairs = [['auto', 'Auto'], ['text', 'Text'], ['number', 'Number'], ['date', 'Date']];
+        for (var ti = 0; ti < typPairs.length; ti++) {
+          var tOpt = document.createElement('option');
+          tOpt.value = typPairs[ti][0];
+          tOpt.textContent = typPairs[ti][1];
+          typSel.appendChild(tOpt);
+        }
+        var tv = spec.type;
+        typSel.value = (tv === 'text' || tv === 'number' || tv === 'date' || tv === 'auto') ? tv : 'auto';
+
+        var rm = document.createElement('button');
+        rm.type = 'button';
+        rm.className = 'btn-secondary btn--sm sort-key-remove';
+        rm.setAttribute('aria-label', 'Remove sort key ' + (index + 1));
+        rm.textContent = 'Remove';
+
+        li.appendChild(colSel);
+        li.appendChild(ordSel);
+        li.appendChild(typSel);
+        li.appendChild(rm);
+        return li;
+      }
+
+      function renderSortKeysList(displayNames, numCols, preservedSpecs) {
+        if (!sortKeysList) return;
+        var specs = preservedSpecs && preservedSpecs.length ? preservedSpecs.slice() : [{ colIndex: 0, order: 'asc', type: 'auto' }];
+        if (specs.length > MAX_SORT_KEYS) specs = specs.slice(0, MAX_SORT_KEYS);
+        for (var p = 0; p < specs.length; p++) {
+          var pc = parseInt(specs[p].colIndex, 10);
+          if (isNaN(pc)) pc = 0;
+          specs[p].colIndex = Math.max(0, Math.min(pc, numCols - 1));
+        }
+        sortKeysList.innerHTML = '';
+        for (var i = 0; i < specs.length; i++) {
+          sortKeysList.appendChild(createSortKeyRow(specs[i], i, displayNames, numCols));
+        }
+        updateSortKeyRemoveButtons();
+        syncAddSortKeyButton();
+      }
+
+      function updateDetectedTypeHint() {
+        if (!detectedTypeHint) return;
+        if (!parsedData) {
+          detectedTypeHint.textContent = '';
+          return;
+        }
+        var firstCol = getFirstSortKeyColSelect();
+        var colIdx = firstCol ? parseInt(firstCol.value, 10) : NaN;
+        if (isNaN(colIdx) || colIdx < 0 || colIdx >= parsedData.numCols) {
+          detectedTypeHint.textContent = '';
+          return;
+        }
+        var dataRows = parsedData.rows.slice(parsedData.dataStart);
+        var sample = [];
+        for (var ri = 0; ri < dataRows.length && sample.length < 50; ri++) {
+          var cell = dataRows[ri][colIdx];
+          var raw = cell == null ? '' : String(cell).trim();
+          if (raw !== '') sample.push(raw);
+        }
+        if (sample.length === 0) {
+          detectedTypeHint.textContent = 'Detected: — (no non-empty values in sample)';
+          return;
+        }
+        var detected = detectValueType(sample);
+        var confident = getSampleConfidence(sample, detected);
+        var labelMap = { text: 'Text', number: 'Number', date: 'Date' };
+        var label = labelMap[detected] || 'Text';
+        detectedTypeHint.textContent =
+          'Detected: ' + label + ' (' + confident + '% of sampled values match)';
       }
 
       function toSortKey(val, valueType, caseInsensitive) {
@@ -927,10 +1243,22 @@
 
       function clearError() { errorMsg.classList.remove('visible'); }
 
+      function showWarning(msg) {
+        if (!warningMsg || !warningText) return;
+        warningText.textContent = msg;
+        warningMsg.classList.add('visible');
+      }
+
+      function clearWarning() {
+        if (!warningMsg) return;
+        warningMsg.classList.remove('visible');
+      }
+
       function clearResult() {
         resultSection.classList.remove('visible');
         csvOutput.value = '';
         resultMeta.textContent = '';
+        lastSortedOutRows = null;
         if (csvBlobUrl) { URL.revokeObjectURL(csvBlobUrl); csvBlobUrl = null; }
         downloadLink.style.display = 'none';
       }
@@ -952,11 +1280,40 @@
 
       function showUploadSuccessToast() {
         if (!uploadToast) return;
+        var defaultToastSpan = uploadToast.querySelector('span');
+        if (defaultToastSpan) defaultToastSpan.textContent = 'File successfully uploaded';
         uploadToast.classList.add('visible');
         if (uploadToastTimer) window.clearTimeout(uploadToastTimer);
         uploadToastTimer = window.setTimeout(function () {
           uploadToast.classList.remove('visible');
         }, 2200);
+      }
+
+      /** After upload + parse, move focus into sort controls (or announce via toast if none are available). */
+      function focusAfterFileUploadComplete() {
+        if (uploadToast) uploadToast.removeAttribute('tabindex');
+        function tryFocus(el) {
+          if (!el || el.disabled) return false;
+          if (el.getAttribute('hidden') != null) return false;
+          var r = el.getBoundingClientRect();
+          if (r.width === 0 || r.height === 0) return false;
+          el.focus();
+          return true;
+        }
+        if (sortOptions && !sortOptions.classList.contains('is-hidden')) {
+          if (tryFocus(getFirstSortKeyColSelect())) return;
+          var focusables = sortOptions.querySelectorAll('select, input, button');
+          for (var i = 0; i < focusables.length; i++) {
+            if (tryFocus(focusables[i])) return;
+          }
+        }
+        if (tryFocus(sortBtn)) return;
+        if (uploadToast) {
+          uploadToast.setAttribute('tabindex', '-1');
+          var toastSpan = uploadToast.querySelector('span');
+          if (toastSpan) toastSpan.textContent = 'File loaded — configure your sort below.';
+          uploadToast.focus();
+        }
       }
 
       /** Snapshot current height so loading (prompt hidden → file info) doesn’t collapse the drop zone; cleared when load ends or aborts. */
@@ -979,10 +1336,11 @@
         if (fileLoadProcessing.rowsReady && fileLoadProcessing.parseReady) {
           dropZone.classList.remove('file-processing');
           if (!dropZone.classList.contains('file-reading')) dropZone.removeAttribute('aria-busy');
-          fileInput.blur();
-          dropZone.blur();
           clearDropZoneHeightLock();
           showUploadSuccessToast();
+          requestAnimationFrame(function () {
+            focusAfterFileUploadComplete();
+          });
         }
       }
 
@@ -1050,22 +1408,35 @@
 
       function parseAndUpdateColumns() {
         var trackFileProcessing = dropZone.classList.contains('file-processing');
+        var preservedSortSpecs = readSortKeysSpecFromDom();
         try {
           var text = getInputText();
           parsedData = null;
+          if (detectedTypeHint) detectedTypeHint.textContent = '';
           sortOptions.classList.add('is-hidden');
-          sortColumnSelect.innerHTML = '<option value="0">Column 1</option>';
+          if (sortKeysList) sortKeysList.innerHTML = '';
+          if (addSortKeyBtn) addSortKeyBtn.disabled = true;
           sortBtn.disabled = true;
 
           if (!text) { updateSortButtonState(); return; }
 
           var delim = getDelimiter();
-          var rows = parseCSV(text, delim);
+          var rows;
+          try {
+            rows = parseCSV(text, delim);
+          } catch (err) {
+            showError(err.message);
+            csvInput.focus();
+            updateSortButtonState();
+            return;
+          }
           if (!rows || rows.length === 0) { updateSortButtonState(); return; }
 
           var hasHeader = hasHeaderCheckbox.checked;
           var dataStart = hasHeader ? 1 : 0;
           if (hasHeader && rows.length < 2) { updateSortButtonState(); return; }
+
+          warnIfInconsistentColumnCounts(rows, dataStart);
 
           var normalized = normalizeColumnCount(rows.map(function (r) { return r.slice(); }));
           var numCols = normalized[0].length;
@@ -1076,14 +1447,10 @@
           parsedData = { rows: normalized, hasHeader: hasHeader, dataStart: dataStart, numCols: numCols, displayNames: displayNames, sourceText: text, parseDelimiter: delim };
 
           sortOptions.classList.remove('is-hidden');
-          sortColumnSelect.innerHTML = '';
-          for (var c = 0; c < numCols; c++) {
-            var opt = document.createElement('option');
-            opt.value = String(c);
-            opt.textContent = displayNames[c];
-            sortColumnSelect.appendChild(opt);
-          }
+          var specsToApply = preservedSortSpecs.length ? preservedSortSpecs : [{ colIndex: 0, order: 'asc', type: 'auto' }];
+          renderSortKeysList(displayNames, numCols, specsToApply);
           updateSortButtonState();
+          updateDetectedTypeHint();
         } finally {
           if (trackFileProcessing) {
             fileLoadProcessing.parseReady = true;
@@ -1093,11 +1460,12 @@
       }
 
       function getSortConfigRunKey() {
+        var keyParts = readSortKeysSpecFromDom().map(function (k) {
+          return k.colIndex + ':' + k.order + ':' + k.type;
+        });
         return [
           hasHeaderCheckbox.checked ? '1' : '0',
-          sortColumnSelect.value,
-          orderAsc.checked ? 'asc' : 'desc',
-          typeAuto.checked ? 'auto' : typeText.checked ? 'text' : typeNumber.checked ? 'number' : 'date',
+          keyParts.join('|'),
           caseInsensitiveCheckbox.checked ? 'ci1' : 'ci0',
           emptyLastCheckbox.checked ? 'el1' : 'el0',
           delimiterSelect.value,
@@ -1108,11 +1476,16 @@
 
       function updateSortButtonState() {
         var hasInput = getInputText().length > 0;
-        clearLink.classList.toggle('clear-link--enabled', hasInput);
-        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
-        if (!hasInput || !parsedData) { sortBtn.disabled = true; return; }
-        var colIdx = parseInt(sortColumnSelect.value, 10);
-        if (isNaN(colIdx) || colIdx < 0 || colIdx >= parsedData.numCols) { sortBtn.disabled = true; return; }
+        clearBtn.classList.toggle('clear-link--enabled', hasInput);
+        clearBtn.disabled = !hasInput;
+        if (!hasInput || !parsedData) { sortBtn.disabled = true; if (addSortKeyBtn) addSortKeyBtn.disabled = true; return; }
+        var specs = readSortKeysSpecFromDom();
+        if (!specs.length) { sortBtn.disabled = true; return; }
+        for (var si = 0; si < specs.length; si++) {
+          var c = specs[si].colIndex;
+          if (isNaN(c) || c < 0 || c >= parsedData.numCols) { sortBtn.disabled = true; return; }
+        }
+        syncAddSortKeyButton();
         if (hasRunCurrentConfig && getSortConfigRunKey() === lastRunKey) { sortBtn.disabled = true; return; }
         sortBtn.disabled = false;
       }
@@ -1129,8 +1502,16 @@
         if (parsedData && parsedData.sourceText === text && parsedData.parseDelimiter === delim) {
           normalized = parsedData.rows;
         } else {
-          var rows = parseCSV(text, delim);
+          var rows;
+          try {
+            rows = parseCSV(text, delim);
+          } catch (err) {
+            showError(err.message);
+            csvInput.focus();
+            return false;
+          }
           if (!rows || rows.length === 0) { showError('The CSV appears to be empty.'); return false; }
+          warnIfInconsistentColumnCounts(rows, dataStart);
           normalized = normalizeColumnCount(rows.map(function (r) { return r.slice(); }));
         }
 
@@ -1138,55 +1519,65 @@
         var header = hasHeader ? [normalized[0]] : [];
         var data = normalized.slice(dataStart);
 
-        var colIdx = parseInt(sortColumnSelect.value, 10);
-        if (isNaN(colIdx) || colIdx < 0 || colIdx >= normalized[0].length) {
-          showError('Selected sort column is missing or invalid.'); return false;
+        var sortKeysSpec = readSortKeysSpecFromDom();
+        if (!sortKeysSpec.length) {
+          showError('Add at least one sort key.'); return false;
+        }
+        for (var vk = 0; vk < sortKeysSpec.length; vk++) {
+          var cidx = sortKeysSpec[vk].colIndex;
+          if (isNaN(cidx) || cidx < 0 || cidx >= normalized[0].length) {
+            showError('Selected sort column is missing or invalid.'); return false;
+          }
         }
 
-        var ascending = orderAsc.checked;
-        var valueType = typeAuto.checked ? 'auto' : typeText.checked ? 'text' : typeNumber.checked ? 'number' : 'date';
         var caseInsensitive = caseInsensitiveCheckbox.checked;
         var emptyLast = emptyLastCheckbox.checked;
-
-        if (valueType === 'auto') {
-          var sampleVals = [];
-          for (var si = 0; si < data.length && sampleVals.length < 100; si++) {
-            var sv = (data[si][colIdx] || '').trim();
-            if (sv !== '') sampleVals.push(sv);
-          }
-          valueType = detectValueType(sampleVals);
-        }
-
-        // Precompute sort keys once (Schwartzian) — avoids O(n log n) repeated toSortKey work vs comparator-only sort
         var n = data.length;
-        var sortKeys = new Array(n);
-        for (var ki = 0; ki < n; ki++) {
-          sortKeys[ki] = toSortKey(data[ki][colIdx], valueType, caseInsensitive);
+        var keyMatrix = [];
+        for (var k = 0; k < sortKeysSpec.length; k++) {
+          var sk = sortKeysSpec[k];
+          var kt = sk.type;
+          var colKey = sk.colIndex;
+          if (kt === 'auto') {
+            var sampleVals = [];
+            for (var svi = 0; svi < data.length && sampleVals.length < 100; svi++) {
+              var sv = (data[svi][colKey] || '').trim();
+              if (sv !== '') sampleVals.push(sv);
+            }
+            kt = detectValueType(sampleVals);
+          }
+          var kArr = new Array(n);
+          for (var ri = 0; ri < n; ri++) {
+            kArr[ri] = toSortKey(data[ri][colKey], kt, caseInsensitive);
+          }
+          keyMatrix.push(kArr);
         }
-        var order = new Array(n);
-        for (var oi = 0; oi < n; oi++) order[oi] = oi;
-        order.sort(function (ia, ib) {
-          var cmp = compareKeys(sortKeys[ia], sortKeys[ib], emptyLast);
-          if (cmp !== 0) return ascending ? cmp : -cmp;
-          return ia - ib;
+
+        var wrapped = new Array(n);
+        for (var wi = 0; wi < n; wi++) wrapped[wi] = { row: data[wi], __origIdx: wi };
+        wrapped.sort(function (wa, wb) {
+          for (var kk = 0; kk < sortKeysSpec.length; kk++) {
+            var ord = sortKeysSpec[kk].order;
+            var a = keyMatrix[kk][wa.__origIdx];
+            var b = keyMatrix[kk][wb.__origIdx];
+            var cmp = compareKeys(a, b, emptyLast);
+            if (cmp !== 0) return ord === 'asc' ? cmp : -cmp;
+          }
+          return wa.__origIdx - wb.__origIdx;
         });
         var sorted = new Array(n);
-        for (var sj = 0; sj < n; sj++) sorted[sj] = data[order[sj]];
+        for (var sj = 0; sj < n; sj++) sorted[sj] = wrapped[sj].row;
 
         var outRows = header.concat(sorted);
-        var csvOut = rowsToCsv(outRows, delim);
+        lastSortedOutRows = outRows.map(function (row) { return row.slice(); });
+        lastSortInputDelim = delim;
 
         resultSection.classList.add('visible');
-        csvOutput.value = csvOut;
         var total = sorted.length;
         resultMeta.textContent = total.toLocaleString() + ' row' + (total !== 1 ? 's' : '') + ' sorted';
-        var blob = new Blob([csvOut], { type: 'text/csv;charset=utf-8' });
-        if (csvBlobUrl) URL.revokeObjectURL(csvBlobUrl);
-        csvBlobUrl = URL.createObjectURL(blob);
-        downloadLink.href = csvBlobUrl;
+        applySortedOutputToDom();
         var baseName = lastUploadFilename ? lastUploadFilename.replace(/\.[^/.]+$/, '') : '';
         downloadLink.download = baseName ? baseName + '-sorted.csv' : 'sorted.csv';
-        downloadLink.style.display = 'inline-flex';
         return true;
       }
 
@@ -1196,23 +1587,56 @@
         parseAndUpdateColumns();
       });
       customDelimiter.addEventListener('input', function () { parseAndUpdateColumns(); });
-      sortColumnSelect.addEventListener('change', function () { updateSortButtonState(); });
-      orderAsc.addEventListener('change', function () { updateSortButtonState(); });
-      orderDesc.addEventListener('change', function () { updateSortButtonState(); });
-      typeAuto.addEventListener('change', function () { updateSortButtonState(); });
-      typeText.addEventListener('change', function () { updateSortButtonState(); });
-      typeNumber.addEventListener('change', function () { updateSortButtonState(); });
-      typeDate.addEventListener('change', function () { updateSortButtonState(); });
+      if (sortKeysList) {
+        sortKeysList.addEventListener('change', function () {
+          updateSortButtonState();
+          updateDetectedTypeHint();
+        });
+        sortKeysList.addEventListener('click', function (e) {
+          var rm = e.target.closest && e.target.closest('.sort-key-remove');
+          if (!rm || !sortKeysList.contains(rm)) return;
+          var li = rm.closest('li.sort-key-row');
+          if (!li || sortKeysList.querySelectorAll('li.sort-key-row').length <= 1) return;
+          li.remove();
+          updateSortKeyRemoveButtons();
+          syncAddSortKeyButton();
+          updateSortButtonState();
+          updateDetectedTypeHint();
+        });
+      }
+      if (addSortKeyBtn) {
+        addSortKeyBtn.addEventListener('click', function () {
+          if (!parsedData || !sortKeysList) return;
+          var n = sortKeysList.querySelectorAll('li.sort-key-row').length;
+          if (n >= MAX_SORT_KEYS) return;
+          var dn = parsedData.displayNames;
+          var nc = parsedData.numCols;
+          var spec = { colIndex: Math.min(n, nc - 1), order: 'asc', type: 'auto' };
+          sortKeysList.appendChild(createSortKeyRow(spec, n, dn, nc));
+          updateSortKeyRemoveButtons();
+          syncAddSortKeyButton();
+          updateSortButtonState();
+        });
+      }
       caseInsensitiveCheckbox.addEventListener('change', function () { updateSortButtonState(); });
       emptyLastCheckbox.addEventListener('change', function () { updateSortButtonState(); });
 
-      clearLink.addEventListener('click', function (e) {
-        e.preventDefault();
+      function onOutputFormatChange() {
+        if (!resultSection.classList.contains('visible') || !lastSortedOutRows) return;
+        applySortedOutputToDom();
+      }
+      if (outDelimSelect) outDelimSelect.addEventListener('change', onOutputFormatChange);
+      if (outQuoteSelect) outQuoteSelect.addEventListener('change', onOutputFormatChange);
+      if (outNewlineSelect) outNewlineSelect.addEventListener('change', onOutputFormatChange);
+
+      clearBtn.addEventListener('click', function () {
+        if (clearBtn.disabled) return;
         if (!getInputText().length) return;
         csvInput.value = '';
         lastUploadFilename = '';
         resetRunState();
         clearError();
+        clearWarning();
         clearResult();
         hideUploadedFileInfo();
         fileInput.value = '';
@@ -1226,6 +1650,7 @@
         lastUploadFilename = '';
         resetRunState();
         clearError();
+        clearWarning();
         clearResult();
         hideUploadedFileInfo();
         fileInput.value = '';
@@ -1237,6 +1662,7 @@
         lastUploadFilename = '';
         resetRunState();
         clearError();
+        clearWarning();
         clearResult();
         hideUploadedFileInfo();
         scheduleParseAndUpdateColumns();
@@ -1248,6 +1674,7 @@
           var text = EXAMPLE_CSV[key];
           if (text == null) return;
           resetRunState();
+          clearWarning();
           fileInput.value = '';
           setInputText(text, '');
           csvInput.focus();
@@ -1255,6 +1682,32 @@
       });
 
       function loadUploadedFileFromDisk(file) {
+        if (typeof readFileAsText !== 'function') {
+          showError(
+            'File upload is unavailable because a required script failed to load. ' +
+            'Please refresh the page. If the problem persists, try pasting your CSV directly.'
+          );
+          if (fileInput) fileInput.disabled = true;
+          csvInput.focus();
+          return;
+        }
+        clearWarning();
+        const MAX_WARN_BYTES = 50 * 1024 * 1024;
+        const MAX_HARD_BYTES = 200 * 1024 * 1024;
+        if (typeof file.size === 'number' && file.size > MAX_HARD_BYTES) {
+          showError(
+            'This file is ' + (file.size / 1024 / 1024).toFixed(0) + ' MB, which exceeds the ' +
+            '200 MB limit. Please split the file into smaller chunks and sort each part separately.'
+          );
+          csvInput.focus();
+          return;
+        }
+        if (typeof file.size === 'number' && file.size > MAX_WARN_BYTES) {
+          showWarning(
+            'Large file detected (' + (file.size / 1024 / 1024).toFixed(0) + ' MB). ' +
+            'Processing may take a moment and the browser may become temporarily unresponsive.'
+          );
+        }
         lockDropZoneHeightForLoading();
         dropZone.classList.add('file-reading');
         dropZone.setAttribute('aria-busy', 'true');
@@ -1266,14 +1719,10 @@
           dropZone.removeAttribute('aria-busy');
           clearDropZoneHeightLock();
           showError(err.message || 'Failed to read file.');
+          csvInput.focus();
         });
       }
 
-      dropZone.addEventListener('click', function (e) {
-        if (e.target === fileInput || (e.target && e.target.closest && e.target.closest('#clearFileBtn'))) return;
-        fileInput.click();
-      });
-      dropZone.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
       fileInput.addEventListener('change', function () {
         if (fileInput.files && fileInput.files[0]) {
           loadUploadedFileFromDisk(fileInput.files[0]);
@@ -1293,6 +1742,7 @@
 
       sortBtn.addEventListener('click', function () {
         clearError();
+        clearWarning();
         clearResult();
         sortBtn.disabled = true;
         sortBtn.classList.add('spinning');
@@ -1314,13 +1764,47 @@
         });
       });
 
-      copyBtn.addEventListener('click', function () {
+      function showCopySuccess() {
+        copyBtnLabel.textContent = 'Copied!';
+        window.setTimeout(function () {
+          copyBtnLabel.textContent = 'Copy CSV';
+        }, 2000);
+      }
+
+      async function handleCopyClick() {
         var csv = csvOutput.value;
         if (!csv) return;
-        navigator.clipboard.writeText(csv).then(function () {
-          copyBtnLabel.textContent = 'Copied!';
-          setTimeout(function () { copyBtnLabel.textContent = 'Copy CSV'; }, 2000);
-        }).catch(function () { showError('Copy failed. You can select and copy the preview text manually.'); });
+
+        try {
+          var canUseClipboard =
+            window.isSecureContext &&
+            typeof navigator !== 'undefined' &&
+            navigator.clipboard &&
+            typeof navigator.clipboard.writeText === 'function';
+
+          if (canUseClipboard) {
+            await navigator.clipboard.writeText(csv);
+            showCopySuccess();
+            return;
+          }
+
+          csvOutput.focus();
+          csvOutput.select();
+          showError(
+            'Automatic copy is not available in this context. ' +
+            'The output text is selected — press Ctrl+C (or Cmd+C on Mac) to copy.'
+          );
+        } catch (err) {
+          csvOutput.focus();
+          csvOutput.select();
+          showError(
+            'Copy failed. The output is selected — press Ctrl+C (or Cmd+C) to copy manually.'
+          );
+        }
+      }
+
+      copyBtn.addEventListener('click', function () {
+        handleCopyClick();
       });
 
       updateCustomDelimiterVisibility();
