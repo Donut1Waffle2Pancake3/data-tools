@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X X X _`
+**Tracker (5 slots):** `X X X X X`
 
 **Rules**
 
@@ -74,27 +74,10 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Medium | **40** | Homepage — H1 + hero subheading vs [`seo-rules.md`](seo-rules.md) (length, no promo words in H1, single outcome blurb) |
 | Medium | **41** | Tool pages — align stray How-to H2s with “How to + keyword” |
 | Low | **42** | `tools/index.html` — keep JSON-LD `ItemList` `numberOfItems` + order aligned with [`js/site.js`](../js/site.js) nav (incl. hidden ids) |
 
-**Suggested order:** **40**, **41**, **42**.
-
----
-
-## 40. Homepage — H1 + hero vs seo-rules
-
-**Status:** Not completed  
-**Source:** Audit: SEO #38 (2026-03-28)
-
-### In plain English
-
-- **What it is:** [`index.html`](../index.html) H1 is long, uses parentheses, repeats “free”-style positioning where rules reserve modifiers for `<title>`; hero uses several stacked subparagraphs vs one tight outcome + trust line.
-- **Why you’d do it:** Homepage is the primary brand/query landing; align with H1/subheading rules for consistency and snippet clarity.
-
-**Action:** Rewrite `hero-heading` + `hero__sub` block: H1 = short verb + object (≈3–8 words, no “free/best” in H1); collapse subs to 1–2 sentences (outcome + local/no upload). Keep keywords in body sections below as needed.
-
-**Acceptance:** H1/subheading match [`seo-rules.md`](seo-rules.md) Header/SEO Structure; no loss of factual trust claims elsewhere on page.
+**Suggested order:** **41**, **42**.
 
 ---
 

@@ -710,6 +710,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 40. Homepage — H1 + hero vs seo-rules
+
+**Status:** Completed  
+**Source:** Audit: SEO #38 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Hero H1 was long, parenthetical, and repeated “free”-style copy meant for `<title>`; three stacked `hero__sub` lines duplicated trust points.
+- **Why it mattered:** Homepage should match internal H1 + subheading rules for intent and snippets.
+
+**Action:** [`index.html`](../index.html): H1 → short verb + object (no “free/best”); one sub block with two sentences (outcome + local / no upload / privacy).
+
+**Acceptance:** Aligned with [`seo-rules.md`](../seo-rules.md) Header/SEO Structure; deeper trust remains in “Why Use TinyDataTool” and below.
+
+**Delivered:** [`index.html`](../index.html).
+
+---
+
 <!--
 ## N. Short title
 
