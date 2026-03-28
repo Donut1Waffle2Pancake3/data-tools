@@ -1,6 +1,6 @@
 # Tools catalog
 
-All utilities on [TinyDataTool](https://tinydatatool.com), grouped like the site navigation. The canonical list and order live in [`js/site.js`](../js/site.js) (`NAV_GROUPS`); update that file when you add or rename a tool, then refresh this doc if you want them to stay in sync. The tools hub page [`tools/index.html`](../tools/index.html) JSON-LD `ItemList` should list the same **visible** tools in the same order—omit ids in `PRODUCTION_HIDDEN_TOOL_IDS` (see `site.js`).
+All utilities on [TinyDataTool](https://tinydatatool.com), grouped like the site navigation. The canonical **public** list and order live in [`js/site.js`](../js/site.js) (`NAV_GROUPS`). Update that file when you add or rename a tool, then refresh this doc and the hub [`tools/index.html`](../tools/index.html) JSON-LD `ItemList` so they list the same tools in the same order as the header nav.
 
 Live URLs use the site root; each tool folder also has `index.html` in the repo.
 
@@ -10,7 +10,6 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 
 | Tool | URL |
 |------|-----|
-| CSV Viewer | [tinydatatool.com/csv-viewer/](https://tinydatatool.com/csv-viewer/) |
 | Split CSV | [tinydatatool.com/split-csv/](https://tinydatatool.com/split-csv/) |
 | Merge CSV | [tinydatatool.com/merge-csv/](https://tinydatatool.com/merge-csv/) |
 | CSV Diff | [tinydatatool.com/csv-diff/](https://tinydatatool.com/csv-diff/) |
@@ -21,7 +20,6 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 | CSV Row Filter | [tinydatatool.com/csv-row-filter/](https://tinydatatool.com/csv-row-filter/) |
 | CSV Column Analyzer | [tinydatatool.com/csv-column-analyzer/](https://tinydatatool.com/csv-column-analyzer/) |
 | CSV Sorter | [tinydatatool.com/csv-sorter/](https://tinydatatool.com/csv-sorter/) |
-| CSV Cleaner | [tinydatatool.com/csv-cleaner/](https://tinydatatool.com/csv-cleaner/) |
 
 ---
 
@@ -36,7 +34,6 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 | JSON Transformer | [tinydatatool.com/json-transformer/](https://tinydatatool.com/json-transformer/) |
 | JSON ↔ YAML | [tinydatatool.com/json-yaml/](https://tinydatatool.com/json-yaml/) |
 | JSON Formatter | [tinydatatool.com/json-formatter/](https://tinydatatool.com/json-formatter/) |
-| JSON Minifier | [tinydatatool.com/json-minifier/](https://tinydatatool.com/json-minifier/) |
 | JSON → CSV | [tinydatatool.com/json-to-csv/](https://tinydatatool.com/json-to-csv/) |
 | JSON → TSV | [tinydatatool.com/json-to-tsv/](https://tinydatatool.com/json-to-tsv/) |
 | UUID Generator | [tinydatatool.com/uuid-generator/](https://tinydatatool.com/uuid-generator/) |
@@ -78,16 +75,26 @@ Tabular and spreadsheet conversions that are not only JSON- or CSV-only.
 
 | Tool | URL |
 |------|-----|
-| CSV → Excel | [tinydatatool.com/csv-to-excel/](https://tinydatatool.com/csv-to-excel/) |
-| JSON → Excel | [tinydatatool.com/json-to-excel/](https://tinydatatool.com/json-to-excel/) |
 | CSV → TSV | [tinydatatool.com/csv-to-tsv/](https://tinydatatool.com/csv-to-tsv/) |
 | TSV → CSV | [tinydatatool.com/tsv-to-csv/](https://tinydatatool.com/tsv-to-csv/) |
 | SQL result → CSV / JSON | [tinydatatool.com/sql-result/](https://tinydatatool.com/sql-result/) |
 
 ---
 
+## Parked (deployed, not in nav)
+
+Same privacy model; URLs work for bookmarks and handoffs. Re-entry criteria: [`prod-hidden-tools.md`](prod-hidden-tools.md).
+
+| Tool | URL |
+|------|-----|
+| CSV Viewer | [tinydatatool.com/csv-viewer/](https://tinydatatool.com/csv-viewer/) |
+| CSV Cleaner | [tinydatatool.com/csv-cleaner/](https://tinydatatool.com/csv-cleaner/) |
+| JSON Minifier | [tinydatatool.com/json-minifier/](https://tinydatatool.com/json-minifier/) |
+| CSV → Excel | [tinydatatool.com/csv-to-excel/](https://tinydatatool.com/csv-to-excel/) |
+| JSON → Excel | [tinydatatool.com/json-to-excel/](https://tinydatatool.com/json-to-excel/) |
+
+---
+
 ## Directory page
 
 - [All tools (listing)](https://tinydatatool.com/tools/)
-
-Some tools may be omitted from the production header or All Tools grid while still deployed; see `PRODUCTION_HIDDEN_TOOL_IDS` in [`js/site.js`](../js/site.js).

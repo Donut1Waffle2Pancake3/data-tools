@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Tool URLs match js/site.js NAV_GROUPS minus PRODUCTION_HIDDEN_TOOL_IDS (csv-viewer, csv-to-excel, json-to-excel, csv-cleaner, json-minifier). Update when nav or visibility changes. -->
+<!-- Tool URLs = js/site.js NAV_GROUPS only (public nav). Parked pages: docs/prod-hidden-tools.md — omit from sitemap until re-listed in NAV_GROUPS. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tinydatatool.com/</loc>

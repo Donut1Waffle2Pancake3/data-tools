@@ -10,7 +10,7 @@ The site ships **many** CSV, JSON, text, file, and converter tools. The list her
 
 - **Browse all utilities:** [All Tools](../tools/index.html) (same directory as the live site).
 - **Markdown catalog:** [docs/tools.md](tools.md) — URLs grouped like the navigation.
-- **Source of truth for names and order:** [`js/site.js`](../js/site.js) → `NAV_GROUPS` (plus `PRODUCTION_HIDDEN_TOOL_IDS` for tools that stay in the repo but out of the production menu).
+- **Source of truth for names and order:** [`js/site.js`](../js/site.js) → `NAV_GROUPS`. Deployed pages outside nav: [`prod-hidden-tools.md`](prod-hidden-tools.md).
 
 ## Run locally
 

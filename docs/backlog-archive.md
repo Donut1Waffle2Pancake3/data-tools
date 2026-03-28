@@ -854,6 +854,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 48. Prod-hidden tools — product decision
+
+**Status:** Completed  
+**Source:** Audit: Product #47 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Five tools lived in `NAV_GROUPS` but were filtered via `PRODUCTION_HIDDEN_TOOL_IDS`, while `docs/tools.md` still listed them like public catalog entries.
+- **Why it mattered:** Split brain between repo, nav, docs, and roadmap.
+
+**Action:** Per id: **park** (remove from `NAV_GROUPS`) or ship; document outcomes and keep `ItemList` / sitemap aligned with public nav.
+
+**Acceptance:** Each id has a recorded outcome; nav + ItemList policy consistent.
+
+**Delivered:** Removed five ids from [`js/site.js`](../js/site.js) `NAV_GROUPS`; dropped `PRODUCTION_HIDDEN_TOOL_IDS`; hub grid cleanup [`tools/index.html`](../tools/index.html); [`docs/prod-hidden-tools.md`](../docs/prod-hidden-tools.md); [`docs/tools.md`](../tools.md), [`docs/README.md`](../README.md), [`sitemap.xml`](../sitemap.xml) comment; related-tool overrides for Excel pages.
+
+---
+
 <!--
 ## N. Short title
 

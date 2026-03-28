@@ -2,13 +2,13 @@
    TinyDataTool — Navigation config (shared by header and related tools)
    Add or reorder tools in NAV_GROUPS; header dropdowns and
    related-tools section stay in sync.
+   Deployed pages not listed here: see docs/prod-hidden-tools.md (parked).
 ============================================================ */
 const NAV_GROUPS = [
     {
       label: 'CSV',
       id: 'csv',
       items: [
-        { id: 'csv-viewer', href: 'csv-viewer/index.html', label: 'CSV Viewer' },
         { id: 'split-csv', href: 'split-csv/index.html', label: 'Split CSV' },
         { id: 'merge-csv', href: 'merge-csv/index.html', label: 'Merge CSV' },
         { id: 'csv-diff', href: 'csv-diff/index.html', label: 'CSV Diff' },
@@ -19,7 +19,6 @@ const NAV_GROUPS = [
         { id: 'csv-row-filter', href: 'csv-row-filter/index.html', label: 'CSV Row Filter' },
         { id: 'csv-column-analyzer', href: 'csv-column-analyzer/index.html', label: 'CSV Column Analyzer' },
         { id: 'csv-sorter', href: 'csv-sorter/index.html', label: 'CSV Sorter' },
-        { id: 'csv-cleaner', href: 'csv-cleaner/index.html', label: 'CSV Cleaner' },
       ],
     },
     {
@@ -33,7 +32,6 @@ const NAV_GROUPS = [
         { id: 'json-transformer', href: 'json-transformer/index.html', label: 'JSON Transformer' },
         { id: 'json-yaml', href: 'json-yaml/index.html', label: 'JSON ↔ YAML' },
         { id: 'json-formatter', href: 'json-formatter/index.html', label: 'JSON Formatter' },
-        { id: 'json-minifier', href: 'json-minifier/index.html', label: 'JSON Minifier' },
         { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON → CSV' },
         { id: 'json-to-tsv', href: 'json-to-tsv/index.html', label: 'JSON → TSV' },
         { id: 'uuid-generator', href: 'uuid-generator/index.html', label: 'UUID Generator' },
@@ -70,8 +68,6 @@ const NAV_GROUPS = [
       label: 'Converters',
       id: 'converters',
       items: [
-        { id: 'csv-to-excel', href: 'csv-to-excel/index.html', label: 'CSV → Excel' },
-        { id: 'json-to-excel', href: 'json-to-excel/index.html', label: 'JSON → Excel' },
         { id: 'csv-to-tsv', href: 'csv-to-tsv/index.html', label: 'CSV → TSV' },
         { id: 'tsv-to-csv', href: 'tsv-to-csv/index.html', label: 'TSV → CSV' },
         { id: 'sql-result', href: 'sql-result/index.html', label: 'SQL result → CSV / JSON' },
@@ -79,23 +75,7 @@ const NAV_GROUPS = [
     },
   ];
 
-const PRODUCTION_HIDDEN_TOOL_IDS = new Set([
-  'csv-viewer',
-  'csv-to-excel',
-  'json-to-excel',
-  'csv-cleaner',
-  'json-minifier',
-]);
-
-const ACTIVE_NAV_GROUPS = NAV_GROUPS.map(function (group) {
-  return {
-    label: group.label,
-    id: group.id,
-    items: group.items.filter(function (item) {
-      return !PRODUCTION_HIDDEN_TOOL_IDS.has(item.id);
-    }),
-  };
-}).filter(function (group) {
+const ACTIVE_NAV_GROUPS = NAV_GROUPS.filter(function (group) {
   return group.items.length > 0;
 });
 
@@ -114,8 +94,8 @@ const RELATED_TOOL_OVERRIDES = {
   'text-case-converter': ['trim-whitespace', 'slug-generator', 'url-encoder-decoder'],
   'slug-generator': ['text-case-converter', 'trim-whitespace', 'url-encoder-decoder'],
   'base64-encoder-decoder': ['url-encoder-decoder', 'json-formatter', 'html-encoder-decoder'],
-  'csv-to-excel': ['csv-to-json', 'csv-viewer', 'csv-to-tsv'],
-  'json-to-excel': ['json-to-csv', 'csv-to-excel', 'json-viewer'],
+  'csv-to-excel': ['csv-to-json', 'csv-sorter', 'csv-to-tsv'],
+  'json-to-excel': ['json-to-csv', 'json-transformer', 'json-viewer'],
   'csv-cleaner': ['csv-column-remover', 'csv-row-filter', 'csv-sorter'],
   'remove-duplicate-lines': ['sort-lines', 'trim-whitespace', 'csv-deduplicator'],
   'sort-lines': ['remove-duplicate-lines', 'csv-sorter', 'trim-whitespace'],

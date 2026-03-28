@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X _ _ _`
+**Tracker (5 slots):** `X X X _ _`
 
 **Rules**
 
@@ -74,28 +74,11 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Medium | **48** | Prod-hidden tools — ship, trim from nav, or document per `PRODUCTION_HIDDEN_TOOL_IDS` |
 | Low | **49** | Client-side “files → one ZIP” (complement to Batch ZIP Extractor) |
 | Low | **50** | TOML ↔ JSON (or explicit defer) |
 | Low | **51** | CSV → Markdown / GFM table |
 
-**Suggested order:** **48**, **49**, **50**, **51**.
-
----
-
-## 48. Prod-hidden tools — product decision
-
-**Status:** Not completed  
-**Source:** Audit: Product #47 (2026-03-28)
-
-### In plain English
-
-- **What it is:** [`js/site.js`](../js/site.js) `PRODUCTION_HIDDEN_TOOL_IDS` hides csv-viewer, csv-cleaner, json-minifier, csv-to-excel, json-to-excel while they remain in `NAV_GROUPS` / repo—split brain for roadmap and docs.
-- **Why you’d do it:** Either ship (unhide + hub/home) or park (remove from nav config until launch) so the catalog matches intent.
-
-**Action:** Per id: define **launch** (criteria + unhide) or **park** (remove from `NAV_GROUPS`, sitemap note, `docs/tools.md`). Optionally one short `docs/` checklist.
-
-**Acceptance:** Each hidden id has a recorded outcome; nav + ItemList policy stays consistent.
+**Suggested order:** **49**, **50**, **51**.
 
 ---
 
