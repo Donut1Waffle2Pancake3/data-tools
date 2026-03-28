@@ -908,6 +908,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 51. CSV → Markdown table
+
+**Status:** Completed  
+**Source:** Audit: Product #47 (2026-03-28)
+
+### In plain English
+
+- **What it was:** No dedicated **CSV → GFM pipe table** path for READMEs and docs.
+- **Why it mattered:** Small, high-clarity complement to other CSV tools.
+
+**Action:** New page: paste/upload CSV → Markdown; header toggle; copy/download.
+
+**Acceptance:** Live tool in CSV nav + hub `ItemList`.
+
+**Delivered:** [`csv-to-markdown/index.html`](../csv-to-markdown/index.html); [`js/site.js`](../js/site.js); [`tools/index.html`](../tools/index.html) (grid + 40-item ItemList); [`sitemap.xml`](../sitemap.xml); [`docs/tools.md`](../tools.md).
+
+---
+
 <!--
 ## N. Short title
 

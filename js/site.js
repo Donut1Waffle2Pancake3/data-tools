@@ -19,6 +19,7 @@ const NAV_GROUPS = [
         { id: 'csv-row-filter', href: 'csv-row-filter/index.html', label: 'CSV Row Filter' },
         { id: 'csv-column-analyzer', href: 'csv-column-analyzer/index.html', label: 'CSV Column Analyzer' },
         { id: 'csv-sorter', href: 'csv-sorter/index.html', label: 'CSV Sorter' },
+        { id: 'csv-to-markdown', href: 'csv-to-markdown/index.html', label: 'CSV → Markdown' },
       ],
     },
     {
@@ -120,6 +121,7 @@ const RELATED_TOOL_OVERRIDES = {
   'csv-diff': ['csv-deduplicator', 'merge-csv', 'text-diff'],
   'csv-to-json': ['json-to-csv', 'sql-result', 'csv-to-tsv'],
   'json-to-csv': ['json-transformer', 'csv-to-json', 'sql-result'],
+  'csv-to-markdown': ['csv-to-tsv', 'csv-to-json', 'csv-sorter'],
 };
 
 /* ============================================================

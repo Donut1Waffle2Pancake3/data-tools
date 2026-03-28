@@ -20,6 +20,7 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 | CSV Row Filter | [tinydatatool.com/csv-row-filter/](https://tinydatatool.com/csv-row-filter/) |
 | CSV Column Analyzer | [tinydatatool.com/csv-column-analyzer/](https://tinydatatool.com/csv-column-analyzer/) |
 | CSV Sorter | [tinydatatool.com/csv-sorter/](https://tinydatatool.com/csv-sorter/) |
+| CSV → Markdown | [tinydatatool.com/csv-to-markdown/](https://tinydatatool.com/csv-to-markdown/) |
 
 ---
 

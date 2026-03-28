@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `_ _ _ _ _`
+**Tracker (5 slots):** `X _ _ _ _`
 
 **Rules**
 
@@ -72,27 +72,7 @@ Action items from [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.m
 
 Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or **closed** items go in [`backlog-archive.md`](backlog-archive.md); append there and remove them from this file.
 
-| Priority | # | Focus |
-|----------|---|-------|
-| Low | **51** | CSV → Markdown / GFM table |
-
-**Suggested order:** **51**.
-
----
-
-## 51. CSV → Markdown table
-
-**Status:** Not completed  
-**Source:** Audit: Product #47 (2026-03-28)
-
-### In plain English
-
-- **What it is:** Writers often need **CSV → pipe/MD table** for READMEs and docs; no dedicated tool in nav.
-- **Why you’d do it:** Small, high-clarity win next to CSV → JSON / text tools.
-
-**Action:** New tool: paste/upload CSV → GFM-style table string, copy/download; header row toggle.
-
-**Acceptance:** Working page linked from CSV group + `tools` hub JSON-LD when shipped.
+**Open tickets:** none — use [idle / audit rotation](#when-no-actionable-tasks-remain) or [Audit inbox](#audit-inbox).
 
 ---
 

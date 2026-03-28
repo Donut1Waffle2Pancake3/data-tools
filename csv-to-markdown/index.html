@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CSV to Markdown Table | Free &amp; Private | TinyDataTool</title>
+  <meta name="description" content="Turn CSV into a GitHub-Flavored Markdown pipe table in your browser. Optional header row, copy or download—private, no uploads." />
+  <link rel="canonical" href="https://tinydatatool.com/csv-to-markdown/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CSV to Markdown Table | TinyDataTool" />
+  <meta property="og:description" content="Convert CSV to a GFM pipe table locally in your browser." />
+  <meta property="og:url" content="https://tinydatatool.com/csv-to-markdown/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="CSV to Markdown Table | TinyDataTool" />
+  <meta name="twitter:description" content="CSV → GFM table in your browser. Private, client-side." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CSV to Markdown Table","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/csv-to-markdown/","description":"Convert CSV to GitHub-Flavored Markdown pipe tables with optional header row, copy and download."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="csv-to-markdown"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">CSV to Markdown Table</h1>
+        <p class="hero__sub">Paste or upload <strong>comma-separated CSV</strong> and get a <strong>GitHub-Flavored Markdown</strong> pipe table for READMEs and docs. Toggle whether the first row is a header, then copy or download. Runs only in your browser—same limits as other CSV tools on this site.</p>
+      </div>
+    </section>
+
+    <section aria-label="CSV to Markdown converter" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region">
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="csvInput">Paste CSV</label>
+              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+            </div>
+            <textarea id="csvInput" class="form-input" placeholder="name,role&#10;Ada,dev&#10;Bob,ops" spellcheck="false" style="min-height: 120px;"></textarea>
+          </div>
+
+          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file" aria-describedby="drop-hint">
+            <div class="drop-zone__busy" aria-hidden="true">
+              <span class="drop-zone__spinner"></span>
+              <p class="drop-zone__busy-label">Loading file…</p>
+            </div>
+            <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+            </svg>
+            <p class="drop-zone__label">Or upload a CSV file</p>
+            <p class="drop-zone__hint" id="drop-hint">In your browser · Up to 200 MB (50+ MB may feel slow)</p>
+            <input type="file" id="fileInput" accept=".csv,text/csv,text/plain" aria-label="Select CSV file" />
+          </div>
+
+          <div class="form-section">
+            <label class="form-option" style="display: flex; align-items: flex-start; gap: 8px;">
+              <input type="checkbox" id="hasHeader" checked />
+              <span>First row is column header</span>
+            </label>
+          </div>
+
+          <button class="btn-primary" id="convertBtn" type="button" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            Convert to Markdown
+          </button>
+
+          <div class="status-message status-message--warning" id="warningMsg" role="status" aria-live="polite" aria-atomic="true">
+            <span id="warningText"></span>
+          </div>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Markdown</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="mdOutput">Preview</label>
+              <textarea id="mdOutput" class="form-input" readonly spellcheck="false" style="min-height: 160px;" aria-label="Generated Markdown table"></textarea>
+            </div>
+            <div class="result-actions">
+              <button class="btn-download" id="copyBtn" type="button">Copy</button>
+              <a class="btn-download" id="downloadLink" href="#" download="table.md" style="display: none;">Download</a>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true" style="width:14px;height:14px;"><path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            No uploads—CSV is parsed with <code>parseCSVLines</code> from the shared site script.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">CSV → GFM table</h2>
+        <p class="section-body">Pipe tables need a header row and a separator row; body rows follow.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste or upload CSV</p>
+            <p class="step__desc">Comma-separated fields; quoted cells may contain commas. Malformed quotes show the same error as other CSV tools.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Header toggle</p>
+            <p class="step__desc">If the first row is not a header, we generate <code>Column 1</code>, <code>Column 2</code>, … and put every row in the body.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy or download</p>
+            <p class="step__desc">Pipes inside cells are escaped as <code>\|</code>; line breaks inside a cell are flattened to spaces.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">Does this support tab- or semicolon-separated files?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Not yet—only comma-separated CSV, matching the simple row parser used here. Convert with CSV → TSV or another tool first if needed.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Why are my rows different widths?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Short rows are padded with empty cells so every row has the same column count as the widest row.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="csv-to-markdown"></div>
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var csvInput = document.getElementById('csvInput');
+      var fileInput = document.getElementById('fileInput');
+      var dropZone = document.getElementById('dropZone');
+      var convertBtn = document.getElementById('convertBtn');
+      var clearLink = document.getElementById('clearLink');
+      var hasHeader = document.getElementById('hasHeader');
+      var warningMsg = document.getElementById('warningMsg');
+      var warningText = document.getElementById('warningText');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var mdOutput = document.getElementById('mdOutput');
+      var copyBtn = document.getElementById('copyBtn');
+      var downloadLink = document.getElementById('downloadLink');
+      var mdBlobUrl = null;
+
+      function parseCSVRow(rowStr) {
+        var cells = [];
+        var current = '';
+        var inQuotes = false;
+        for (var i = 0; i < rowStr.length; i++) {
+          var ch = rowStr[i];
+          if (ch === '"') {
+            if (inQuotes && rowStr[i + 1] === '"') {
+              current += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (ch === ',' && !inQuotes) {
+            cells.push(current);
+            current = '';
+          } else {
+            current += ch;
+          }
+        }
+        if (inQuotes) {
+          throw new Error(
+            'CSV appears malformed: a quoted field was never closed. ' +
+              'Check for a stray quote character, or try a different delimiter.'
+          );
+        }
+        cells.push(current);
+        return cells;
+      }
+
+      function normalizeRows(rows) {
+        var max = 0;
+        for (var r = 0; r < rows.length; r++) {
+          max = Math.max(max, rows[r].length);
+        }
+        return rows.map(function (row) {
+          var c = row.slice();
+          while (c.length < max) c.push('');
+          return c;
+        });
+      }
+
+      function escapeMdCell(val) {
+        var s = String(val == null ? '' : val);
+        s = s.replace(/\r\n|\r|\n/g, ' ');
+        s = s.replace(/\|/g, '\\|');
+        return s;
+      }
+
+      function rowLine(cells) {
+        return '| ' + cells.map(escapeMdCell).join(' | ') + ' |';
+      }
+
+      function csvToGfmTable(csvText, headerFirst) {
+        var rowStrings = parseCSVLines(csvText);
+        if (rowStrings.length === 0) throw new Error('The CSV appears to be empty.');
+        var rows = rowStrings.map(function (rowStr) {
+          return parseCSVRow(rowStr);
+        });
+        var norm = normalizeRows(rows);
+        var headerCells;
+        var bodyRows;
+        if (headerFirst) {
+          headerCells = norm[0];
+          bodyRows = norm.slice(1);
+        } else {
+          var n = norm[0].length;
+          headerCells = [];
+          for (var i = 0; i < n; i++) headerCells.push('Column ' + (i + 1));
+          bodyRows = norm;
+        }
+        var sep = '| ' + headerCells.map(function () {
+          return '---';
+        }).join(' | ') + ' |';
+        var lines = [rowLine(headerCells), sep];
+        bodyRows.forEach(function (row) {
+          lines.push(rowLine(row));
+        });
+        return lines.join('\n');
+      }
+
+      function showWarning(msg) {
+        errorMsg.classList.remove('visible');
+        warningText.textContent = msg;
+        warningMsg.classList.add('visible');
+      }
+
+      function clearWarning() {
+        warningText.textContent = '';
+        warningMsg.classList.remove('visible');
+      }
+
+      function showError(msg) {
+        clearWarning();
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function clearError() {
+        errorMsg.classList.remove('visible');
+      }
+
+      function clearResult() {
+        resultSection.classList.remove('visible');
+        mdOutput.value = '';
+        resultMeta.textContent = '';
+        if (mdBlobUrl) {
+          URL.revokeObjectURL(mdBlobUrl);
+          mdBlobUrl = null;
+        }
+        downloadLink.style.display = 'none';
+      }
+
+      function getInputText() {
+        return (csvInput.value || '').trim();
+      }
+
+      function checkReady() {
+        var valid = getInputText().length > 0;
+        convertBtn.disabled = !valid;
+        clearLink.classList.toggle('clear-link--enabled', valid);
+        clearLink.setAttribute('aria-disabled', valid ? 'false' : 'true');
+      }
+
+      function setInputText(text) {
+        csvInput.value = text;
+        clearError();
+        clearResult();
+        checkReady();
+      }
+
+      function loadCsvFile(file) {
+        if (!file) return;
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var fr = TinyDataToolCsvLimits.checkFile(file);
+          if (!fr.allowed) {
+            showError(fr.hardError || 'File exceeds size limit.');
+            return;
+          }
+        }
+        clearError();
+        clearWarning();
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var wr = TinyDataToolCsvLimits.checkFile(file);
+          if (wr.warnMessage) showWarning(wr.warnMessage);
+        }
+        dropZone.classList.add('file-reading');
+        dropZone.setAttribute('aria-busy', 'true');
+        readFileAsText(file)
+          .then(function (text) {
+            setInputText(text);
+          })
+          .catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          })
+          .finally(function () {
+            dropZone.classList.remove('file-reading');
+            dropZone.removeAttribute('aria-busy');
+          });
+      }
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!getInputText()) return;
+        csvInput.value = '';
+        clearError();
+        clearWarning();
+        clearResult();
+        checkReady();
+        csvInput.focus();
+      });
+
+      dropZone.addEventListener('click', function (e) {
+        if (e.target !== fileInput) fileInput.click();
+      });
+      dropZone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+      fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) {
+          loadCsvFile(fileInput.files[0]);
+          fileInput.value = '';
+        }
+      });
+      dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+      dropZone.addEventListener('dragleave', function () {
+        dropZone.classList.remove('drag-over');
+      });
+      dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        var file = e.dataTransfer.files[0];
+        if (file && (file.name.toLowerCase().endsWith('.csv') || file.type === 'text/csv' || file.type === 'text/plain')) {
+          loadCsvFile(file);
+        } else if (file) {
+          showError('Please drop a CSV or plain-text file.');
+        }
+      });
+
+      csvInput.addEventListener('input', checkReady);
+
+      convertBtn.addEventListener('click', function () {
+        clearError();
+        clearResult();
+        var text = getInputText();
+        if (!text) {
+          showError('Please paste CSV or upload a file.');
+          csvInput.focus();
+          return;
+        }
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var cr = TinyDataToolCsvLimits.checkPaste(text);
+          if (!cr.allowed) {
+            showError(cr.hardError || 'Input exceeds size limit.');
+            return;
+          }
+          if (cr.warnMessage) showWarning(cr.warnMessage);
+          else clearWarning();
+        }
+        convertBtn.classList.add('spinning');
+        convertBtn.setAttribute('aria-busy', 'true');
+        try {
+          var md = csvToGfmTable(text, hasHeader.checked);
+          resultSection.classList.add('visible');
+          mdOutput.value = md;
+          var bodyLines = Math.max(0, md.split('\n').length - 2);
+          resultMeta.textContent = bodyLines + ' body row' + (bodyLines !== 1 ? 's' : '');
+          var blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+          if (mdBlobUrl) URL.revokeObjectURL(mdBlobUrl);
+          mdBlobUrl = URL.createObjectURL(blob);
+          downloadLink.href = mdBlobUrl;
+          downloadLink.setAttribute('download', 'table.md');
+          downloadLink.style.display = 'inline-flex';
+        } catch (err) {
+          showError(err.message || 'Conversion failed. Check that your input is valid CSV.');
+        } finally {
+          convertBtn.classList.remove('spinning');
+          convertBtn.removeAttribute('aria-busy');
+          checkReady();
+        }
+      });
+
+      copyBtn.addEventListener('click', function () {
+        var md = mdOutput.value;
+        if (!md) return;
+        window.TinyDataToolClipboard.copyWithFeedback(md, copyBtn, function () {
+          showError('Copy failed. Select the preview text manually.');
+        });
+      });
+
+      checkReady();
+    })();
+  </script>
+</body>
+</html>
