@@ -728,6 +728,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 41. Tool pages — How-to H2 wording
+
+**Status:** Completed  
+**Source:** Audit: SEO #38 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Seven tools used generic or marketing-style `#how-heading` text instead of **How to + keyword** per [`seo-rules.md`](../seo-rules.md).
+- **Why it mattered:** Consistent how-section headings match search intent and internal standards.
+
+**Action:** Rewrote `id="how-heading"` on csv-sorter, sql-result, html/url encoder-decoder, split-csv, merge-csv, zip-combiner; normalized sql-result eyebrow label casing.
+
+**Acceptance:** Each listed page’s how H2 starts with **How to**; step bodies unchanged.
+
+**Delivered:** [`csv-sorter/index.html`](../csv-sorter/index.html), [`sql-result/index.html`](../sql-result/index.html), [`html-encoder-decoder/index.html`](../html-encoder-decoder/index.html), [`url-encoder-decoder/index.html`](../url-encoder-decoder/index.html), [`split-csv/index.html`](../split-csv/index.html), [`merge-csv/index.html`](../merge-csv/index.html), [`zip-combiner/index.html`](../zip-combiner/index.html).
+
+---
+
 <!--
 ## N. Short title
 

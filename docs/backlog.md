@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `_ _ _ _ _`
+**Tracker (5 slots):** `X _ _ _ _`
 
 **Rules**
 
@@ -74,26 +74,9 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Medium | **41** | Tool pages — align stray How-to H2s with “How to + keyword” |
 | Low | **42** | `tools/index.html` — keep JSON-LD `ItemList` `numberOfItems` + order aligned with [`js/site.js`](../js/site.js) nav (incl. hidden ids) |
 
-**Suggested order:** **41**, **42**.
-
----
-
-## 41. Tool pages — How-to H2 wording
-
-**Status:** Not completed  
-**Source:** Audit: SEO #38 (2026-03-28)
-
-### In plain English
-
-- **What it is:** Several tools use `id="how-heading"` text that is not **“How to + keyword”** (e.g. “How it works”, marketing-style headlines).
-- **Why you’d do it:** [`seo-rules.md`](seo-rules.md) requires a consistent How-to block for intent matching.
-
-**Action:** Update `#how-heading` (and matching `section-label` if needed) on: [`csv-sorter/index.html`](../csv-sorter/index.html) (“How it works” → e.g. “How to sort CSV online”), [`sql-result/index.html`](../sql-result/index.html), [`html-encoder-decoder/index.html`](../html-encoder-decoder/index.html), [`url-encoder-decoder/index.html`](../url-encoder-decoder/index.html), [`split-csv/index.html`](../split-csv/index.html), [`merge-csv/index.html`](../merge-csv/index.html), [`zip-combiner/index.html`](../zip-combiner/index.html). Use concise “How to …” phrasing per tool primary keyword.
-
-**Acceptance:** Each listed page’s how-section H2 starts with **How to** and names the task; 3-step body unchanged unless a step title must match.
+**Suggested order:** **42**.
 
 ---
 
