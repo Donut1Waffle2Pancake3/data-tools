@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X X X X`
+**Tracker (5 slots):** `_ _ _ _ _`
 
 **Rules**
 
