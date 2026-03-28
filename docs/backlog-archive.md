@@ -782,6 +782,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 44. `copyWithFeedback` — unhandled rejection guard
+
+**Status:** Completed  
+**Source:** Audit: Reliability #43 (2026-03-28)
+
+### In plain English
+
+- **What it was:** `copyWithFeedback` used a single `.then`; throws inside `flashCopySuccess` (or future edits) could reject the chain with no handler.
+- **Why it mattered:** Unhandled rejections in strict environments and confusing copy UX when flash UI throws.
+
+**Action:** [`js/site.js`](../js/site.js): wrap `then` body in `try/catch`; terminal `.catch` calls `onFail` and returns `false`.
+
+**Acceptance:** Success-path throw or upstream rejection invokes `onFail`; promise settles to `false`.
+
+**Delivered:** [`js/site.js`](../js/site.js).
+
+---
+
 <!--
 ## N. Short title
 

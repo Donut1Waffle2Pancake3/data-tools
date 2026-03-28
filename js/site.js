@@ -973,14 +973,24 @@ function parseCSVLines(text) {
   }
 
   function copyWithFeedback(text, button, onFail, flashOpts) {
-    return copyTextToClipboard(text).then(function (ok) {
-      if (ok) {
-        flashCopySuccess(button, flashOpts);
-        return true;
-      }
-      if (typeof onFail === 'function') onFail();
-      return false;
-    });
+    return copyTextToClipboard(text)
+      .then(function (ok) {
+        try {
+          if (ok) {
+            flashCopySuccess(button, flashOpts);
+            return true;
+          }
+          if (typeof onFail === 'function') onFail();
+          return false;
+        } catch (e) {
+          if (typeof onFail === 'function') onFail();
+          return false;
+        }
+      })
+      .catch(function () {
+        if (typeof onFail === 'function') onFail();
+        return false;
+      });
   }
 
   global.TinyDataToolClipboard = {

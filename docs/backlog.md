@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X X _ _`
+**Tracker (5 slots):** `X X X X _`
 
 **Rules**
 
@@ -74,27 +74,10 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Medium | **44** | `copyWithFeedback` — terminal `.catch` / guard if `then` throws ([`js/site.js`](../js/site.js)) |
 | Medium | **45** | `json-to-excel` + `json-minifier` — `FileReader` missing `onerror` (pick + drop) |
 | Low | **46** | JSON formatter — clearer error for cyclic `JSON.stringify` (vs parse errors) |
 
-**Suggested order:** **44**, **45**, **46**.
-
----
-
-## 44. `copyWithFeedback` — unhandled rejection guard
-
-**Status:** Not completed  
-**Source:** Audit: Reliability #43 (2026-03-28)
-
-### In plain English
-
-- **What it is:** `TinyDataToolClipboard.copyWithFeedback` chains `.then` only; if `flashCopySuccess` or the callback throws, the promise can reject with no consumer.
-- **Why you’d do it:** Avoid rare unhandled rejections in DevTools / strict monitoring.
-
-**Action:** [`js/site.js`](../js/site.js): append `.catch` (or try/catch inside `then`) calling `onFail` when present, returning `false`.
-
-**Acceptance:** Forced throw inside success path surfaces `onFail`, no unhandled rejection.
+**Suggested order:** **45**, **46**.
 
 ---
 
