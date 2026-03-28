@@ -836,6 +836,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 47. Audit: Product
+
+**Status:** Completed  
+**Source:** Backlog #47 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Product-only pass on [`NAV_GROUPS`](../js/site.js) vs jobs (config formats, ZIP story, hidden inventory) and obvious format gaps.
+- **Why it mattered:** Prioritize build vs cut without mixing UX/SEO/reliability work.
+
+**Action:** Compared shipped vs hidden tools, extract-only ZIP, YAML/TOML/MD adjacency.
+
+**Acceptance:** Concrete follow-up tickets.
+
+**Delivered:** Backlog **#48–#51** (hidden-tool decision, ZIP packer, TOML↔JSON, CSV→Markdown).
+
+---
+
 <!--
 ## N. Short title
 

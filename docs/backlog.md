@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X _ _ _ _`
+**Tracker (5 slots):** `X X _ _ _`
 
 **Rules**
 
@@ -74,25 +74,76 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Low | **47** | Audit: Product |
+| Medium | **48** | Prod-hidden tools — ship, trim from nav, or document per `PRODUCTION_HIDDEN_TOOL_IDS` |
+| Low | **49** | Client-side “files → one ZIP” (complement to Batch ZIP Extractor) |
+| Low | **50** | TOML ↔ JSON (or explicit defer) |
+| Low | **51** | CSV → Markdown / GFM table |
 
-**Suggested order:** **47** (execute audit when selected).
+**Suggested order:** **48**, **49**, **50**, **51**.
 
 ---
 
-## 47. Audit: Product
+## 48. Prod-hidden tools — product decision
 
 **Status:** Not completed  
-**Source:** Idle rotation — successor to Audit: Reliability #43 (2026-03-28)
+**Source:** Audit: Product #47 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** Product-only review: tool coverage vs user jobs-to-be-done, obvious feature gaps, parity between related tools, and nav / hub discoverability—no UX, SEO, or reliability mixing.
-- **Why you’d do it:** Prioritize what to build or retire without re-auditing polish or metadata.
+- **What it is:** [`js/site.js`](../js/site.js) `PRODUCTION_HIDDEN_TOOL_IDS` hides csv-viewer, csv-cleaner, json-minifier, csv-to-excel, json-to-excel while they remain in `NAV_GROUPS` / repo—split brain for roadmap and docs.
+- **Why you’d do it:** Either ship (unhide + hub/home) or park (remove from nav config until launch) so the catalog matches intent.
 
-**Action:** Apply [When executing an audit task](#when-executing-an-audit-task) for **Product** only. Deliverables: numbered backlog items, each with a concrete gap and proposed outcome.
+**Action:** Per id: define **launch** (criteria + unhide) or **park** (remove from `NAV_GROUPS`, sitemap note, `docs/tools.md`). Optionally one short `docs/` checklist.
 
-**Acceptance:** Archived as **`## N. Audit: Product`** after triage; follow-ups are shippable tickets.
+**Acceptance:** Each hidden id has a recorded outcome; nav + ItemList policy stays consistent.
+
+---
+
+## 49. Client-side ZIP packer
+
+**Status:** Not completed  
+**Source:** Audit: Product #47 (2026-03-28)
+
+### In plain English
+
+- **What it is:** [`zip-combiner`](../zip-combiner/index.html) is extract-only; many users want **multiple files → one `.zip`** in-browser.
+- **Why you’d do it:** Completes the file ZIP story without server upload.
+
+**Action:** New tool (e.g. `fflate` or similar, license OK) or document **out of scope** in product/README with reason (memory, UX).
+
+**Acceptance:** Shipped tool **or** explicit “won’t build” note—no ambiguous gap.
+
+---
+
+## 50. TOML ↔ JSON
+
+**Status:** Not completed  
+**Source:** Audit: Product #47 (2026-03-28)
+
+### In plain English
+
+- **What it is:** JSON ↔ YAML exists; **TOML** (Cargo, pyproject, many configs) has no first-party converter beside “paste JSON only.”
+- **Why you’d do it:** Same privacy story as other config converters.
+
+**Action:** Add converter page + nav entry with bundled MIT parser **or** backlog “defer” with link to recommended external flow.
+
+**Acceptance:** Tool live **or** documented defer with rationale.
+
+---
+
+## 51. CSV → Markdown table
+
+**Status:** Not completed  
+**Source:** Audit: Product #47 (2026-03-28)
+
+### In plain English
+
+- **What it is:** Writers often need **CSV → pipe/MD table** for READMEs and docs; no dedicated tool in nav.
+- **Why you’d do it:** Small, high-clarity win next to CSV → JSON / text tools.
+
+**Action:** New tool: paste/upload CSV → GFM-style table string, copy/download; header row toggle.
+
+**Acceptance:** Working page linked from CSV group + `tools` hub JSON-LD when shipped.
 
 ---
 
