@@ -72,7 +72,27 @@ Action items from [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.m
 
 Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or **closed** items go in [`backlog-archive.md`](backlog-archive.md); append there and remove them from this file.
 
-**No open numbered tickets.** Next run: [idle / audit rotation](#when-no-actionable-tasks-remain) unless the audit inbox adds work.
+| Priority | # | Focus |
+|----------|---|-------|
+| Low | **47** | Audit: Product |
+
+**Suggested order:** **47** (execute audit when selected).
+
+---
+
+## 47. Audit: Product
+
+**Status:** Not completed  
+**Source:** Idle rotation — successor to Audit: Reliability #43 (2026-03-28)
+
+### In plain English
+
+- **What it is:** Product-only review: tool coverage vs user jobs-to-be-done, obvious feature gaps, parity between related tools, and nav / hub discoverability—no UX, SEO, or reliability mixing.
+- **Why you’d do it:** Prioritize what to build or retire without re-auditing polish or metadata.
+
+**Action:** Apply [When executing an audit task](#when-executing-an-audit-task) for **Product** only. Deliverables: numbered backlog items, each with a concrete gap and proposed outcome.
+
+**Acceptance:** Archived as **`## N. Audit: Product`** after triage; follow-ups are shippable tickets.
 
 ---
 
