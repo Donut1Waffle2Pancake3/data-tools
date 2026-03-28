@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X X _ _`
+**Tracker (5 slots):** `X X X X _`
 
 **Rules**
 
@@ -74,28 +74,11 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Medium | **39** | `seo-rules.md` — remove broken `:contentReference` artifacts |
 | Medium | **40** | Homepage — H1 + hero subheading vs [`seo-rules.md`](seo-rules.md) (length, no promo words in H1, single outcome blurb) |
 | Medium | **41** | Tool pages — align stray How-to H2s with “How to + keyword” |
 | Low | **42** | `tools/index.html` — keep JSON-LD `ItemList` `numberOfItems` + order aligned with [`js/site.js`](../js/site.js) nav (incl. hidden ids) |
 
-**Suggested order:** **39**, **40**, **41**, **42**.
-
----
-
-## 39. `seo-rules.md` — remove broken `:contentReference` artifacts
-
-**Status:** Not completed  
-**Source:** Audit: SEO #38 (2026-03-28)
-
-### In plain English
-
-- **What it is:** FAQ bullets still contain pasted `:contentReference[oaicite:…]{index=…}` strings (broken citations).
-- **Why you’d do it:** Editors and agents rely on this doc; garbage lines undermine trust and copy-paste.
-
-**Action:** Edit [`seo-rules.md`](seo-rules.md): delete or replace those tokens with plain English per surrounding intent.
-
-**Acceptance:** No `:contentReference` substrings remain; FAQ principles still read cleanly.
+**Suggested order:** **40**, **41**, **42**.
 
 ---
 

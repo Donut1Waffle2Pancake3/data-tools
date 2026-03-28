@@ -692,6 +692,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 39. `seo-rules.md` — remove broken `:contentReference` artifacts
+
+**Status:** Completed  
+**Source:** Audit: SEO #38 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Core and FAQ bullets ended with pasted `:contentReference[oaicite:…]{index=…}` tokens from a bad export.
+- **Why it mattered:** Unreadable in-repo spec; broke trust for anyone editing or following the doc.
+
+**Action:** Removed those suffixes; left bullet intent unchanged.
+
+**Acceptance:** No `:contentReference` substrings in [`seo-rules.md`](../seo-rules.md).
+
+**Delivered:** [`seo-rules.md`](../seo-rules.md).
+
+---
+
 <!--
 ## N. Short title
 

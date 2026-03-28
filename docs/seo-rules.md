@@ -6,7 +6,7 @@ Standards for tool pages (FAQ, How To, headers).
 
 ## Core
 
-- Solve **real user problems**, not definitions. :contentReference[oaicite:0]{index=0}  
+- Solve **real user problems**, not definitions.
 - Be **concise, direct, outcome-focused**.  
 - Avoid filler, repetition, academic tone.
 
@@ -16,8 +16,8 @@ Standards for tool pages (FAQ, How To, headers).
 
 ### Principles
 
-- Target **high-intent queries** (errors, “how to fix,” edge cases). :contentReference[oaicite:1]{index=1}  
-- Reject textbook queries (“what is JSON”). :contentReference[oaicite:2]{index=2}  
+- Target **high-intent queries** (errors, “how to fix,” edge cases).
+- Reject textbook queries (“what is JSON”).
 
 ### Include
 
