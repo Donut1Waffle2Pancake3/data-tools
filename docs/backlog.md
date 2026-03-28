@@ -297,7 +297,9 @@ Copy and place above **Audit inbox** for each new ticket:
 
 If no meaningful tasks are available (everything completed, archived, or not worth doing), **do not** run a broad, mixed-domain audit.
 
-1. **Select the next audit type** from the rotation (see [Audit rotation](#audit-rotation)). Infer the last completed audit from the most recent `Audit:` entry in [`backlog-archive.md`](backlog-archive.md); if none exists, start with **Product**.
+If this file already has an **open** ticket whose heading includes **`Audit:`** (e.g. `## 28. Audit: SEO`), do **not** add another—pick up that ticket on a later run instead of idling into a duplicate.
+
+1. **Select the next audit type** from the rotation (see [Audit rotation](#audit-rotation)). Infer the last **completed** audit from [`backlog-archive.md`](backlog-archive.md): find ticket headings whose title includes **`Audit:`** (e.g. `## 28. Audit: SEO`) and use the **last** such section in the file—[`backlog-archive.md`](backlog-archive.md) keeps **newest at the bottom**, so the final match is the one to use. If none exists, start with **Product**. The next idle-spawned audit is always the **successor** of that type in the cycle (never the same type twice in a row).
 2. **Create a new backlog task** (then stop execution for this run):
    - **Title:** `Audit: <type>` (type is one of: Product, UX, SEO, Reliability)
    - Clear, scoped description of what to review in that category only
@@ -314,7 +316,7 @@ When **`Audit: <type>`** is the selected task:
 - Work systematically across: key tool pages, shared components / [`js/site.js`](../js/site.js) patterns, and relevant docs ([`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.md)).
 - **Output:** concrete backlog items only—no vague observations. Each finding needs a **clear problem** and a **specific fix**.
 - Add findings to this file with correct priority; merge duplicates and trim overlap.
-- **Completion:** Move the audit task to [`backlog-archive.md`](backlog-archive.md). The next time you hit idle, the new `Audit:` task must be the **next** type in the rotation (never the same type twice in a row).
+- **Completion:** Move the audit task to [`backlog-archive.md`](backlog-archive.md), keeping a heading that includes **`Audit:`** (same pattern as open tickets, e.g. `## N. Audit: SEO`) so rotation stays traceable. The next time you hit idle, the new `Audit:` task must be the **next** type in the rotation (never the same type twice in a row).
 
 ---
 
@@ -322,13 +324,15 @@ When **`Audit: <type>`** is the selected task:
 
 **Order (cycle):** Product → UX → SEO → Reliability → repeat.
 
-**Rule:** Do not use the same audit type on consecutive idle spawns. After archiving `Audit: UX`, the next idle-created audit is **SEO** (then Reliability, then Product, …).
+**Successors:** Product → UX → SEO → Reliability → Product (loop).
+
+**Rule:** Do not use the same audit type on consecutive idle spawns. After archiving `Audit: UX`, the next idle-created audit is **SEO**; after **Reliability**, the next is **Product**.
 
 **Types (scope hint):**
 
 | Type | Focus |
 |------|--------|
-| **Product** | New tools, meaningful feature gaps on existing tools |
+| **Product** | New tools, new pages, meaningful feature gaps on existing tools |
 | **UX** | Flows, friction, clarity, accessibility |
 | **SEO** | Titles, metadata, internal linking, content gaps |
 | **Reliability** | Errors, edge cases, performance |
