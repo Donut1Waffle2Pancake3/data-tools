@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `_ _ _ _ _`
+**Tracker (5 slots):** `X _ _ _ _`
 
 **Rules**
 
@@ -74,26 +74,9 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Medium | **36** | Tabbed tools — tabpanel `aria-labelledby` |
 | Low | **37** | `initDropZone` — `aria-busy` while reading |
 
-**Suggested order:** **36**, **37**.
-
----
-
-## 36. Tabbed tools — tabpanel `aria-labelledby`
-
-**Status:** Not completed  
-**Source:** Audit: UX #34 (2026-03-28)
-
-### In plain English
-
-- **What it is:** Shared `role="tabpanel"` often keeps `aria-labelledby` fixed to the first tab while the second tab is selected.
-- **Why you’d do it:** Screen readers should hear the active tab’s label for the visible panel.
-
-**Action:** Audit pages with `.tool-tabs` (e.g. [`json-yaml/tool.js`](../json-yaml/tool.js), [`json-formatter`](../json-formatter/index.html) inline script): on tab change, set `aria-labelledby` on the panel to the active tab’s `id`.
-
-**Acceptance:** JSON ↔ YAML + JSON formatter (and any other tab UIs) update `aria-labelledby` when switching tabs.
+**Suggested order:** **37**.
 
 ---
 

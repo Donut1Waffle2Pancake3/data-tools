@@ -11,6 +11,7 @@
   var fileInput = document.getElementById('fileInput');
   var tabJ2Y = document.getElementById('tabJ2Y');
   var tabY2J = document.getElementById('tabY2J');
+  var panelMain = document.getElementById('panel-main');
   var inputLabel = document.getElementById('inputLabel');
   var indentSel = document.getElementById('indentSel');
   var convertBtn = document.getElementById('convertBtn');
@@ -60,6 +61,7 @@
     tabJ2Y.setAttribute('aria-selected', j2y ? 'true' : 'false');
     tabY2J.classList.toggle('active', !j2y);
     tabY2J.setAttribute('aria-selected', j2y ? 'false' : 'true');
+    if (panelMain) panelMain.setAttribute('aria-labelledby', j2y ? 'tabJ2Y' : 'tabY2J');
     inputLabel.textContent = j2y ? 'JSON input' : 'YAML input';
     textInput.placeholder = j2y
       ? '{"hello": "world", "n": 1}'

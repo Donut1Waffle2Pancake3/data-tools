@@ -638,6 +638,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 36. Tabbed tools — tabpanel `aria-labelledby`
+
+**Status:** Completed  
+**Source:** Audit: UX #34 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Shared `panel-main` kept `aria-labelledby="tabJ2Y"` when YAML → JSON was selected.
+- **Why it mattered:** Screen readers should name the panel from the active tab.
+
+**Action:** [`json-yaml/tool.js`](../json-yaml/tool.js) `setMode`: set `aria-labelledby` to `tabJ2Y` or `tabY2J`. Other `.tool-tabs` pages (`json-formatter`, `html-encoder-decoder`, `url-encoder-decoder`) already updated the shared panel on tab change; `sql-result` uses separate tabpanels per mode.
+
+**Acceptance:** JSON ↔ YAML updates `aria-labelledby` when switching direction.
+
+**Delivered:** [`json-yaml/tool.js`](../json-yaml/tool.js).
+
+---
+
 <!--
 ## N. Short title
 
