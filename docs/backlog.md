@@ -72,7 +72,27 @@ Action items from [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.m
 
 Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or **closed** items go in [`backlog-archive.md`](backlog-archive.md); append there and remove them from this file.
 
-**No open numbered tickets.** Next run: [idle / audit rotation](#when-no-actionable-tasks-remain) unless new items land in the inbox.
+| Priority | # | Focus |
+|----------|---|-------|
+| Low | **38** | Audit: SEO |
+
+**Suggested order:** **38** (execute audit when selected).
+
+---
+
+## 38. Audit: SEO
+
+**Status:** Not completed  
+**Source:** Idle rotation — successor to Audit: UX #34 (2026-03-28)
+
+### In plain English
+
+- **What it is:** SEO-only review of public pages (home, tools hub, representative tool URLs), shared chrome, and [`seo-rules.md`](seo-rules.md) alignment.
+- **Why you’d do it:** Find title/description/canonical/structured-data/internal-link gaps without mixing UX or reliability work.
+
+**Action:** Apply [When executing an audit task](#when-executing-an-audit-task) for **SEO** only. Deliverables: new or updated **numbered** backlog tickets with a clear problem and fix each—no vague notes.
+
+**Acceptance:** This `Audit: SEO` item moved to [`backlog-archive.md`](backlog-archive.md) with heading **`## N. Audit: SEO`** after triage; follow-up tickets carry specific work.
 
 ---
 
