@@ -800,6 +800,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 45. JSON → Excel / JSON minifier — FileReader errors
+
+**Status:** Completed  
+**Source:** Audit: Reliability #43 (2026-03-28)
+
+### In plain English
+
+- **What it was:** File pick and drag-drop used `FileReader` with `onload` only; read errors left the textarea unchanged with no feedback.
+- **Why it mattered:** Matches [`json-viewer`](../json-viewer/index.html) resilience and avoids silent failures.
+
+**Action:** `reader.onerror` → `setError` + clear `fileInput`; `onload` starts with `clearError`.
+
+**Acceptance:** Read failure shows the same user-facing line as json-viewer-style copy on both paths per tool.
+
+**Delivered:** [`json-to-excel/index.html`](../json-to-excel/index.html), [`json-minifier/index.html`](../json-minifier/index.html).
+
+---
+
 <!--
 ## N. Short title
 

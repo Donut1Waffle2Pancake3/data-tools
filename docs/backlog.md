@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X X X _`
+**Tracker (5 slots):** `X X X X X`
 
 **Rules**
 
@@ -74,26 +74,9 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Medium | **45** | `json-to-excel` + `json-minifier` — `FileReader` missing `onerror` (pick + drop) |
 | Low | **46** | JSON formatter — clearer error for cyclic `JSON.stringify` (vs parse errors) |
 
-**Suggested order:** **45**, **46**.
-
----
-
-## 45. JSON → Excel / JSON minifier — FileReader errors
-
-**Status:** Not completed  
-**Source:** Audit: Reliability #43 (2026-03-28)
-
-### In plain English
-
-- **What it is:** [`json-to-excel/index.html`](../json-to-excel/index.html) and [`json-minifier/index.html`](../json-minifier/index.html) use `FileReader` with `onload` only for input change + drag-drop.
-- **Why you’d do it:** Read failures (permissions, transient IO) leave the UI silent; [`json-viewer`](../json-viewer/index.html) already sets `onerror`.
-
-**Action:** Add `reader.onerror` → same pattern as json-viewer (`showError` / `setError` + optional `fileInput.value = ''`).
-
-**Acceptance:** Simulated or real read error shows a user-visible message on both paths per file.
+**Suggested order:** **46**.
 
 ---
 

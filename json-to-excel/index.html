@@ -385,7 +385,13 @@
         var file = event.target.files && event.target.files[0];
         if (!file) return;
         var reader = new FileReader();
+        reader.onerror = function () {
+          setError('Could not read that file. Try again or paste the JSON instead.');
+          fileInput.value = '';
+          updateButtonState();
+        };
         reader.onload = function (e) {
+          clearError();
           jsonInput.value = String(e.target.result || '');
           hasRunCurrentInput = false;
           updateButtonState();
@@ -411,7 +417,13 @@
         var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
         if (!file) return;
         var reader = new FileReader();
+        reader.onerror = function () {
+          setError('Could not read that file. Try again or paste the JSON instead.');
+          fileInput.value = '';
+          updateButtonState();
+        };
         reader.onload = function (e) {
+          clearError();
           jsonInput.value = String(e.target.result || '');
           hasRunCurrentInput = false;
           updateButtonState();
