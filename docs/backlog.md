@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `_ _ _ _ _`
+**Tracker (5 slots):** `X X X X X`
 
 **Rules**
 
@@ -74,89 +74,59 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| High | **12** | New tool: JSON → JSON Transformer (JQ-style lite) |
-| High | **14** | New tool: JSON Diff (structured tree diff) |
-| High | **15** | New tool: CSV Diff (keyed rows, field highlights) |
-| Medium | **16** | New tool: SQL result / SQL formatter → CSV or JSON |
-| Medium | **22** | JSON tools — Web Worker parse / higher cap (follow-up to #1) |
+| High | **31** | Homepage — grid parity vs prod nav |
+| Medium | **33** | New tool: JSON ↔ YAML |
+| Low | **32** | README — Tools section vs site |
 
-**Suggested order:** **Roadmap (new tools):** **14** → **15** → **12** (largest build last among greenfield). **22** when raising limits safely matters more than new tools.
-
-Each open item below includes **In plain English** — a short, non-technical read of what the ticket is, why you’d care, and what improves if you do it.
+**Suggested order:** **31** (discoverability), **33**, **32**.
 
 ---
 
-## 12. New tool — JSON → JSON Transformer (JQ-style lite)
+## 31. Homepage — grid parity vs production nav
 
 **Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
+**Source:** Audit: Product #30 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** A workflow tool that takes JSON in and outputs **reshaped** JSON: pick fields, filter arrays, simple maps — not just view/pretty-print.
-- **Why you’d do it:** Power users constantly need “give me only these keys” or “filter this array” without spinning up jq or a script.
-- **Upside:** Moves TinyDataTool from passive utilities to something people use in real pipelines. **Tradeoff:** Must stay bounded (lite) so support and security stay manageable in the browser.
+- **What it is:** [`index.html`](../index.html) omits many tools that appear under production-visible nav (`ACTIVE_NAV_GROUPS` / `PRODUCTION_HIDDEN_TOOL_IDS` in [`js/site.js`](../js/site.js)).
+- **Why you’d do it:** Users landing on the homepage never see SQL result, ZIP, JSON Diff, etc., though they exist in the header.
 
-**Action:** New tool page under repo root (e.g. `json-transformer/`). **MVP:** paste/upload JSON → built-in recipes (pick paths, filter by key, unwrap array) + copy/download result. **Advanced mode:** small expression language or path DSL (document limits; no arbitrary JS `eval`). Reuse [`site-rules.md`](site-rules.md) template; wire into [`js/site.js`](../js/site.js) `NAV_GROUPS` (JSON group).
+**Action:** Add `home-tool-card` entries (and new **Converters** / **File** section blocks if needed) so every **non-hidden** nav item has a homepage card: **JSON** — viewer, schema generator, diff, transformer; **CSV** — diff, column analyzer; **Text** — text diff, base64, regex tester, text case converter, HTML encoder; **Converters** — `sql-result`; **File** — `zip-combiner`. Match card tone/length to existing rows.
 
-**SEO / content:** Target intent: “transform JSON online”, “JSON map fields”, “pick fields from JSON”, “filter JSON array online”. FAQ: large files, privacy (client-side), difference vs formatter. Avoid textbook “what is JSON” per [`seo-rules.md`](seo-rules.md).
-
-**Acceptance:** User can produce a transformed JSON document from sample input using at least pick + filter + map-style operations; errors are explicit (invalid path, type mismatch). Linked from `json-viewer`, `json-to-csv`, All Tools.
+**Acceptance:** Spot-check: nav dropdown (prod) ⊆ homepage links; no duplicate cards for the same tool.
 
 ---
 
-## 14. New tool — JSON Diff (structured)
+## 32. README — Tools section vs live site
 
 **Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
+**Source:** Audit: Product #30 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** Compare two JSON documents **by structure**: added/removed keys, changed scalars, array edits — not just line-by-line text diff.
-- **Why you’d do it:** Higher intent than generic text diff; devs and API users search “compare JSON files” / “JSON diff viewer”.
-- **Upside:** Pairs with JSON viewer/formatter/transformer for internal linking depth.
+- **What it is:** [`docs/README.md`](../README.md) lists ~9 tools; the site ships dozens.
+- **Why you’d do it:** Repo onboarding misleads contributors and future-you.
 
-**Action:** New tool (e.g. `json-diff/`). **UI:** side-by-side trees or inline highlights; color legend for add/remove/change. **Tech:** deep-equal walk with path tracking; consider array alignment (by index vs by id field — document). Large-file guardrails (warn / truncate) aligned with backlog **#1**.
+**Action:** Replace the long stale bullet list with a short intro + links to [`tools/index.html`](../tools/index.html) (All Tools) and [`docs/tools.md`](tools.md); optionally one line: “Canonical list: `js/site.js` `NAV_GROUPS`.”
 
-**SEO / content:** “JSON diff online”, “compare two JSON files”, “JSON diff viewer”. FAQ: privacy, max size, vs text diff tool.
-
-**Acceptance:** Two JSON inputs produce a clear structural diff for objects and arrays; invalid JSON shows parse errors with position where possible. Cross-link from `text-diff`, `json-viewer`, `json-validator`.
+**Acceptance:** README Tools section has no false “complete” list unless it mirrors nav or defers to `tools.md`.
 
 ---
 
-## 15. New tool — CSV Diff (tabular, keyed)
+## 33. New tool — JSON ↔ YAML
 
 **Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
+**Source:** Audit: Product #30 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** Compare two CSVs **as tables**: align rows by a chosen **key column** (e.g. ID), highlight row adds/removes and **cell-level** changes.
-- **Why you’d do it:** Text diff is wrong tool for “what changed between these two exports?” — structured diff is the intent.
-- **Upside:** Natural fit next to CSV sorter, deduplicator, merge; strengthens the CSV cluster and internal links.
+- **What it is:** No YAML import/export; configs and CI often use YAML next to JSON.
+- **Why you’d do it:** Common pipeline step; complements formatter/validator/transformer.
 
-**Action:** New tool (e.g. `csv-diff/`). User picks **key column(s)** (and optional secondary sort). Diff engine: parse both with shared delimiter options (reuse patterns from `csv-sorter`). Output: summary counts + table or row list with per-field badges. Handle duplicate keys gracefully (warn, list rows).
+**Action:** New tool folder (e.g. `json-yaml/`): JSON→YAML and YAML→JSON tabs or toggle; **js-yaml** or small parser with **documented limits** (size, recursion); client-side only; wire nav (JSON group), sitemap, `tools/index.html`, `docs/tools.md`, related tools.
 
-**SEO / content:** “CSV diff online”, “compare CSV files”, “Excel export diff” (secondary). FAQ: key column, encoding, large files.
-
-**Acceptance:** Two CSVs with same schema diff correctly on a chosen ID column; missing/extra rows visible; delimiter auto-detect or user-selected. Linked from `csv-deduplicator`, `merge-csv`, `text-diff`.
-
----
-
-## 22. JSON tools — Web Worker parse / higher size cap (optional follow-up)
-
-**Status:** Not completed  
-**Source:** Gap from shipping #1 (2026-03-28)
-
-### In plain English
-
-- **What it is:** Viewer and validator now **reject** inputs over **10 MB** to protect the main thread. A worker could parse or validate off-thread and allow a **higher** cap with less jank.
-- **Why you’d do it:** Some users have legitimate 15–50 MB JSON and only need validation, not a full tree DOM.
-- **Upside:** Fewer “false negatives” on size while keeping the tab responsive. **Limit:** Tree viewer still needs a DOM strategy (virtualization) for huge graphs — worker alone is not enough for #1’s viewer path.
-
-**Action:** Spike `JSON.parse` or tokenizer in a Web Worker for `json-validator`; consider text-only or lazy tree for viewer. Coordinate caps with any future virtualization ticket.
-
-**Acceptance:** Documented higher safe limit or same limit with materially less UI freeze on multi-MB paste; no regression on sub-10 MB flows.
+**Acceptance:** Round-trip sane samples; invalid YAML/JSON surfaces explicit errors; caps documented in FAQ.
 
 ---
 

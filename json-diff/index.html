@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>JSON Diff | Compare JSON Online | TinyDataTool</title>
+  <meta name="description" content="Compare two JSON documents structurally: added keys, removed keys, and changed values. Arrays aligned by index. Private, in-browser—up to 10 MB per side." />
+  <link rel="canonical" href="https://tinydatatool.com/json-diff/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="JSON Diff | Compare JSON Online | TinyDataTool" />
+  <meta property="og:description" content="Structural JSON diff in your browser. See adds, removes, and changes with JSON Pointer paths." />
+  <meta property="og:url" content="https://tinydatatool.com/json-diff/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="JSON Diff | TinyDataTool" />
+  <meta name="twitter:description" content="Compare two JSON files structurally. Client-side only." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"JSON Diff","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/json-diff/","description":"Compare two JSON documents in the browser with structural diffs, JSON Pointer paths, and no uploads."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .jd-inputs { display: grid; grid-template-columns: 1fr; gap: var(--space-16); }
+    @media (min-width: 900px) {
+      .jd-inputs { grid-template-columns: 1fr 1fr; }
+    }
+    .jd-side { display: flex; flex-direction: column; gap: var(--space-8); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .jd-legend { display: flex; flex-wrap: wrap; gap: var(--space-16); margin: var(--space-8) 0; font-size: var(--text-sm); }
+    .jd-legend span { display: inline-flex; align-items: center; gap: var(--space-8); }
+    .jd-swatch { width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0; }
+    .jd-swatch--add { background: #ecfdf3; border: 1px solid #86efac; }
+    .jd-swatch--remove { background: #fef2f2; border: 1px solid #fca5a5; }
+    .jd-swatch--change { background: #fffbeb; border: 1px solid #fcd34d; }
+    .jd-table-wrap {
+      border: 1px solid var(--grey-6);
+      border-radius: var(--radius);
+      overflow: auto;
+      max-height: 480px;
+      background: var(--grey-1);
+    }
+    .jd-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .jd-table th,
+    .jd-table td {
+      padding: var(--space-8) var(--space-12);
+      border-bottom: 1px solid var(--grey-6);
+      vertical-align: top;
+      text-align: left;
+      word-break: break-word;
+    }
+    .jd-table th { position: sticky; top: 0; background: var(--grey-2); z-index: 1; font-weight: 600; }
+    .jd-row--add td { background: #ecfdf3; }
+    .jd-row--remove td { background: #fef2f2; }
+    .jd-row--change td { background: #fffbeb; }
+    .jd-path { white-space: pre-wrap; max-width: 200px; }
+    .jd-val { white-space: pre-wrap; max-width: 280px; }
+    .drop-zone--compact {
+      padding: 16px;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .drop-zone--compact .drop-zone__hint { margin: 0; }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="json-diff"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">JSON Diff</h1>
+        <p class="hero__sub">Paste two JSON values and see a <strong>structural</strong> diff: keys added or removed, and value changes. Paths use JSON Pointer style (<code>/a/0/b</code>). <strong>Arrays</strong> are compared <strong>by index</strong> (not re-ordered to match). For line-by-line text, use the <a href="../text-diff/index.html">text diff</a> tool.</p>
+      </div>
+    </section>
+
+    <section aria-label="JSON diff" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region">
+
+          <div class="jd-inputs">
+            <div class="jd-side">
+              <div class="form-group">
+                <div class="form-label-row">
+                  <label class="form-label" for="jsonA">JSON A (before / left)</label>
+                  <a href="#" class="clear-link" id="clearALink" role="button" aria-disabled="true">Clear</a>
+                </div>
+                <textarea id="jsonA" class="form-input" placeholder="{ } or [ ] — first JSON" spellcheck="false" style="min-height: 120px;"></textarea>
+              </div>
+              <div class="drop-zone drop-zone--compact" id="dropZoneA" role="button" tabindex="0" aria-label="Upload JSON file for A">
+                <div class="drop-zone__busy" aria-hidden="true">
+                  <span class="drop-zone__spinner"></span>
+                  <p class="drop-zone__busy-label">Loading…</p>
+                </div>
+                <input type="file" id="fileInputA" accept=".json,.txt,application/json,text/plain" aria-label="File for JSON A" />
+                <p class="drop-zone__hint">Drop JSON for A · max 10 MB</p>
+              </div>
+            </div>
+            <div class="jd-side">
+              <div class="form-group">
+                <div class="form-label-row">
+                  <label class="form-label" for="jsonB">JSON B (after / right)</label>
+                  <a href="#" class="clear-link" id="clearBLink" role="button" aria-disabled="true">Clear</a>
+                </div>
+                <textarea id="jsonB" class="form-input" placeholder="{ } or [ ] — second JSON" spellcheck="false" style="min-height: 120px;"></textarea>
+              </div>
+              <div class="drop-zone drop-zone--compact" id="dropZoneB" role="button" tabindex="0" aria-label="Upload JSON file for B">
+                <div class="drop-zone__busy" aria-hidden="true">
+                  <span class="drop-zone__spinner"></span>
+                  <p class="drop-zone__busy-label">Loading…</p>
+                </div>
+                <input type="file" id="fileInputB" accept=".json,.txt,application/json,text/plain" aria-label="File for JSON B" />
+                <p class="drop-zone__hint">Drop JSON for B · max 10 MB</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="compareBtn" type="button" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            Compare JSON
+          </button>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Diff</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="jd-legend" aria-label="Legend">
+              <span><span class="jd-swatch jd-swatch--add" aria-hidden="true"></span> Added in B</span>
+              <span><span class="jd-swatch jd-swatch--remove" aria-hidden="true"></span> Removed from A</span>
+              <span><span class="jd-swatch jd-swatch--change" aria-hidden="true"></span> Changed</span>
+            </div>
+            <div class="jd-table-wrap">
+              <table class="jd-table" id="diffTable" aria-label="Structural differences">
+                <thead>
+                  <tr>
+                    <th scope="col">Path</th>
+                    <th scope="col">Kind</th>
+                    <th scope="col">A</th>
+                    <th scope="col">B</th>
+                  </tr>
+                </thead>
+                <tbody id="diffBody"></tbody>
+              </table>
+            </div>
+            <div class="result-actions" style="margin-top: var(--space-16);">
+              <button class="btn-download" id="copyReportBtn" type="button">Copy report (JSON)</button>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true" style="width:14px;height:14px;">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+            Compared only in your browser. No uploads.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW TO</p>
+        <h2 class="section-title" id="how-heading">How to compare JSON files</h2>
+        <p class="section-body">Paste two JSON values or load two files, compare, then read paths and values or copy a full JSON report. Everything stays in your browser.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste or upload A and B</p>
+            <p class="step__desc">Put the “before” JSON on the left and the “after” JSON on the right, or drop files under each side.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Compare JSON</p>
+            <p class="step__desc">Run the comparison to list structural adds, removes, and value changes with JSON Pointer paths.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy the report</p>
+            <p class="step__desc">Use the table for a quick view, or copy the JSON report when the table is truncated.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">JSON diff vs text diff — which should I use?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Use JSON diff when you care about structure: keys and array positions. Use text diff when formatting or key order differs but you want a line-by-line view of the raw file.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">How are arrays compared?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">By index: item 0 is compared to item 0, and so on. Extra items on either side show as added or removed. There is no automatic reorder or id-based matching.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">What is the size limit?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Each side (paste or file) is limited to about 10 MB of UTF-8 text, similar to the JSON validator. Very large documents may also hit a cap on the number of reported differences for performance.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="json-diff"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var MAX_BYTES = 10 * 1024 * 1024;
+      var MAX_DIFF_ROWS = 800;
+      var MAX_DIFF_TOTAL = 20000;
+
+      var jsonA = document.getElementById('jsonA');
+      var jsonB = document.getElementById('jsonB');
+      var clearALink = document.getElementById('clearALink');
+      var clearBLink = document.getElementById('clearBLink');
+      var compareBtn = document.getElementById('compareBtn');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var diffBody = document.getElementById('diffBody');
+      var copyReportBtn = document.getElementById('copyReportBtn');
+      var dropZoneA = document.getElementById('dropZoneA');
+      var dropZoneB = document.getElementById('dropZoneB');
+      var fileInputA = document.getElementById('fileInputA');
+      var fileInputB = document.getElementById('fileInputB');
+
+      var lastReport = null;
+
+      function utf8ByteLength(str) {
+        if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str).length;
+        return str.length;
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+        resultSection.classList.remove('visible');
+      }
+
+      function clearError() {
+        errorText.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+
+      function joinPtr(base, seg) {
+        var esc = String(seg).replace(/~/g, '~0').replace(/\//g, '~1');
+        return base === '' ? '/' + esc : base + '/' + esc;
+      }
+
+      function ptrDisplay(p) {
+        return p === '' ? '/' : p;
+      }
+
+      function isObj(x) {
+        return x !== null && typeof x === 'object';
+      }
+
+      function diffWalk(a, b, path, out) {
+        if (out.total >= MAX_DIFF_TOTAL) {
+          out.truncated = true;
+          return;
+        }
+
+        if (a === b) return;
+
+        var ta = a === null ? 'null' : typeof a;
+        var tb = b === null ? 'null' : typeof b;
+        if (ta !== tb) {
+          out.rows.push({ path: ptrDisplay(path), kind: 'change', left: a, right: b });
+          out.total++;
+          return;
+        }
+
+        if (ta === 'null' || ta === 'string' || ta === 'number' || ta === 'boolean') {
+          if (a !== b) {
+            out.rows.push({ path: ptrDisplay(path), kind: 'change', left: a, right: b });
+            out.total++;
+          }
+          return;
+        }
+
+        if (Array.isArray(a) && Array.isArray(b)) {
+          var n = Math.max(a.length, b.length);
+          for (var i = 0; i < n; i++) {
+            if (out.total >= MAX_DIFF_TOTAL) {
+              out.truncated = true;
+              return;
+            }
+            var p = joinPtr(path, String(i));
+            if (i >= a.length) {
+              out.rows.push({ path: ptrDisplay(p), kind: 'add', left: undefined, right: b[i] });
+              out.total++;
+            } else if (i >= b.length) {
+              out.rows.push({ path: ptrDisplay(p), kind: 'remove', left: a[i], right: undefined });
+              out.total++;
+            } else {
+              diffWalk(a[i], b[i], p, out);
+            }
+          }
+          return;
+        }
+
+        if (isObj(a) && isObj(b) && !Array.isArray(a) && !Array.isArray(b)) {
+          var keys = {};
+          var k;
+          for (k in a) {
+            if (Object.prototype.hasOwnProperty.call(a, k)) keys[k] = true;
+          }
+          for (k in b) {
+            if (Object.prototype.hasOwnProperty.call(b, k)) keys[k] = true;
+          }
+          var keyList = Object.keys(keys).sort();
+          for (var j = 0; j < keyList.length; j++) {
+            if (out.total >= MAX_DIFF_TOTAL) {
+              out.truncated = true;
+              return;
+            }
+            k = keyList[j];
+            var pk = joinPtr(path, k);
+            var ha = Object.prototype.hasOwnProperty.call(a, k);
+            var hb = Object.prototype.hasOwnProperty.call(b, k);
+            if (!ha) {
+              out.rows.push({ path: ptrDisplay(pk), kind: 'add', left: undefined, right: b[k] });
+              out.total++;
+            } else if (!hb) {
+              out.rows.push({ path: ptrDisplay(pk), kind: 'remove', left: a[k], right: undefined });
+              out.total++;
+            } else {
+              diffWalk(a[k], b[k], pk, out);
+            }
+          }
+          return;
+        }
+
+        out.rows.push({ path: ptrDisplay(path), kind: 'change', left: a, right: b });
+        out.total++;
+      }
+
+      function previewVal(v, maxLen) {
+        if (v === undefined) return '—';
+        var s;
+        try {
+          s = JSON.stringify(v);
+        } catch (e) {
+          return String(v);
+        }
+        if (s.length > maxLen) return s.slice(0, maxLen) + '…';
+        return s;
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function checkReady() {
+        var ok = jsonA.value.trim().length > 0 && jsonB.value.trim().length > 0;
+        compareBtn.disabled = !ok;
+        clearALink.classList.toggle('clear-link--enabled', jsonA.value.trim().length > 0);
+        clearALink.setAttribute('aria-disabled', jsonA.value.trim().length > 0 ? 'false' : 'true');
+        clearBLink.classList.toggle('clear-link--enabled', jsonB.value.trim().length > 0);
+        clearBLink.setAttribute('aria-disabled', jsonB.value.trim().length > 0 ? 'false' : 'true');
+      }
+
+      jsonA.addEventListener('input', checkReady);
+      jsonB.addEventListener('input', checkReady);
+
+      clearALink.addEventListener('click', function (e) {
+        e.preventDefault();
+        jsonA.value = '';
+        checkReady();
+        clearError();
+        resultSection.classList.remove('visible');
+      });
+      clearBLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        jsonB.value = '';
+        checkReady();
+        clearError();
+        resultSection.classList.remove('visible');
+      });
+
+      function loadFile(side, file) {
+        if (!file) return;
+        if (file.size > MAX_BYTES) {
+          showError('File exceeds 10 MB limit.');
+          return;
+        }
+        var dz = side === 'a' ? dropZoneA : dropZoneB;
+        dz.classList.add('file-reading');
+        dz.setAttribute('aria-busy', 'true');
+        readFileAsText(file)
+          .then(function (text) {
+            if (utf8ByteLength(text) > MAX_BYTES) {
+              showError('File content exceeds 10 MB UTF-8 limit.');
+              return;
+            }
+            if (side === 'a') jsonA.value = text;
+            else jsonB.value = text;
+            clearError();
+            checkReady();
+          })
+          .catch(function (err) {
+            showError(err.message || 'Could not read file.');
+          })
+          .finally(function () {
+            dz.classList.remove('file-reading');
+            dz.removeAttribute('aria-busy');
+          });
+      }
+
+      function wireDrop(zone, input, side) {
+        zone.addEventListener('click', function (e) {
+          if (e.target !== input) input.click();
+        });
+        zone.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            input.click();
+          }
+        });
+        input.addEventListener('change', function () {
+          if (input.files && input.files[0]) {
+            loadFile(side, input.files[0]);
+            input.value = '';
+          }
+        });
+        zone.addEventListener('dragover', function (e) {
+          e.preventDefault();
+          zone.classList.add('drag-over');
+        });
+        zone.addEventListener('dragleave', function () {
+          zone.classList.remove('drag-over');
+        });
+        zone.addEventListener('drop', function (e) {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+          var f = e.dataTransfer.files[0];
+          if (f) loadFile(side, f);
+        });
+      }
+
+      wireDrop(dropZoneA, fileInputA, 'a');
+      wireDrop(dropZoneB, fileInputB, 'b');
+
+      compareBtn.addEventListener('click', function () {
+        clearError();
+        resultSection.classList.remove('visible');
+        diffBody.innerHTML = '';
+
+        var ta = jsonA.value.trim();
+        var tb = jsonB.value.trim();
+        if (!ta || !tb) {
+          showError('Paste or load JSON into both sides.');
+          return;
+        }
+        if (utf8ByteLength(ta) > MAX_BYTES || utf8ByteLength(tb) > MAX_BYTES) {
+          showError('Each JSON input must be at most 10 MB (UTF-8).');
+          return;
+        }
+
+        var a;
+        var b;
+        try {
+          a = JSON.parse(ta);
+        } catch (e) {
+          showError('JSON A: ' + (e.message || 'Invalid JSON'));
+          return;
+        }
+        try {
+          b = JSON.parse(tb);
+        } catch (e) {
+          showError('JSON B: ' + (e.message || 'Invalid JSON'));
+          return;
+        }
+
+        compareBtn.classList.add('spinning');
+        compareBtn.setAttribute('aria-busy', 'true');
+        try {
+          var out = { rows: [], total: 0, truncated: false };
+          diffWalk(a, b, '', out);
+          var rows = out.rows;
+          var addN = 0;
+          var remN = 0;
+          var chN = 0;
+          for (var i = 0; i < rows.length; i++) {
+            if (rows[i].kind === 'add') addN++;
+            else if (rows[i].kind === 'remove') remN++;
+            else chN++;
+          }
+
+          var displayRows = rows.slice(0, MAX_DIFF_ROWS);
+          var hidden = rows.length - displayRows.length;
+
+          var html = '';
+          for (var r = 0; r < displayRows.length; r++) {
+            var row = displayRows[r];
+            var cls = 'jd-row--' + row.kind;
+            html +=
+              '<tr class="' +
+              cls +
+              '"><td class="jd-path">' +
+              escapeHtml(row.path) +
+              '</td><td>' +
+              escapeHtml(row.kind) +
+              '</td><td class="jd-val">' +
+              escapeHtml(previewVal(row.left, 400)) +
+              '</td><td class="jd-val">' +
+              escapeHtml(previewVal(row.right, 400)) +
+              '</td></tr>';
+          }
+          if (hidden > 0) {
+            html +=
+              '<tr><td colspan="4">' +
+              escapeHtml('… ' + hidden.toLocaleString() + ' more row(s) not shown. Copy report (JSON) for full list up to cap.') +
+              '</td></tr>';
+          }
+          diffBody.innerHTML = html;
+
+          var metaParts = [
+            rows.length.toLocaleString() + ' difference' + (rows.length !== 1 ? 's' : ''),
+            addN + ' add',
+            remN + ' remove',
+            chN + ' change',
+          ];
+          if (out.truncated) metaParts.push('stopped at ' + MAX_DIFF_TOTAL.toLocaleString() + ' entries (cap)');
+          resultMeta.textContent = metaParts.join(' · ');
+
+          lastReport = {
+            summary: { add: addN, remove: remN, change: chN, total: rows.length },
+            truncated: out.truncated || hidden > 0,
+            differences: rows,
+          };
+          resultSection.classList.add('visible');
+        } finally {
+          compareBtn.classList.remove('spinning');
+          compareBtn.removeAttribute('aria-busy');
+        }
+      });
+
+      copyReportBtn.addEventListener('click', function () {
+        if (!lastReport) return;
+        var text = JSON.stringify(lastReport, null, 2);
+        window.TinyDataToolClipboard.copyWithFeedback(text, copyReportBtn, function () {
+          showError('Copy failed. Select the table or try again.');
+        });
+      });
+
+      checkReady();
+    })();
+  </script>
+</body>
+</html>

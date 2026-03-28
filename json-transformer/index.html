@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>JSON Transformer | Pick, Filter, Extract | TinyDataTool</title>
+  <meta name="description" content="Reshape JSON in your browser: navigate to a path, keep only chosen object keys, or filter an array by a field value. No code, no uploads—10 MB limit." />
+  <link rel="canonical" href="https://tinydatatool.com/json-transformer/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="JSON Transformer | TinyDataTool" />
+  <meta property="og:description" content="Pick keys, filter arrays, extract by path—client-side JSON transforms without eval." />
+  <meta property="og:url" content="https://tinydatatool.com/json-transformer/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="JSON Transformer | TinyDataTool" />
+  <meta name="twitter:description" content="Transform JSON locally: extract path, pick keys, filter arrays." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"JSON Transformer","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/json-transformer/","description":"Transform JSON in the browser with path extraction, top-level key picking, and array filtering—no arbitrary code execution."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .jt-fieldset { border: 1px solid var(--grey-6); border-radius: var(--radius); padding: var(--space-16); margin-top: var(--space-16); }
+    .jt-fieldset legend { padding: 0 var(--space-8); font-weight: 600; font-size: var(--text-sm); }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="json-transformer"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">JSON Transformer</h1>
+        <p class="hero__sub">Paste JSON and <strong>reshape</strong> it with safe, built-in steps: jump to a <strong>path</strong> (e.g. <code>data.items[0]</code>), <strong>keep only</strong> selected keys on an object, or <strong>filter</strong> an array of objects by a field value. No scripts run on your data—this is not a full programming environment. For pretty-print only, use the <a href="../json-formatter/index.html">JSON formatter</a>.</p>
+      </div>
+    </section>
+
+    <section aria-label="JSON transformer" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region">
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="jsonInput">Input JSON</label>
+              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+            </div>
+            <textarea id="jsonInput" class="form-input" placeholder='{"users":[{"id":1,"role":"admin"},{"id":2,"role":"guest"}]}' spellcheck="false" style="min-height: 120px;"></textarea>
+          </div>
+
+          <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload JSON file" aria-describedby="drop-hint">
+            <div class="drop-zone__busy" aria-hidden="true">
+              <span class="drop-zone__spinner"></span>
+              <p class="drop-zone__busy-label">Loading file…</p>
+            </div>
+            <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+            </svg>
+            <p class="drop-zone__label">Or upload a JSON file</p>
+            <p class="drop-zone__hint" id="drop-hint">Max 10 MB UTF-8 · processed locally</p>
+            <input type="file" id="fileInput" accept=".json,.txt,application/json,text/plain" aria-label="Select JSON file" />
+          </div>
+
+          <fieldset class="jt-fieldset">
+            <legend>1. Focus (optional)</legend>
+            <label class="form-label" for="focusPath">Path from root</label>
+            <input type="text" id="focusPath" class="form-input" placeholder="e.g. data.users or items[0] — leave empty to use whole document" style="min-height: 40px;" autocomplete="off" />
+            <p class="form-hint" style="margin-top: 8px;">Use dot segments and <code>[index]</code> for arrays. Invalid paths stop with a clear error.</p>
+          </fieldset>
+
+          <fieldset class="jt-fieldset">
+            <legend>2. Pick keys (optional)</legend>
+            <label class="form-option">
+              <input type="checkbox" id="pickEnabled" />
+              <span>Keep only these <strong>top-level</strong> keys on the focused <strong>object</strong></span>
+            </label>
+            <div class="form-group" style="margin-top: 12px; margin-bottom: 0;">
+              <label class="form-label" for="pickKeys">Keys (comma or newline)</label>
+              <textarea id="pickKeys" class="form-input" rows="2" placeholder="id, name, email" spellcheck="false" style="min-height: 64px;"></textarea>
+            </div>
+          </fieldset>
+
+          <fieldset class="jt-fieldset">
+            <legend>3. Filter array (optional)</legend>
+            <label class="form-option">
+              <input type="checkbox" id="filterEnabled" />
+              <span>Keep only array elements where a property <strong>equals</strong> a value (string match)</span>
+            </label>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px;">
+              <div class="form-group" style="margin: 0; flex: 1 1 140px;">
+                <label class="form-label" for="filterProp">Property name</label>
+                <input type="text" id="filterProp" class="form-input" placeholder="role" style="min-height: 40px;" autocomplete="off" />
+              </div>
+              <div class="form-group" style="margin: 0; flex: 1 1 140px;">
+                <label class="form-label" for="filterVal">Value</label>
+                <input type="text" id="filterVal" class="form-input" placeholder="admin" style="min-height: 40px;" autocomplete="off" />
+              </div>
+            </div>
+            <p class="form-hint" style="margin-top: 8px;">Runs on the focused value after steps 1–2; it must be a JSON <strong>array</strong> of objects.</p>
+          </fieldset>
+
+          <div class="form-section" style="margin-top: 16px;">
+            <span class="form-section__label">Output</span>
+            <label class="form-label" for="indentSel">Indent</label>
+            <select id="indentSel" class="field-md" style="min-width: 120px;">
+              <option value="2">2 spaces</option>
+              <option value="4">4 spaces</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" id="runBtn" type="button" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            Transform JSON
+          </button>
+
+          <button type="button" class="btn-download" id="useOutputBtn" style="display: none; margin-top: 12px;">Use output as new input</button>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Result</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="jsonOutput">JSON output</label>
+              <textarea id="jsonOutput" class="form-input" readonly spellcheck="false" style="min-height: 160px;"></textarea>
+            </div>
+            <div class="result-actions">
+              <button class="btn-download" id="copyBtn" type="button">Copy JSON</button>
+              <a class="btn-download" id="downloadLink" href="#" download="transformed.json" style="display: none;">Download JSON</a>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true" style="width:14px;height:14px;"><path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            Runs only in your browser. No eval, no uploads.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW TO</p>
+        <h2 class="section-title" id="how-heading">How to transform JSON online</h2>
+        <p class="section-body">Chain a path, optional key pick, and optional array filter, then copy or download the result.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste or upload JSON</p>
+            <p class="step__desc">Stay under the size limit. Optionally set a path to focus on part of the tree.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Choose transforms</p>
+            <p class="step__desc">Pick keys on an object, filter an array by one field, or use path alone to extract a subtree.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Run and export</p>
+            <p class="step__desc">Copy or download JSON, or send the output back to the input for another pass.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">Does this run JavaScript on my JSON?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No arbitrary code. The tool applies fixed operations: path navigation, key picking, and string-equality filtering on arrays. There is no eval or user-supplied expressions.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">What is the size limit?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">About 10 MB of UTF-8 text per paste or file. The JSON Validator allows a higher limit when your browser can parse in a worker. Very large documents may still hit memory limits.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">How is this different from the JSON formatter?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The formatter focuses on pretty-print and minify. Here you change structure: extract a path, drop keys you do not need, or filter list entries.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="json-transformer"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var MAX_BYTES = 10 * 1024 * 1024;
+      var MAX_BYTES_MSG = 'Input exceeds 10 MB (UTF-8). Use a smaller file or split the JSON.';
+
+      var jsonInput = document.getElementById('jsonInput');
+      var clearLink = document.getElementById('clearLink');
+      var dropZone = document.getElementById('dropZone');
+      var fileInput = document.getElementById('fileInput');
+      var focusPath = document.getElementById('focusPath');
+      var pickEnabled = document.getElementById('pickEnabled');
+      var pickKeys = document.getElementById('pickKeys');
+      var filterEnabled = document.getElementById('filterEnabled');
+      var filterProp = document.getElementById('filterProp');
+      var filterVal = document.getElementById('filterVal');
+      var indentSel = document.getElementById('indentSel');
+      var runBtn = document.getElementById('runBtn');
+      var useOutputBtn = document.getElementById('useOutputBtn');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var jsonOutput = document.getElementById('jsonOutput');
+      var copyBtn = document.getElementById('copyBtn');
+      var downloadLink = document.getElementById('downloadLink');
+      var blobUrl = null;
+
+      function utf8ByteLength(str) {
+        if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str).length;
+        return str.length;
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+        resultSection.classList.remove('visible');
+        useOutputBtn.style.display = 'none';
+        if (blobUrl) {
+          URL.revokeObjectURL(blobUrl);
+          blobUrl = null;
+        }
+        downloadLink.style.display = 'none';
+      }
+
+      function clearError() {
+        errorText.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+
+      function pathTokens(pathStr) {
+        var s = String(pathStr || '').trim();
+        if (!s) return [];
+        var tok = [];
+        var i = 0;
+        while (i < s.length) {
+          if (s[i] === '.') {
+            i++;
+            continue;
+          }
+          if (s[i] === '[') {
+            var j = s.indexOf(']', i);
+            if (j < 0) throw new Error('Path: missing closing ]');
+            var inner = s.slice(i + 1, j).trim();
+            if (!/^\d+$/.test(inner)) throw new Error('Path: only numeric indices allowed inside [ ], got [' + inner + ']');
+            tok.push(parseInt(inner, 10));
+            i = j + 1;
+            continue;
+          }
+          var start = i;
+          while (i < s.length && s[i] !== '.' && s[i] !== '[') {
+            if (s[i] <= ' ' || s[i] === '\t') throw new Error('Path: spaces not allowed in segment names');
+            i++;
+          }
+          if (start === i) throw new Error('Path: unexpected character at position ' + (i + 1));
+          var seg = s.slice(start, i);
+          if (!/^[a-zA-Z_$][a-zA-Z0-9_$-]*$/.test(seg)) {
+            throw new Error('Path: invalid segment "' + seg + '" (letters, numbers, _, $, hyphen; must not start with a digit)');
+          }
+          tok.push(seg);
+        }
+        return tok;
+      }
+
+      function getAtPath(obj, pathStr) {
+        var parts = pathTokens(pathStr);
+        if (parts.length === 0) return obj;
+        var cur = obj;
+        for (var p = 0; p < parts.length; p++) {
+          var key = parts[p];
+          if (cur == null) throw new Error('Path: value is null or undefined at step ' + (p + 1));
+          if (typeof key === 'number') {
+            if (!Array.isArray(cur)) throw new Error('Path: expected array before [' + key + ']');
+            if (key < 0 || key >= cur.length) throw new Error('Path: array index ' + key + ' out of range (length ' + cur.length + ')');
+            cur = cur[key];
+          } else {
+            if (typeof cur !== 'object' || Array.isArray(cur)) {
+              throw new Error('Path: expected object before property "' + key + '"');
+            }
+            if (!Object.prototype.hasOwnProperty.call(cur, key)) {
+              throw new Error('Path: missing property "' + key + '"');
+            }
+            cur = cur[key];
+          }
+        }
+        return cur;
+      }
+
+      function parseKeyList(text) {
+        return String(text || '')
+          .split(/[\s,]+/)
+          .map(function (x) { return x.trim(); })
+          .filter(Boolean);
+      }
+
+      function pickTopKeys(obj, keys) {
+        if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {
+          throw new Error('Pick keys: focused value must be a plain object, not an array or primitive.');
+        }
+        var out = {};
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          if (Object.prototype.hasOwnProperty.call(obj, k)) out[k] = obj[k];
+        }
+        return out;
+      }
+
+      function filterArrayOfObjects(arr, prop, want) {
+        if (!Array.isArray(arr)) throw new Error('Filter: focused value must be an array.');
+        var w = String(want);
+        return arr.filter(function (el) {
+          return el !== null && typeof el === 'object' && !Array.isArray(el) && String(el[prop]) === w;
+        });
+      }
+
+      function checkReady() {
+        var v = jsonInput.value.trim().length > 0;
+        runBtn.disabled = !v;
+        clearLink.classList.toggle('clear-link--enabled', v);
+        clearLink.setAttribute('aria-disabled', v ? 'false' : 'true');
+      }
+
+      jsonInput.addEventListener('input', checkReady);
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!jsonInput.value.trim()) return;
+        jsonInput.value = '';
+        jsonOutput.value = '';
+        resultSection.classList.remove('visible');
+        useOutputBtn.style.display = 'none';
+        if (blobUrl) {
+          URL.revokeObjectURL(blobUrl);
+          blobUrl = null;
+        }
+        downloadLink.style.display = 'none';
+        checkReady();
+        jsonInput.focus();
+      });
+
+      dropZone.addEventListener('click', function (e) {
+        if (e.target !== fileInput) fileInput.click();
+      });
+      dropZone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+      fileInput.addEventListener('change', function () {
+        if (!fileInput.files || !fileInput.files[0]) return;
+        var f = fileInput.files[0];
+        if (f.size > MAX_BYTES) {
+          showError(MAX_BYTES_MSG);
+          fileInput.value = '';
+          return;
+        }
+        dropZone.classList.add('file-reading');
+        dropZone.setAttribute('aria-busy', 'true');
+        readFileAsText(f)
+          .then(function (text) {
+            if (utf8ByteLength(text) > MAX_BYTES) {
+              showError(MAX_BYTES_MSG);
+              return;
+            }
+            jsonInput.value = text;
+            clearError();
+            checkReady();
+          })
+          .catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          })
+          .finally(function () {
+            dropZone.classList.remove('file-reading');
+            dropZone.removeAttribute('aria-busy');
+            fileInput.value = '';
+          });
+      });
+      dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+      dropZone.addEventListener('dragleave', function () {
+        dropZone.classList.remove('drag-over');
+      });
+      dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        var f = e.dataTransfer.files[0];
+        if (!f) return;
+        if (f.size > MAX_BYTES) {
+          showError(MAX_BYTES_MSG);
+          return;
+        }
+        dropZone.classList.add('file-reading');
+        dropZone.setAttribute('aria-busy', 'true');
+        readFileAsText(f)
+          .then(function (text) {
+            if (utf8ByteLength(text) > MAX_BYTES) {
+              showError(MAX_BYTES_MSG);
+              return;
+            }
+            jsonInput.value = text;
+            clearError();
+            checkReady();
+          })
+          .catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          })
+          .finally(function () {
+            dropZone.classList.remove('file-reading');
+            dropZone.removeAttribute('aria-busy');
+          });
+      });
+
+      runBtn.addEventListener('click', function () {
+        clearError();
+        var raw = jsonInput.value.trim();
+        if (!raw) {
+          showError('Paste or upload JSON first.');
+          return;
+        }
+        if (utf8ByteLength(raw) > MAX_BYTES) {
+          showError(MAX_BYTES_MSG);
+          return;
+        }
+
+        var root;
+        try {
+          root = JSON.parse(raw);
+        } catch (err) {
+          showError('Invalid JSON: ' + (err.message || 'parse error'));
+          return;
+        }
+
+        var pathStr = focusPath.value.trim();
+        var usePick = pickEnabled.checked;
+        var keysText = pickKeys.value;
+        var useFilter = filterEnabled.checked;
+        var fProp = filterProp.value.trim();
+        var fVal = filterVal.value;
+
+        if (!pathStr && !usePick && !useFilter) {
+          showError('Set a path, enable pick keys, or enable filter—or use the JSON formatter for formatting only.');
+          return;
+        }
+
+        if (usePick && !keysText.trim()) {
+          showError('Pick keys: enter at least one key name.');
+          return;
+        }
+        if (useFilter) {
+          if (!fProp) {
+            showError('Filter: enter a property name.');
+            return;
+          }
+        }
+
+        runBtn.classList.add('spinning');
+        runBtn.setAttribute('aria-busy', 'true');
+        try {
+          var cur = pathStr ? getAtPath(root, pathStr) : root;
+          var steps = [];
+
+          if (pathStr) steps.push('path');
+
+          if (usePick) {
+            var ks = parseKeyList(keysText);
+            cur = pickTopKeys(cur, ks);
+            steps.push('pick(' + ks.length + ' keys)');
+          }
+
+          if (useFilter) {
+            cur = filterArrayOfObjects(cur, fProp, fVal);
+            steps.push('filter(' + fProp + '=' + fVal + ')');
+          }
+
+          var indent = parseInt(indentSel.value, 10) || 2;
+          var outStr = JSON.stringify(cur, null, indent);
+          jsonOutput.value = outStr;
+          resultMeta.textContent = steps.length ? steps.join(' → ') : '—';
+          resultSection.classList.add('visible');
+          useOutputBtn.style.display = 'inline-flex';
+
+          if (blobUrl) URL.revokeObjectURL(blobUrl);
+          blobUrl = URL.createObjectURL(new Blob([outStr], { type: 'application/json;charset=utf-8' }));
+          downloadLink.href = blobUrl;
+          downloadLink.style.display = 'inline-flex';
+        } catch (err2) {
+          showError(err2.message || 'Transform failed.');
+        } finally {
+          runBtn.classList.remove('spinning');
+          runBtn.removeAttribute('aria-busy');
+        }
+      });
+
+      useOutputBtn.addEventListener('click', function () {
+        var o = jsonOutput.value.trim();
+        if (!o) return;
+        jsonInput.value = o;
+        jsonOutput.value = '';
+        resultSection.classList.remove('visible');
+        useOutputBtn.style.display = 'none';
+        if (blobUrl) {
+          URL.revokeObjectURL(blobUrl);
+          blobUrl = null;
+        }
+        downloadLink.style.display = 'none';
+        checkReady();
+        clearError();
+        jsonInput.focus();
+      });
+
+      copyBtn.addEventListener('click', function () {
+        var t = jsonOutput.value;
+        if (!t) return;
+        window.TinyDataToolClipboard.copyWithFeedback(t, copyBtn, function () {
+          showError('Copy failed. Select the output text manually.');
+        });
+      });
+
+      checkReady();
+    })();
+  </script>
+</body>
+</html>

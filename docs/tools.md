@@ -13,6 +13,7 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 | CSV Viewer | [tinydatatool.com/csv-viewer/](https://tinydatatool.com/csv-viewer/) |
 | Split CSV | [tinydatatool.com/split-csv/](https://tinydatatool.com/split-csv/) |
 | Merge CSV | [tinydatatool.com/merge-csv/](https://tinydatatool.com/merge-csv/) |
+| CSV Diff | [tinydatatool.com/csv-diff/](https://tinydatatool.com/csv-diff/) |
 | CSV Column Remover | [tinydatatool.com/csv-column-remover/](https://tinydatatool.com/csv-column-remover/) |
 | CSV Column Splitter | [tinydatatool.com/csv-column-splitter/](https://tinydatatool.com/csv-column-splitter/) |
 | CSV Column Joiner | [tinydatatool.com/csv-column-joiner/](https://tinydatatool.com/csv-column-joiner/) |
@@ -31,6 +32,8 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 | JSON Viewer | [tinydatatool.com/json-viewer/](https://tinydatatool.com/json-viewer/) |
 | JSON Validator | [tinydatatool.com/json-validator/](https://tinydatatool.com/json-validator/) |
 | JSON Schema Generator | [tinydatatool.com/json-schema-generator/](https://tinydatatool.com/json-schema-generator/) |
+| JSON Diff | [tinydatatool.com/json-diff/](https://tinydatatool.com/json-diff/) |
+| JSON Transformer | [tinydatatool.com/json-transformer/](https://tinydatatool.com/json-transformer/) |
 | JSON Formatter | [tinydatatool.com/json-formatter/](https://tinydatatool.com/json-formatter/) |
 | JSON Minifier | [tinydatatool.com/json-minifier/](https://tinydatatool.com/json-minifier/) |
 | JSON → CSV | [tinydatatool.com/json-to-csv/](https://tinydatatool.com/json-to-csv/) |

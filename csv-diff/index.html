@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CSV Diff | Compare CSV Files Online | TinyDataTool</title>
+  <meta name="description" content="Compare two CSV files by a key column: row adds, removes, and cell-level changes. Delimiter auto-detect, private in-browser processing." />
+  <link rel="canonical" href="https://tinydatatool.com/csv-diff/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CSV Diff | Compare CSV Files Online | TinyDataTool" />
+  <meta property="og:description" content="Keyed CSV diff in your browser—see added, removed, and changed rows." />
+  <meta property="og:url" content="https://tinydatatool.com/csv-diff/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="CSV Diff | TinyDataTool" />
+  <meta name="twitter:description" content="Compare two CSVs by ID or key column. Client-side only." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CSV Diff","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/csv-diff/","description":"Compare two CSV tables by a chosen key column with adds, removes, and cell-level changes in the browser."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .cd-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-16); }
+    @media (min-width: 900px) { .cd-grid { grid-template-columns: 1fr 1fr; } }
+    .cd-side { display: flex; flex-direction: column; gap: var(--space-8); }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .cd-legend { display: flex; flex-wrap: wrap; gap: var(--space-16); margin: var(--space-8) 0; font-size: var(--text-sm); }
+    .cd-legend span { display: inline-flex; align-items: center; gap: var(--space-8); }
+    .cd-swatch { width: 16px; height: 16px; border-radius: 4px; }
+    .cd-swatch--add { background: #ecfdf3; border: 1px solid #86efac; }
+    .cd-swatch--remove { background: #fef2f2; border: 1px solid #fca5a5; }
+    .cd-swatch--change { background: #fffbeb; border: 1px solid #fcd34d; }
+    .cd-table-wrap {
+      border: 1px solid var(--grey-6);
+      border-radius: var(--radius);
+      overflow: auto;
+      max-height: 480px;
+      background: var(--grey-1);
+    }
+    .cd-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .cd-table th, .cd-table td {
+      padding: var(--space-8) var(--space-12);
+      border-bottom: 1px solid var(--grey-6);
+      vertical-align: top;
+      text-align: left;
+      word-break: break-word;
+    }
+    .cd-table th { position: sticky; top: 0; background: var(--grey-2); z-index: 1; font-weight: 600; }
+    .cd-row--add td { background: #ecfdf3; }
+    .cd-row--remove td { background: #fef2f2; }
+    .cd-row--change td { background: #fffbeb; }
+    .cd-row--same td { background: transparent; }
+    .drop-zone--compact { padding: 16px; min-height: 56px; display: flex; align-items: center; justify-content: center; position: relative; }
+    .drop-zone--compact .drop-zone__hint { margin: 0; }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="csv-diff"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">CSV Diff</h1>
+        <p class="hero__sub">Paste or upload <strong>two CSVs</strong>, choose the same <strong>key column</strong> on both (for example <code>id</code>), and see rows that were <strong>added</strong>, <strong>removed</strong>, or <strong>changed</strong>. Matching uses the <strong>first row</strong> when duplicate keys exist; duplicates are called out in a warning. For raw text, use <a href="../text-diff/index.html">text diff</a>.</p>
+      </div>
+    </section>
+
+    <section aria-label="CSV diff" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region">
+
+          <div class="form-section" aria-label="Delimiter">
+            <span class="form-section__label">Delimiter (both files)</span>
+            <div class="delimiter-group" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+              <label for="delimiterSelect" class="form-label" style="margin: 0;">Delimiter</label>
+              <select id="delimiterSelect" class="field-md" style="min-width: 120px;">
+                <option value="auto">Auto</option>
+                <option value=",">Comma</option>
+                <option value="tab">Tab</option>
+                <option value=";">Semicolon</option>
+                <option value="|">Pipe</option>
+                <option value="custom">Custom</option>
+              </select>
+              <input type="text" id="customDelimiter" class="form-input field-md" style="max-width: 128px; min-height: 40px;" maxlength="3" placeholder="Chars" hidden aria-label="Custom delimiter" />
+            </div>
+            <label class="form-option" style="margin-top: 12px; display: flex;">
+              <input type="checkbox" id="hasHeader" checked />
+              <span>First row is header</span>
+            </label>
+          </div>
+
+          <div class="cd-grid">
+            <div class="cd-side">
+              <div class="form-group">
+                <div class="form-label-row">
+                  <label class="form-label" for="csvA">CSV A (before)</label>
+                  <a href="#" class="clear-link" id="clearA" role="button" aria-disabled="true">Clear</a>
+                </div>
+                <textarea id="csvA" class="form-input" placeholder="Paste CSV A…" spellcheck="false" style="min-height: 120px;"></textarea>
+              </div>
+              <div class="drop-zone drop-zone--compact" id="dzA" role="button" tabindex="0" aria-label="Upload file for CSV A">
+                <div class="drop-zone__busy" aria-hidden="true"><span class="drop-zone__spinner"></span><p class="drop-zone__busy-label">Loading…</p></div>
+                <input type="file" id="fileA" accept=".csv,.txt,text/csv,text/plain" aria-label="File CSV A" />
+                <p class="drop-zone__hint">Drop file A · shared CSV limits</p>
+              </div>
+            </div>
+            <div class="cd-side">
+              <div class="form-group">
+                <div class="form-label-row">
+                  <label class="form-label" for="csvB">CSV B (after)</label>
+                  <a href="#" class="clear-link" id="clearB" role="button" aria-disabled="true">Clear</a>
+                </div>
+                <textarea id="csvB" class="form-input" placeholder="Paste CSV B…" spellcheck="false" style="min-height: 120px;"></textarea>
+              </div>
+              <div class="drop-zone drop-zone--compact" id="dzB" role="button" tabindex="0" aria-label="Upload file for CSV B">
+                <div class="drop-zone__busy" aria-hidden="true"><span class="drop-zone__spinner"></span><p class="drop-zone__busy-label">Loading…</p></div>
+                <input type="file" id="fileB" accept=".csv,.txt,text/csv,text/plain" aria-label="File CSV B" />
+                <p class="drop-zone__hint">Drop file B · shared CSV limits</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section" style="margin-top: 16px;">
+            <span class="form-section__label">Key columns</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="keyPrimary">Primary key</label>
+                <select id="keyPrimary" class="field-md" style="min-width: 160px;" disabled><option value="">Load CSV first</option></select>
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="keySecondary">Secondary key (optional)</label>
+                <select id="keySecondary" class="field-md" style="min-width: 160px;" disabled><option value="">— None —</option></select>
+              </div>
+            </div>
+            <p class="form-hint" style="margin-top: 8px;">Headers must appear in <strong>both</strong> files. Composite key = primary + secondary.</p>
+          </div>
+
+          <label class="form-option" style="margin-top: 12px;">
+            <input type="checkbox" id="hideSame" />
+            <span>Hide unchanged rows in the table</span>
+          </label>
+
+          <button class="btn-primary" id="runBtn" type="button" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            Compare CSVs
+          </button>
+
+          <div class="status-message status-message--warning" id="warnMsg" role="status" aria-live="polite" aria-atomic="true"><span id="warnText"></span></div>
+          <div class="status-message status-message--error" id="errMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span id="errText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Results</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="cd-legend" aria-label="Legend">
+              <span><span class="cd-swatch cd-swatch--add" aria-hidden="true"></span> Added in B</span>
+              <span><span class="cd-swatch cd-swatch--remove" aria-hidden="true"></span> Removed from A</span>
+              <span><span class="cd-swatch cd-swatch--change" aria-hidden="true"></span> Changed</span>
+              <span><span class="cd-swatch" style="background:var(--grey-2);border:1px solid var(--grey-6);" aria-hidden="true"></span> Unchanged</span>
+            </div>
+            <div class="cd-table-wrap">
+              <table class="cd-table" id="outTable">
+                <thead>
+                  <tr>
+                    <th scope="col">Key</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Details</th>
+                  </tr>
+                </thead>
+                <tbody id="outBody"></tbody>
+              </table>
+            </div>
+            <div class="result-actions" style="margin-top: 16px;">
+              <button class="btn-download" id="copyBtn" type="button">Copy report (TSV)</button>
+              <a class="btn-download" id="dlLink" href="#" download="csv-diff-report.txt" style="display: none;">Download report</a>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true" style="width:14px;height:14px;"><path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            Compared only in your browser. No uploads.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW TO</p>
+        <h2 class="section-title" id="how-heading">How to compare CSV files</h2>
+        <p class="section-body">Align two exports on a stable key, run the comparison, then scan the table or download a text report.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste both CSVs</p>
+            <p class="step__desc">Use the same delimiter for both, or choose Auto. Confirm the first row is your header.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Pick the key</p>
+            <p class="step__desc">Select the primary key column (and optional secondary) that exists in both files.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Review adds, removes, changes</p>
+            <p class="step__desc">Read per-row details or copy/download the full report.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">What if the same key appears on multiple rows?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The tool warns you and lists duplicate keys. Comparison uses the first matching row per file for that key; fix duplicates in the source CSVs if you need every row differenced.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Do column names have to match?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Key columns must share the same header text in both files (after trim). Other columns are compared by matching header name; columns only in one file are noted in change details.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Is my data uploaded?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. Parsing and diff run entirely in your browser.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="csv-diff"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var MAX_TABLE_ROWS = 600;
+      var MAX_DATA_ROWS = 120000;
+      var WARN_ROWS = 25000;
+
+      var CSV_UNCLOSED = 'CSV appears malformed: a quoted field was never closed. Try another delimiter or fix quotes.';
+
+      var delimiterSelect = document.getElementById('delimiterSelect');
+      var customDelimiter = document.getElementById('customDelimiter');
+      var hasHeader = document.getElementById('hasHeader');
+      var csvA = document.getElementById('csvA');
+      var csvB = document.getElementById('csvB');
+      var clearA = document.getElementById('clearA');
+      var clearB = document.getElementById('clearB');
+      var dzA = document.getElementById('dzA');
+      var dzB = document.getElementById('dzB');
+      var fileA = document.getElementById('fileA');
+      var fileB = document.getElementById('fileB');
+      var keyPrimary = document.getElementById('keyPrimary');
+      var keySecondary = document.getElementById('keySecondary');
+      var hideSame = document.getElementById('hideSame');
+      var runBtn = document.getElementById('runBtn');
+      var warnMsg = document.getElementById('warnMsg');
+      var warnText = document.getElementById('warnText');
+      var errMsg = document.getElementById('errMsg');
+      var errText = document.getElementById('errText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var outBody = document.getElementById('outBody');
+      var copyBtn = document.getElementById('copyBtn');
+      var dlLink = document.getElementById('dlLink');
+      var reportBlob = null;
+      var lastReportLines = [];
+
+      function clearWarn() {
+        warnText.textContent = '';
+        warnMsg.classList.remove('visible');
+      }
+      function showWarn(t) {
+        warnText.textContent = t;
+        warnMsg.classList.add('visible');
+      }
+      function showErr(t) {
+        clearWarn();
+        errText.textContent = t;
+        errMsg.classList.add('visible');
+        resultSection.classList.remove('visible');
+      }
+      function clearErr() {
+        errText.textContent = '';
+        errMsg.classList.remove('visible');
+      }
+
+      function updateCustomDelimVis() {
+        if (delimiterSelect.value === 'custom') customDelimiter.removeAttribute('hidden');
+        else customDelimiter.setAttribute('hidden', '');
+      }
+      delimiterSelect.addEventListener('change', updateCustomDelimVis);
+      updateCustomDelimVis();
+
+      function detectDelimiter(text) {
+        var sample = (text || '').slice(0, 2000);
+        var counts = { ',': 0, '\t': 0, ';': 0, '|': 0 };
+        for (var i = 0; i < sample.length; i++) {
+          var c = sample[i];
+          if (c === ',') counts[',']++;
+          else if (c === '\t') counts['\t']++;
+          else if (c === ';') counts[';']++;
+          else if (c === '|') counts['|']++;
+        }
+        var order = [',', '\t', ';', '|'];
+        var best = ',';
+        var bestN = -1;
+        for (var j = 0; j < order.length; j++) {
+          var d = order[j];
+          if (counts[d] > bestN) {
+            bestN = counts[d];
+            best = d;
+          }
+        }
+        return best;
+      }
+
+      function getDelimiter() {
+        var mode = delimiterSelect.value;
+        if (mode === 'auto') {
+          var ta = (csvA.value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+          var tb = (csvB.value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+          return detectDelimiter(ta + '\n' + tb);
+        }
+        if (mode === 'tab') return '\t';
+        if (mode === 'custom') {
+          var c = (customDelimiter.value || '').slice(0, 3);
+          return c.length ? c : ',';
+        }
+        return mode;
+      }
+
+      function delimMatchesAt(s, i, delimiter) {
+        if (!delimiter || i + delimiter.length > s.length) return false;
+        for (var k = 0; k < delimiter.length; k++) {
+          if (s[i + k] !== delimiter[k]) return false;
+        }
+        return true;
+      }
+
+      function parseCSVRows(text, delimiter) {
+        var delim = delimiter || ',';
+        var normalized = (text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        var trimmed = normalized.replace(/\n+$/, '');
+        if (!trimmed) return [];
+        var rows = [];
+        var row = [];
+        var cell = '';
+        var inQuotes = false;
+        for (var i = 0; i < trimmed.length; i++) {
+          var ch = trimmed[i];
+          if (ch === '"') {
+            if (inQuotes && trimmed[i + 1] === '"') {
+              cell += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (!inQuotes) {
+            if (delimMatchesAt(trimmed, i, delim)) {
+              row.push(cell.trim());
+              cell = '';
+              i += delim.length - 1;
+            } else if (ch === '\n') {
+              row.push(cell.trim());
+              rows.push(row);
+              row = [];
+              cell = '';
+            } else {
+              cell += ch;
+            }
+          } else {
+            cell += ch;
+          }
+        }
+        row.push(cell.trim());
+        rows.push(row);
+        if (inQuotes) throw new Error(CSV_UNCLOSED);
+        return rows;
+      }
+
+      function tableFromRows(rows, headerFlag) {
+        if (rows.length === 0) throw new Error('CSV is empty.');
+        var headerRow = rows[0].map(function (c) { return c.trim(); });
+        var dataRows;
+        var headers;
+        if (headerFlag) {
+          headers = headerRow;
+          dataRows = rows.slice(1);
+        } else {
+          var n = headerRow.length;
+          headers = [];
+          for (var h = 0; h < n; h++) headers.push('column_' + (h + 1));
+          dataRows = rows.slice(0);
+        }
+        while (dataRows.length && dataRows[dataRows.length - 1].every(function (c) { return String(c).trim() === ''; })) {
+          dataRows.pop();
+        }
+        if (headers.every(function (x) { return x === ''; })) throw new Error('No column headers found.');
+        if (dataRows.length > MAX_DATA_ROWS) throw new Error('Too many data rows (max ' + MAX_DATA_ROWS.toLocaleString() + ').');
+        return { headers: headers, dataRows: dataRows };
+      }
+
+      function headerIndex(headers, name) {
+        for (var i = 0; i < headers.length; i++) {
+          if (headers[i] === name) return i;
+        }
+        return -1;
+      }
+
+      function buildKeyIndex(dataRows, headers, keyNames) {
+        var idxs = keyNames.map(function (name) {
+          var ix = headerIndex(headers, name);
+          if (ix < 0) throw new Error('Key column "' + name + '" not found in headers.');
+          return ix;
+        });
+        var map = Object.create(null);
+        var dupSamples = [];
+        for (var r = 0; r < dataRows.length; r++) {
+          var row = dataRows[r];
+          var parts = idxs.map(function (ci) {
+            return ci < row.length ? String(row[ci]) : '';
+          });
+          var k = parts.join('\x1e');
+          if (!map[k]) map[k] = [];
+          map[k].push(r);
+        }
+        for (var key in map) {
+          if (map[key].length > 1 && dupSamples.length < 12) {
+            dupSamples.push({ key: key, count: map[key].length, exampleRow: map[key][0] + 2 });
+          }
+        }
+        return { map: map, dupSamples: dupSamples, keyIdxs: idxs };
+      }
+
+      function intersectionHeaders(ha, hb) {
+        var setB = Object.create(null);
+        for (var i = 0; i < hb.length; i++) setB[hb[i]] = true;
+        var out = [];
+        for (var j = 0; j < ha.length; j++) {
+          if (ha[j] && setB[ha[j]]) out.push(ha[j]);
+        }
+        return out;
+      }
+
+      function escapeOptAttr(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function fillKeySelects() {
+        clearErr();
+        clearWarn();
+        var ta = csvA.value.trim();
+        var tb = csvB.value.trim();
+        if (!ta || !tb) {
+          keyPrimary.innerHTML = '<option value="">Load CSV first</option>';
+          keySecondary.innerHTML = '<option value="">— None —</option>';
+          keyPrimary.disabled = true;
+          keySecondary.disabled = true;
+          checkReady();
+          return;
+        }
+        try {
+          var delim = getDelimiter();
+          var pa = tableFromRows(parseCSVRows(ta, delim), hasHeader.checked);
+          var pb = tableFromRows(parseCSVRows(tb, delim), hasHeader.checked);
+          var inter = intersectionHeaders(pa.headers, pb.headers);
+          if (inter.length === 0) throw new Error('No matching column names between A and B.');
+          keyPrimary.disabled = false;
+          keySecondary.disabled = false;
+          keyPrimary.innerHTML = inter.map(function (h) {
+            return '<option value="' + escapeOptAttr(h) + '">' + escapeHtml(h) + '</option>';
+          }).join('');
+          keySecondary.innerHTML = '<option value="">— None —</option>' + inter.map(function (h) {
+            return '<option value="' + escapeOptAttr(h) + '">' + escapeHtml(h) + '</option>';
+          }).join('');
+        } catch (e) {
+          keyPrimary.innerHTML = '<option value="">Parse error</option>';
+          keySecondary.innerHTML = '<option value="">— None —</option>';
+          keyPrimary.disabled = true;
+          keySecondary.disabled = true;
+        }
+        checkReady();
+      }
+
+      function checkReady() {
+        var ok = csvA.value.trim() && csvB.value.trim() && keyPrimary.value && !keyPrimary.disabled;
+        runBtn.disabled = !ok;
+        clearA.classList.toggle('clear-link--enabled', !!csvA.value.trim());
+        clearA.setAttribute('aria-disabled', csvA.value.trim() ? 'false' : 'true');
+        clearB.classList.toggle('clear-link--enabled', !!csvB.value.trim());
+        clearB.setAttribute('aria-disabled', csvB.value.trim() ? 'false' : 'true');
+      }
+
+      csvA.addEventListener('input', function () { fillKeySelects(); });
+      csvB.addEventListener('input', function () { fillKeySelects(); });
+      hasHeader.addEventListener('change', fillKeySelects);
+      delimiterSelect.addEventListener('change', fillKeySelects);
+      customDelimiter.addEventListener('input', fillKeySelects);
+      keyPrimary.addEventListener('change', checkReady);
+      keySecondary.addEventListener('change', checkReady);
+      clearA.addEventListener('click', function (e) {
+        e.preventDefault();
+        csvA.value = '';
+        lastResultRows = null;
+        fillKeySelects();
+        resultSection.classList.remove('visible');
+        if (reportBlob) { URL.revokeObjectURL(reportBlob); reportBlob = null; }
+        dlLink.style.display = 'none';
+      });
+      clearB.addEventListener('click', function (e) {
+        e.preventDefault();
+        csvB.value = '';
+        lastResultRows = null;
+        fillKeySelects();
+        resultSection.classList.remove('visible');
+        if (reportBlob) { URL.revokeObjectURL(reportBlob); reportBlob = null; }
+        dlLink.style.display = 'none';
+      });
+
+      function readSideFile(zone, input, setVal, f) {
+        if (!f) return;
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var fr = TinyDataToolCsvLimits.checkFile(f);
+          if (!fr.allowed) {
+            showErr(fr.hardError || 'File too large.');
+            return;
+          }
+        }
+        zone.classList.add('file-reading');
+        zone.setAttribute('aria-busy', 'true');
+        readFileAsText(f)
+          .then(function (text) {
+            setVal(text);
+            clearErr();
+            fillKeySelects();
+          })
+          .catch(function (err) {
+            showErr(err.message || 'Read failed.');
+          })
+          .finally(function () {
+            zone.classList.remove('file-reading');
+            zone.removeAttribute('aria-busy');
+            input.value = '';
+          });
+      }
+
+      function wireDrop(zone, input, setVal) {
+        zone.addEventListener('click', function (e) {
+          if (e.target !== input) input.click();
+        });
+        zone.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            input.click();
+          }
+        });
+        input.addEventListener('change', function () {
+          if (!input.files || !input.files[0]) return;
+          readSideFile(zone, input, setVal, input.files[0]);
+        });
+        zone.addEventListener('dragover', function (e) {
+          e.preventDefault();
+          zone.classList.add('drag-over');
+        });
+        zone.addEventListener('dragleave', function () {
+          zone.classList.remove('drag-over');
+        });
+        zone.addEventListener('drop', function (e) {
+          e.preventDefault();
+          zone.classList.remove('drag-over');
+          var f = e.dataTransfer.files[0];
+          if (f) readSideFile(zone, input, setVal, f);
+        });
+      }
+
+      wireDrop(dzA, fileA, function (t) { csvA.value = t; });
+      wireDrop(dzB, fileB, function (t) { csvB.value = t; });
+
+      var lastResultRows = null;
+
+      function renderResultTable() {
+        if (!lastResultRows) return;
+        var rows = lastResultRows;
+        var hide = hideSame.checked;
+        var displayRows = rows.filter(function (r) {
+          return !hide || r.status !== 'unchanged';
+        });
+        var truncated = displayRows.length > MAX_TABLE_ROWS;
+        var slice = displayRows.slice(0, MAX_TABLE_ROWS);
+        var html = '';
+        for (var i = 0; i < slice.length; i++) {
+          var rw = slice[i];
+          html +=
+            '<tr class="' +
+            rw.cls +
+            '"><td>' +
+            escapeHtml(rw.key) +
+            '</td><td>' +
+            escapeHtml(rw.status) +
+            '</td><td>' +
+            escapeHtml(rw.details) +
+            '</td></tr>';
+        }
+        if (truncated) {
+          html +=
+            '<tr><td colspan="3">' +
+            escapeHtml('… ' + (displayRows.length - MAX_TABLE_ROWS).toLocaleString() + ' more rows not shown. Use copy/download for full report.') +
+            '</td></tr>';
+        }
+        outBody.innerHTML = html;
+      }
+
+      hideSame.addEventListener('change', function () {
+        if (lastResultRows && resultSection.classList.contains('visible')) renderResultTable();
+      });
+
+      runBtn.addEventListener('click', function () {
+        clearErr();
+        clearWarn();
+        resultSection.classList.remove('visible');
+        lastResultRows = null;
+        outBody.innerHTML = '';
+        if (reportBlob) {
+          URL.revokeObjectURL(reportBlob);
+          reportBlob = null;
+        }
+        dlLink.style.display = 'none';
+
+        var ta = csvA.value.trim();
+        var tb = csvB.value.trim();
+        if (!ta || !tb) {
+          showErr('Paste or load both CSVs.');
+          return;
+        }
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var ca = TinyDataToolCsvLimits.checkPaste(ta);
+          var cb = TinyDataToolCsvLimits.checkPaste(tb);
+          if (!ca.allowed) {
+            showErr('CSV A: ' + (ca.hardError || 'Too large.'));
+            return;
+          }
+          if (!cb.allowed) {
+            showErr('CSV B: ' + (cb.hardError || 'Too large.'));
+            return;
+          }
+          if (ca.warnMessage) showWarn(ca.warnMessage);
+          if (cb.warnMessage) showWarn((warnText.textContent ? warnText.textContent + ' ' : '') + cb.warnMessage);
+        }
+
+        var k1 = keyPrimary.value;
+        var k2 = keySecondary.value;
+        if (!k1) {
+          showErr('Choose a primary key column.');
+          return;
+        }
+        if (k2 === k1) {
+          showErr('Secondary key must differ from primary (or leave secondary empty).');
+          return;
+        }
+
+        runBtn.classList.add('spinning');
+        runBtn.setAttribute('aria-busy', 'true');
+        try {
+          var delim = getDelimiter();
+          var pa = tableFromRows(parseCSVRows(ta, delim), hasHeader.checked);
+          var pb = tableFromRows(parseCSVRows(tb, delim), hasHeader.checked);
+          var keyNames = k2 ? [k1, k2] : [k1];
+
+          var ia = buildKeyIndex(pa.dataRows, pa.headers, keyNames);
+          var ib = buildKeyIndex(pb.dataRows, pb.headers, keyNames);
+
+          var warnParts = [];
+          if (ia.dupSamples.length) {
+            warnParts.push('CSV A: duplicate keys (e.g. ' + ia.dupSamples.slice(0, 3).map(function (d) {
+              return '"' + d.key.replace(/\x1e/g, '|') + '" ×' + d.count;
+            }).join('; ') + '). Using first row per key.');
+          }
+          if (ib.dupSamples.length) {
+            warnParts.push('CSV B: duplicate keys (e.g. ' + ib.dupSamples.slice(0, 3).map(function (d) {
+              return '"' + d.key.replace(/\x1e/g, '|') + '" ×' + d.count;
+            }).join('; ') + '). Using first row per key.');
+          }
+          if (pa.dataRows.length >= WARN_ROWS || pb.dataRows.length >= WARN_ROWS) {
+            warnParts.push('Large paste—comparison may take a moment.');
+          }
+          if (warnParts.length) showWarn(warnParts.join(' '));
+
+          var allCols = intersectionHeaders(pa.headers, pb.headers);
+          var compareCols = allCols.filter(function (h) {
+            return keyNames.indexOf(h) === -1;
+          });
+
+          var onlyInA = pa.headers.filter(function (h) {
+            return headerIndex(pb.headers, h) < 0 && keyNames.indexOf(h) === -1;
+          });
+          var onlyInB = pb.headers.filter(function (h) {
+            return headerIndex(pa.headers, h) < 0 && keyNames.indexOf(h) === -1;
+          });
+          if (onlyInA.length || onlyInB.length) {
+            var sch = [];
+            if (onlyInA.length) sch.push('Columns only in A: ' + onlyInA.join(', '));
+            if (onlyInB.length) sch.push('Columns only in B: ' + onlyInB.join(', '));
+            showWarn((warnText.textContent ? warnText.textContent + ' ' : '') + sch.join(' · ') + '.');
+          }
+
+          var allKeys = Object.create(null);
+          var k;
+          for (k in ia.map) allKeys[k] = true;
+          for (k in ib.map) allKeys[k] = true;
+
+          var rows = [];
+          var nAdd = 0;
+          var nRem = 0;
+          var nChg = 0;
+          var nSame = 0;
+
+          var lineOff = hasHeader.checked ? 2 : 1;
+          for (k in allKeys) {
+            var rowsA = ia.map[k];
+            var rowsB = ib.map[k];
+            var displayKey = k.replace(/\x1e/g, ' · ');
+            if (!rowsA) {
+              nAdd++;
+              rows.push({ key: displayKey, status: 'added', cls: 'cd-row--add', details: 'Only in B (data row ' + (ib.map[k][0] + lineOff) + ' in file).' });
+              continue;
+            }
+            if (!rowsB) {
+              nRem++;
+              rows.push({ key: displayKey, status: 'removed', cls: 'cd-row--remove', details: 'Only in A (data row ' + (ia.map[k][0] + lineOff) + ' in file).' });
+              continue;
+            }
+            var ra = pa.dataRows[rowsA[0]];
+            var rb = pb.dataRows[rowsB[0]];
+            var changes = [];
+            for (var c = 0; c < compareCols.length; c++) {
+              var hn = compareCols[c];
+              var iax = headerIndex(pa.headers, hn);
+              var ibx = headerIndex(pb.headers, hn);
+              var va = iax < ra.length ? ra[iax] : '';
+              var vb = ibx < rb.length ? rb[ibx] : '';
+              if (va !== vb) {
+                changes.push(hn + ': "' + va + '" → "' + vb + '"');
+              }
+            }
+
+            if (changes.length === 0) {
+              nSame++;
+              rows.push({ key: displayKey, status: 'unchanged', cls: 'cd-row--same', details: '—' });
+            } else {
+              nChg++;
+              rows.push({
+                key: displayKey,
+                status: 'changed',
+                cls: 'cd-row--change',
+                details: changes.join('; '),
+              });
+            }
+          }
+
+          rows.sort(function (a, b) {
+            var o = { added: 0, removed: 1, changed: 2, unchanged: 3 };
+            if (o[a.status] !== o[b.status]) return o[a.status] - o[b.status];
+            return String(a.key).localeCompare(String(b.key));
+          });
+
+          lastResultRows = rows;
+          renderResultTable();
+
+          resultMeta.textContent =
+            nAdd +
+            ' added · ' +
+            nRem +
+            ' removed · ' +
+            nChg +
+            ' changed · ' +
+            nSame +
+            ' unchanged';
+
+          lastReportLines = ['key\tstatus\tdetails'];
+          for (var j = 0; j < rows.length; j++) {
+            var rj = rows[j];
+            lastReportLines.push(
+              rj.key.replace(/\t/g, ' ') +
+                '\t' +
+                rj.status +
+                '\t' +
+                rj.details.replace(/\t/g, ' ').replace(/\r?\n/g, ' ')
+            );
+          }
+          var reportText = lastReportLines.join('\n');
+          reportBlob = URL.createObjectURL(new Blob([reportText], { type: 'text/plain;charset=utf-8' }));
+          dlLink.href = reportBlob;
+          dlLink.style.display = 'inline-flex';
+
+          resultSection.classList.add('visible');
+        } catch (err) {
+          showErr(err.message || 'Compare failed.');
+        } finally {
+          runBtn.classList.remove('spinning');
+          runBtn.removeAttribute('aria-busy');
+        }
+      });
+
+      copyBtn.addEventListener('click', function () {
+        if (!lastReportLines.length) return;
+        var t = lastReportLines.join('\n');
+        window.TinyDataToolClipboard.copyWithFeedback(t, copyBtn, function () {
+          showErr('Copy failed.');
+        });
+      });
+
+      fillKeySelects();
+    })();
+  </script>
+</body>
+</html>

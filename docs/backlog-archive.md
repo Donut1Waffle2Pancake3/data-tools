@@ -458,6 +458,96 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 14. New tool — JSON Diff (structured)
+
+**Status:** Completed  
+**Source:** Backlog #14 (2026-03-28)
+
+### In plain English
+
+- **What it was:** No structural JSON comparison on-site—only text diff or manual inspection.
+- **Why it mattered:** API/config diffs need path-level adds/removes/changes, not line noise from formatting.
+
+**Action:** New [`json-diff/`](../json-diff/): dual paste + file drop (10 MB/side); recursive diff with JSON Pointer paths; arrays by index; table + legend (add/remove/change); caps (20k diff entries, 800 table rows) with full list in copyable JSON report; `JSON.parse` errors per side; FAQ; nav, sitemap, tools index, `docs/tools.md`, related-tool overrides (`json-viewer`, `json-formatter`, `json-validator`, `text-diff`).
+
+**Acceptance:** Two valid JSON values yield a readable structural diff; invalid input surfaces parse errors.
+
+**Delivered:** [`json-diff/index.html`](../json-diff/index.html), [`js/site.js`](../js/site.js), [`js/site.min.js`](../js/site.min.js), [`sitemap.xml`](../sitemap.xml), [`tools/index.html`](../tools/index.html), [`docs/tools.md`](../docs/tools.md).
+
+---
+
+## 15. New tool — CSV Diff (tabular, keyed)
+
+**Status:** Completed  
+**Source:** Backlog #15 (2026-03-28)
+
+### In plain English
+
+- **What it was:** No keyed comparison for two CSV exports—only generic text diff or manual spreadsheet work.
+- **Why it mattered:** “What changed between these two dumps?” is a table problem, not a line-diff problem.
+
+**Action:** New [`csv-diff/`](../csv-diff/): CSV A/B paste + file drop; shared delimiter (auto/comma/tab/semicolon/pipe/custom) + RFC-style parse; primary + optional secondary key (intersection headers); duplicate-key warnings (first row used); adds/removes/changes + unchanged; **hide unchanged**; column-set mismatch warning; `TinyDataToolCsvLimits`; table cap + full TSV report copy/download; HOW TO + FAQ; nav, sitemap, tools index, `docs/tools.md`, related (`csv-deduplicator`, `merge-csv`, `text-diff`).
+
+**Acceptance:** Same-schema CSVs diff on chosen key; missing/extra keys visible; duplicate keys warned.
+
+**Delivered:** [`csv-diff/index.html`](../csv-diff/index.html), [`js/site.js`](../js/site.js), [`js/site.min.js`](../js/site.min.js), [`sitemap.xml`](../sitemap.xml), [`tools/index.html`](../tools/index.html), [`docs/tools.md`](../docs/tools.md).
+
+---
+
+## 12. New tool — JSON → JSON Transformer (JQ-style lite)
+
+**Status:** Completed  
+**Source:** Backlog #12 (2026-03-28)
+
+### In plain English
+
+- **What it was:** No client-side way to reshape JSON (path extract, key pick, array filter) without jq or custom scripts.
+- **Why it mattered:** Pipelines often need a smaller JSON blob before CSV export or review.
+
+**Action:** New [`json-transformer/`](../json-transformer/): dot + `[index]` path; optional top-level key pick on objects; optional array filter (property equals string); 10 MB paste/file; no `eval`; copy/download + “use output as input”; HOW TO + FAQ; nav (`NAV_GROUPS`), related (`json-viewer`, `json-formatter`, `json-validator`, `json-diff`, `json-to-csv`), sitemap, tools index + ItemList, `docs/tools.md`.
+
+**Acceptance:** Transformed output from path and/or pick and/or filter; explicit path/type errors.
+
+**Delivered:** [`json-transformer/index.html`](../json-transformer/index.html), [`js/site.js`](../js/site.js), [`js/site.min.js`](../js/site.min.js), [`sitemap.xml`](../sitemap.xml), [`tools/index.html`](../tools/index.html), [`docs/tools.md`](../docs/tools.md).
+
+---
+
+## 22. JSON tools — Web Worker parse / higher size cap (optional follow-up)
+
+**Status:** Completed  
+**Source:** Backlog #22 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Validator capped at 10 MB and parsed on the main thread, so large pastes risked tab jank or rejection.
+- **Why it mattered:** Some users only need syntax validation on multi-megabyte JSON.
+
+**Action:** Add [`parse-worker.js`](../json-validator/parse-worker.js) (`JSON.parse` + error message); main thread uses worker for UTF-8 size ≥ **256 KB** when `Worker` exists; cap **25 MB** with worker, **10 MB** fallback without; drop hint + FAQ + HOW TO step; [`script.js`](../json-validator/script.js) handles worker `error` / `postMessage` failure (sync fallback). Viewer unchanged.
+
+**Acceptance:** Documented limits; less main-thread parse work for large input; sub–256 KB / no-worker paths unchanged in behavior.
+
+**Delivered:** [`json-validator/parse-worker.js`](../json-validator/parse-worker.js), [`json-validator/script.js`](../json-validator/script.js), [`json-validator/index.html`](../json-validator/index.html); [`json-transformer/index.html`](../json-transformer/index.html) (FAQ cross-reference).
+
+---
+
+## 30. Audit: Product
+
+**Status:** Completed  
+**Source:** Backlog #30 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Product-only pass over nav, homepage, and README for missing surface area and obvious tool gaps.
+- **Why it mattered:** Homepage and docs under-represent shipped utilities; YAML is a common adjacent format.
+
+**Action:** Compared [`js/site.js`](../js/site.js) (`ACTIVE_NAV_GROUPS` vs `PRODUCTION_HIDDEN_TOOL_IDS`), [`index.html`](../index.html), [`docs/README.md`](../README.md). **No UX/SEO/reliability findings** in this ticket.
+
+**Acceptance:** New backlog items with concrete fixes (or explicit none).
+
+**Delivered:** **#31** homepage grid parity, **#32** README tools, **#33** JSON↔YAML tool.
+
+---
+
 <!--
 ## N. Short title
 

@@ -1,8 +1,27 @@
 (function () {
-  /** Same cap as JSON viewer: full parse runs on the main thread. */
-  var MAX_JSON_INPUT_BYTES = 10 * 1024 * 1024;
-  var MAX_JSON_SIZE_MSG =
-    'This input is larger than 10 MB. Paste a smaller file, split the JSON, or use a desktop tool so your browser stays responsive.';
+  var HAS_WORKER = typeof Worker !== 'undefined';
+  /** With a parse worker: higher cap; without Worker, match JSON viewer (main-thread only). */
+  var MAX_JSON_INPUT_BYTES = HAS_WORKER ? 25 * 1024 * 1024 : 10 * 1024 * 1024;
+  var MAX_JSON_SIZE_MSG = HAS_WORKER
+    ? 'This input is larger than 25 MB (UTF-8). Paste a smaller file, split the JSON, or use a desktop tool.'
+    : 'This input is larger than 10 MB. Paste a smaller file, split the JSON, or use a desktop tool so your browser stays responsive.';
+  /** At or above this size, parse off-thread when Worker is available (reduces UI jank). */
+  var WORKER_PARSE_MIN_BYTES = 256 * 1024;
+
+  var parseWorker = null;
+  var workerSeq = 0;
+
+  function getParseWorker() {
+    if (!HAS_WORKER) return null;
+    if (!parseWorker) {
+      try {
+        parseWorker = new Worker('parse-worker.js');
+      } catch (err) {
+        return null;
+      }
+    }
+    return parseWorker;
+  }
 
   function utf8ByteLength(str) {
     if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str).length;
@@ -119,6 +138,28 @@
     clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
   }
 
+  function applyParseResult(errMsg, text) {
+    if (errMsg == null) {
+      showSuccess('Valid JSON. No syntax errors found.');
+      return;
+    }
+    var pos = getPositionFromError(errMsg, text);
+    var line = pos ? pos.line : null;
+    var column = pos ? pos.column : null;
+    var snippet = line != null && line > 0 ? getErrorSnippet(text, line, column, 5) : '';
+    showError(errMsg, {
+      line: line,
+      column: column,
+      snippet: snippet
+    });
+  }
+
+  function finishValidateUI() {
+    validateBtn.classList.remove('spinning');
+    validateBtn.removeAttribute('aria-busy');
+    updateButtonState();
+  }
+
   function runValidate() {
     clearMessages();
     var text = (jsonInput.value || '').trim();
@@ -127,31 +168,90 @@
       jsonInput.focus();
       return;
     }
-    if (utf8ByteLength(text) > MAX_JSON_INPUT_BYTES) {
+    var bytes = utf8ByteLength(text);
+    if (bytes > MAX_JSON_INPUT_BYTES) {
       showError(MAX_JSON_SIZE_MSG);
       return;
     }
     validateBtn.disabled = true;
     validateBtn.classList.add('spinning');
     validateBtn.setAttribute('aria-busy', 'true');
+
+    var useWorker = HAS_WORKER && bytes >= WORKER_PARSE_MIN_BYTES;
+    var w = useWorker ? getParseWorker() : null;
+    if (!useWorker || !w) {
+      try {
+        JSON.parse(text);
+        applyParseResult(null, text);
+      } catch (err) {
+        var msg = err instanceof SyntaxError ? (err.message || 'Invalid JSON.') : String(err.message || 'Invalid JSON.');
+        applyParseResult(msg, text);
+      }
+      finishValidateUI();
+      return;
+    }
+
+    var reqId = ++workerSeq;
+    var sentText = text;
+
+    function onMsg(ev) {
+      if (!ev.data || ev.data.reqId !== reqId) return;
+      w.removeEventListener('message', onMsg);
+      w.removeEventListener('error', onErr);
+      if ((jsonInput.value || '').trim() !== sentText) {
+        finishValidateUI();
+        return;
+      }
+      if (ev.data.ok) {
+        applyParseResult(null, text);
+      } else {
+        applyParseResult(ev.data.message || 'Invalid JSON.', text);
+      }
+      finishValidateUI();
+    }
+
+    function onErr() {
+      w.removeEventListener('message', onMsg);
+      w.removeEventListener('error', onErr);
+      if (parseWorker === w) {
+        parseWorker.terminate();
+        parseWorker = null;
+      }
+      if ((jsonInput.value || '').trim() !== sentText) {
+        finishValidateUI();
+        return;
+      }
+      try {
+        JSON.parse(text);
+        applyParseResult(null, text);
+      } catch (err2) {
+        var msg2 =
+          err2 instanceof SyntaxError ? (err2.message || 'Invalid JSON.') : String(err2.message || 'Invalid JSON.');
+        applyParseResult(msg2, text);
+      }
+      finishValidateUI();
+    }
+
+    w.addEventListener('message', onMsg);
+    w.addEventListener('error', onErr);
     try {
-      JSON.parse(text);
-      showSuccess('Valid JSON. No syntax errors found.');
-    } catch (err) {
-      var msg = err instanceof SyntaxError ? (err.message || 'Invalid JSON.') : String(err.message || 'Invalid JSON.');
-      var pos = getPositionFromError(msg, text);
-      var line = pos ? pos.line : null;
-      var column = pos ? pos.column : null;
-      var snippet = (line != null && line > 0) ? getErrorSnippet(text, line, column, 5) : '';
-      showError(msg, {
-        line: line,
-        column: column,
-        snippet: snippet
-      });
-    } finally {
-      validateBtn.classList.remove('spinning');
-      validateBtn.removeAttribute('aria-busy');
-      updateButtonState();
+      w.postMessage({ reqId: reqId, text: text });
+    } catch (postErr) {
+      w.removeEventListener('message', onMsg);
+      w.removeEventListener('error', onErr);
+      if (parseWorker === w) {
+        parseWorker.terminate();
+        parseWorker = null;
+      }
+      try {
+        JSON.parse(text);
+        applyParseResult(null, text);
+      } catch (err3) {
+        var msg3 =
+          err3 instanceof SyntaxError ? (err3.message || 'Invalid JSON.') : String(err3.message || 'Invalid JSON.');
+        applyParseResult(msg3, text);
+      }
+      finishValidateUI();
     }
   }
 
