@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X _ _ _`
+**Tracker (5 slots):** `X X X _ _`
 
 **Rules**
 
@@ -74,25 +74,59 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Low | **43** | Audit: Reliability |
+| Medium | **44** | `copyWithFeedback` — terminal `.catch` / guard if `then` throws ([`js/site.js`](../js/site.js)) |
+| Medium | **45** | `json-to-excel` + `json-minifier` — `FileReader` missing `onerror` (pick + drop) |
+| Low | **46** | JSON formatter — clearer error for cyclic `JSON.stringify` (vs parse errors) |
 
-**Suggested order:** **43** (execute audit when selected).
+**Suggested order:** **44**, **45**, **46**.
 
 ---
 
-## 43. Audit: Reliability
+## 44. `copyWithFeedback` — unhandled rejection guard
 
 **Status:** Not completed  
-**Source:** Idle rotation — successor to Audit: SEO #38 (2026-03-28)
+**Source:** Audit: Reliability #43 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** Reliability-only review: error handling, edge cases, size limits, async failure paths, and performance hotspots on representative tools plus [`js/site.js`](../js/site.js) shared helpers.
-- **Why you’d do it:** Catch crashes, silent failures, and runaway work without mixing Product, UX, or SEO tickets.
+- **What it is:** `TinyDataToolClipboard.copyWithFeedback` chains `.then` only; if `flashCopySuccess` or the callback throws, the promise can reject with no consumer.
+- **Why you’d do it:** Avoid rare unhandled rejections in DevTools / strict monitoring.
 
-**Action:** Apply [When executing an audit task](#when-executing-an-audit-task) for **Reliability** only. Deliverables: numbered backlog items with a concrete failure mode and fix each.
+**Action:** [`js/site.js`](../js/site.js): append `.catch` (or try/catch inside `then`) calling `onFail` when present, returning `false`.
 
-**Acceptance:** This task archived as **`## N. Audit: Reliability`** after triage; follow-ups are shippable tickets.
+**Acceptance:** Forced throw inside success path surfaces `onFail`, no unhandled rejection.
+
+---
+
+## 45. JSON → Excel / JSON minifier — FileReader errors
+
+**Status:** Not completed  
+**Source:** Audit: Reliability #43 (2026-03-28)
+
+### In plain English
+
+- **What it is:** [`json-to-excel/index.html`](../json-to-excel/index.html) and [`json-minifier/index.html`](../json-minifier/index.html) use `FileReader` with `onload` only for input change + drag-drop.
+- **Why you’d do it:** Read failures (permissions, transient IO) leave the UI silent; [`json-viewer`](../json-viewer/index.html) already sets `onerror`.
+
+**Action:** Add `reader.onerror` → same pattern as json-viewer (`showError` / `setError` + optional `fileInput.value = ''`).
+
+**Acceptance:** Simulated or real read error shows a user-visible message on both paths per file.
+
+---
+
+## 46. JSON formatter — cyclic structure message
+
+**Status:** Not completed  
+**Source:** Audit: Reliability #43 (2026-03-28)
+
+### In plain English
+
+- **What it is:** Valid `JSON.parse` + cyclic object → `JSON.stringify` throws `TypeError`; [`json-formatter`](../json-formatter/index.html) `catch` uses parse-oriented `getFriendlyParseError`.
+- **Why you’d do it:** Users see misleading “syntax” wording for structural cycles.
+
+**Action:** In `runAction` `catch`, if `err instanceof TypeError` and message matches cyclic/converting circular, show a short dedicated string; else keep existing helper.
+
+**Acceptance:** Cyclic input yields a cycle-specific error line, not a generic parse hint.
 
 ---
 

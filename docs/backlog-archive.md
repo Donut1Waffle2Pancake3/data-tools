@@ -764,6 +764,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 43. Audit: Reliability
+
+**Status:** Completed  
+**Source:** Backlog #43 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Reliability pass on shared clipboard + Excel handoff + FileReader call sites vs `readFileAsText` patterns.
+- **Why it mattered:** Surface silent failures and possible unhandled promise rejections without mixing other audit axes.
+
+**Action:** Reviewed [`js/site.js`](../js/site.js) (`TinyDataToolClipboard`, `TinyDataToolExcelHandoff`), grep for `FileReader` / `copyWithFeedback`, sampled merge/split CSV async paths.
+
+**Acceptance:** Follow-up tickets with file-level fixes.
+
+**Delivered:** Backlog **#44–#46** (`copyWithFeedback` guard, FileReader `onerror` on json-to-excel + json-minifier, JSON formatter cyclic stringify copy).
+
+---
+
 <!--
 ## N. Short title
 
