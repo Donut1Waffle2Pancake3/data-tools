@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X _ _ _`
+**Tracker (5 slots):** `X X X _ _`
 
 **Rules**
 
@@ -74,25 +74,76 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Low | **38** | Audit: SEO |
+| Medium | **39** | `seo-rules.md` — remove broken `:contentReference` artifacts |
+| Medium | **40** | Homepage — H1 + hero subheading vs [`seo-rules.md`](seo-rules.md) (length, no promo words in H1, single outcome blurb) |
+| Medium | **41** | Tool pages — align stray How-to H2s with “How to + keyword” |
+| Low | **42** | `tools/index.html` — keep JSON-LD `ItemList` `numberOfItems` + order aligned with [`js/site.js`](../js/site.js) nav (incl. hidden ids) |
 
-**Suggested order:** **38** (execute audit when selected).
+**Suggested order:** **39**, **40**, **41**, **42**.
 
 ---
 
-## 38. Audit: SEO
+## 39. `seo-rules.md` — remove broken `:contentReference` artifacts
 
 **Status:** Not completed  
-**Source:** Idle rotation — successor to Audit: UX #34 (2026-03-28)
+**Source:** Audit: SEO #38 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** SEO-only review of public pages (home, tools hub, representative tool URLs), shared chrome, and [`seo-rules.md`](seo-rules.md) alignment.
-- **Why you’d do it:** Find title/description/canonical/structured-data/internal-link gaps without mixing UX or reliability work.
+- **What it is:** FAQ bullets still contain pasted `:contentReference[oaicite:…]{index=…}` strings (broken citations).
+- **Why you’d do it:** Editors and agents rely on this doc; garbage lines undermine trust and copy-paste.
 
-**Action:** Apply [When executing an audit task](#when-executing-an-audit-task) for **SEO** only. Deliverables: new or updated **numbered** backlog tickets with a clear problem and fix each—no vague notes.
+**Action:** Edit [`seo-rules.md`](seo-rules.md): delete or replace those tokens with plain English per surrounding intent.
 
-**Acceptance:** This `Audit: SEO` item moved to [`backlog-archive.md`](backlog-archive.md) with heading **`## N. Audit: SEO`** after triage; follow-up tickets carry specific work.
+**Acceptance:** No `:contentReference` substrings remain; FAQ principles still read cleanly.
+
+---
+
+## 40. Homepage — H1 + hero vs seo-rules
+
+**Status:** Not completed  
+**Source:** Audit: SEO #38 (2026-03-28)
+
+### In plain English
+
+- **What it is:** [`index.html`](../index.html) H1 is long, uses parentheses, repeats “free”-style positioning where rules reserve modifiers for `<title>`; hero uses several stacked subparagraphs vs one tight outcome + trust line.
+- **Why you’d do it:** Homepage is the primary brand/query landing; align with H1/subheading rules for consistency and snippet clarity.
+
+**Action:** Rewrite `hero-heading` + `hero__sub` block: H1 = short verb + object (≈3–8 words, no “free/best” in H1); collapse subs to 1–2 sentences (outcome + local/no upload). Keep keywords in body sections below as needed.
+
+**Acceptance:** H1/subheading match [`seo-rules.md`](seo-rules.md) Header/SEO Structure; no loss of factual trust claims elsewhere on page.
+
+---
+
+## 41. Tool pages — How-to H2 wording
+
+**Status:** Not completed  
+**Source:** Audit: SEO #38 (2026-03-28)
+
+### In plain English
+
+- **What it is:** Several tools use `id="how-heading"` text that is not **“How to + keyword”** (e.g. “How it works”, marketing-style headlines).
+- **Why you’d do it:** [`seo-rules.md`](seo-rules.md) requires a consistent How-to block for intent matching.
+
+**Action:** Update `#how-heading` (and matching `section-label` if needed) on: [`csv-sorter/index.html`](../csv-sorter/index.html) (“How it works” → e.g. “How to sort CSV online”), [`sql-result/index.html`](../sql-result/index.html), [`html-encoder-decoder/index.html`](../html-encoder-decoder/index.html), [`url-encoder-decoder/index.html`](../url-encoder-decoder/index.html), [`split-csv/index.html`](../split-csv/index.html), [`merge-csv/index.html`](../merge-csv/index.html), [`zip-combiner/index.html`](../zip-combiner/index.html). Use concise “How to …” phrasing per tool primary keyword.
+
+**Acceptance:** Each listed page’s how-section H2 starts with **How to** and names the task; 3-step body unchanged unless a step title must match.
+
+---
+
+## 42. Tools hub — JSON-LD ItemList vs nav
+
+**Status:** Not completed  
+**Source:** Audit: SEO #38 (2026-03-28)
+
+### In plain English
+
+- **What it is:** [`tools/index.html`](../tools/index.html) embeds `numberOfItems` and a fixed `itemListElement` list; easy to drift when tools are added, reordered, or hidden via `NAV_GROUPS` / prod flags.
+- **Why you’d do it:** Rich result / internal consistency; avoids advertising URLs that are hidden in prod.
+
+**Action:** After any nav change, reconcile ItemList positions, names, and `numberOfItems` with [`js/site.js`](../js/site.js) `NAV_GROUPS` + `PRODUCTION_HIDDEN_TOOL_IDS` (same source of truth as [`sitemap.xml`](../sitemap.xml) comment). Optionally add a short note in [`docs/tools.md`](tools.md) or site-rules for editors.
+
+**Acceptance:** ItemList count and URLs match shipped nav intent; hidden tools omitted or documented if intentionally listed for staging only.
 
 ---
 

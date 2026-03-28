@@ -674,6 +674,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 38. Audit: SEO
+
+**Status:** Completed  
+**Source:** Backlog #38 (2026-03-28)
+
+### In plain English
+
+- **What it was:** SEO-only sweep of home, tools hub, `sitemap.xml`, [`seo-rules.md`](../seo-rules.md), and representative tool How-to headings vs internal standards.
+- **Why it mattered:** Surface doc corruption, homepage H1/sub drift, inconsistent How-to H2s, and ItemList maintenance risk without mixing other audit axes.
+
+**Action:** Compared pages to [`seo-rules.md`](../seo-rules.md) (H1, How-to block, titles); checked hub structured data and sitemap coverage.
+
+**Acceptance:** Concrete follow-up tickets with file-level fixes.
+
+**Delivered:** Backlog **#39–#42** (seo-rules cleanup, homepage hero, How-to H2 alignment, tools hub ItemList discipline).
+
+---
+
 <!--
 ## N. Short title
 
