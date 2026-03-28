@@ -149,6 +149,7 @@
                OPTIONAL FILE UPLOAD / DROP ZONE
                Keep markup and roles consistent when used.
                Remove or adapt if the tool is text-only.
+               Use initDropZone() from site.js: it sets aria-busy + .file-reading while readFileAsText runs (unless busyDuringRead: false). Optional .drop-zone__busy shows the overlay (global.css).
           ================================= -->
           <div
             class="drop-zone"
@@ -158,6 +159,10 @@
             aria-label="Upload file. Click or drag and drop."
             aria-describedby="drop-hint"
           >
+            <div class="drop-zone__busy" aria-hidden="true">
+              <span class="drop-zone__spinner"></span>
+              <p class="drop-zone__busy-label">Loading file…</p>
+            </div>
             <svg
               class="upload-icon"
               width="28"

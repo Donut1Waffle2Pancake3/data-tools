@@ -656,6 +656,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 37. `initDropZone` — `aria-busy` while reading
+
+**Status:** Completed  
+**Source:** Audit: UX #34 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Shared `initDropZone` ran `readFileAsText` without `aria-busy` or `.file-reading`, unlike hand-rolled drop zones on CSV/JSON tools.
+- **Why it mattered:** Screen readers and consistent busy UI during file load.
+
+**Action:** [`js/site.js`](../js/site.js) `initDropZone`: default `busyDuringRead` applies `aria-busy` + `file-reading` for the read lifecycle (`.finally`); JSDoc + [`templates/tool-page-reference.html`](../templates/tool-page-reference.html) note. [`json-yaml/index.html`](../json-yaml/index.html) + [`json-validator/index.html`](../json-validator/index.html): `.drop-zone__busy` overlay markup.
+
+**Acceptance:** Consumers using only `initDropZone` expose busy during read without duplicate handlers.
+
+**Delivered:** [`js/site.js`](../js/site.js), [`json-yaml/index.html`](../json-yaml/index.html), [`json-validator/index.html`](../json-validator/index.html), [`templates/tool-page-reference.html`](../templates/tool-page-reference.html).
+
+---
+
 <!--
 ## N. Short title
 

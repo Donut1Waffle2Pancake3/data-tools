@@ -716,7 +716,8 @@ function clearToolResult(opts) {
 
 /**
  * Wire a drop zone to a file input: click/keydown, change, dragover, dragleave, drop.
- * @param {Object} options - { dropZoneId, fileInputId, accept(file), setContent(text, filename), showError(msg), maxFileBytes?, maxFileBytesMessage? }
+ * @param {Object} options - { dropZoneId, fileInputId, accept(file), setContent(text, filename), showError(msg), maxFileBytes?, maxFileBytesMessage?, busyDuringRead? }
+ *   If busyDuringRead is not false: during readFileAsText, sets aria-busy and class file-reading on the drop zone (pair with .drop-zone__busy in markup for overlay).
  */
 function initDropZone(options) {
   var dropZone = document.getElementById(options.dropZoneId);
@@ -727,6 +728,32 @@ function initDropZone(options) {
   var accept = options.accept;
   var maxFileBytes = options.maxFileBytes;
   var maxFileBytesMessage = options.maxFileBytesMessage || 'This file is too large.';
+  var busyDuringRead = options.busyDuringRead !== false;
+
+  function setReadingState(on) {
+    if (!busyDuringRead) return;
+    if (on) {
+      dropZone.classList.add('file-reading');
+      dropZone.setAttribute('aria-busy', 'true');
+    } else {
+      dropZone.classList.remove('file-reading');
+      dropZone.removeAttribute('aria-busy');
+    }
+  }
+
+  function readAndApply(file) {
+    setReadingState(true);
+    readFileAsText(file)
+      .then(function (text) {
+        if (setContent) setContent(text, file.name);
+      })
+      .catch(function (err) {
+        if (showError) showError(err.message || 'Failed to read file.');
+      })
+      .finally(function () {
+        setReadingState(false);
+      });
+  }
 
   function rejectIfOversized(file) {
     if (maxFileBytes == null || !file || typeof file.size !== 'number') return false;
@@ -746,11 +773,7 @@ function initDropZone(options) {
     if (fileInput.files && fileInput.files[0]) {
       var file = fileInput.files[0];
       if (rejectIfOversized(file)) return;
-      readFileAsText(file).then(function (text) {
-        if (setContent) setContent(text, file.name);
-      }).catch(function (err) {
-        if (showError) showError(err.message || 'Failed to read file.');
-      });
+      readAndApply(file);
       fileInput.value = '';
     }
   });
@@ -762,11 +785,7 @@ function initDropZone(options) {
     var file = e.dataTransfer.files[0];
     if (file && accept && accept(file)) {
       if (rejectIfOversized(file)) return;
-      readFileAsText(file).then(function (text) {
-        if (setContent) setContent(text, file.name);
-      }).catch(function (err) {
-        if (showError) showError(err.message || 'Failed to read file.');
-      });
+      readAndApply(file);
     } else if (file && showError) {
       showError(options.dropErrorMsg || 'Please drop a valid file.');
     }

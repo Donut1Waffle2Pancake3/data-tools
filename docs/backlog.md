@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X _ _ _ _`
+**Tracker (5 slots):** `X X _ _ _`
 
 **Rules**
 
@@ -72,27 +72,7 @@ Action items from [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.m
 
 Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or **closed** items go in [`backlog-archive.md`](backlog-archive.md); append there and remove them from this file.
 
-| Priority | # | Focus |
-|----------|---|-------|
-| Low | **37** | `initDropZone` — `aria-busy` while reading |
-
-**Suggested order:** **37**.
-
----
-
-## 37. `initDropZone` — `aria-busy` while reading
-
-**Status:** Not completed  
-**Source:** Audit: UX #34 (2026-03-28)
-
-### In plain English
-
-- **What it is:** [`initDropZone`](../js/site.js) reads files asynchronously but does not set `aria-busy` on the drop zone; custom tools (json-diff, csv-to-json) add it manually.
-- **Why you’d do it:** Consistent “working” state for assistive tech on paste/upload paths that only use shared `initDropZone`.
-
-**Action:** Extend `initDropZone` (opt-in or default): set `aria-busy="true"` and optional `file-reading` class from `readFileAsText` start until settle; document in template reference. Roll out to [`json-yaml/tool.js`](../json-yaml/tool.js), [`json-validator/script.js`](../json-validator/script.js) if no duplicate handlers.
-
-**Acceptance:** At least one consumer-only drop zone exposes busy during read without double-wiring.
+**No open numbered tickets.** Next run: [idle / audit rotation](#when-no-actionable-tasks-remain) unless new items land in the inbox.
 
 ---
 
