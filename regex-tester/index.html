@@ -293,9 +293,21 @@
         errorMsg.classList.remove('visible');
       }
 
+      var DEBOUNCE_MS = 280;
+      var debounceTimer = null;
+
       function updateClearState() {
         var hasAny = (regexInput.value || '').length > 0 || (textInput.value || '').length > 0;
         clearLink.setAttribute('aria-disabled', hasAny ? 'false' : 'true');
+      }
+
+      function scheduleRender() {
+        updateClearState();
+        if (debounceTimer) window.clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(function () {
+          debounceTimer = null;
+          render();
+        }, DEBOUNCE_MS);
       }
 
       function render() {
@@ -353,14 +365,30 @@
         resultSection.classList.add('visible');
       }
 
-      regexInput.addEventListener('input', render);
-      textInput.addEventListener('input', render);
-      caseInsensitive.addEventListener('change', render);
-      multiline.addEventListener('change', render);
+      regexInput.addEventListener('input', scheduleRender);
+      textInput.addEventListener('input', scheduleRender);
+      caseInsensitive.addEventListener('change', function () {
+        if (debounceTimer) {
+          window.clearTimeout(debounceTimer);
+          debounceTimer = null;
+        }
+        render();
+      });
+      multiline.addEventListener('change', function () {
+        if (debounceTimer) {
+          window.clearTimeout(debounceTimer);
+          debounceTimer = null;
+        }
+        render();
+      });
 
       clearLink.addEventListener('click', function (event) {
         event.preventDefault();
         if (clearLink.getAttribute('aria-disabled') === 'true') return;
+        if (debounceTimer) {
+          window.clearTimeout(debounceTimer);
+          debounceTimer = null;
+        }
         regexInput.value = '';
         textInput.value = '';
         caseInsensitive.checked = false;

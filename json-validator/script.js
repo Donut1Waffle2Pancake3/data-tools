@@ -1,4 +1,14 @@
 (function () {
+  /** Same cap as JSON viewer: full parse runs on the main thread. */
+  var MAX_JSON_INPUT_BYTES = 10 * 1024 * 1024;
+  var MAX_JSON_SIZE_MSG =
+    'This input is larger than 10 MB. Paste a smaller file, split the JSON, or use a desktop tool so your browser stays responsive.';
+
+  function utf8ByteLength(str) {
+    if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str).length;
+    return str.length;
+  }
+
   const jsonInput = document.getElementById('jsonInput');
   const fileInput = document.getElementById('fileInput');
   const dropZone = document.getElementById('dropZone');
@@ -117,6 +127,10 @@
       jsonInput.focus();
       return;
     }
+    if (utf8ByteLength(text) > MAX_JSON_INPUT_BYTES) {
+      showError(MAX_JSON_SIZE_MSG);
+      return;
+    }
     validateBtn.disabled = true;
     validateBtn.classList.add('spinning');
     validateBtn.setAttribute('aria-busy', 'true');
@@ -192,7 +206,9 @@
     accept: function (f) { return f.name.toLowerCase().endsWith('.json') || f.type === 'application/json'; },
     setContent: setInputFromFile,
     showError: showError,
-    dropErrorMsg: 'Please drop a .json file.'
+    dropErrorMsg: 'Please drop a .json file.',
+    maxFileBytes: MAX_JSON_INPUT_BYTES,
+    maxFileBytesMessage: MAX_JSON_SIZE_MSG
   });
 
   updateButtonState();

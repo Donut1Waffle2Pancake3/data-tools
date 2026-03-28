@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Site audit runner for GitHub Actions: reads audit-queue.md, audits first entry via Google Gemini,
-appends scores to audit-results.md, appends tasks to backlog.md, rotates the queue.
+Site audit runner: reads docs/audit-queue.md (create it with repo-relative paths, one per line),
+audits the first entry via Google Gemini, appends to docs/audit-results.md (created if missing),
+appends tasks to docs/backlog.md, rotates the queue.
 
 Env:
   GEMINI_API_KEY   (required) — from https://aistudio.google.com/apikey
@@ -21,7 +22,7 @@ from pathlib import Path
 
 import requests
 
-# Queue lines must look like repo paths, not free-form docs (see audit-queue.md).
+# Queue lines must look like repo paths, not free-form docs (see docs/audit-queue.md).
 _QUEUE_SINGLE = re.compile(r"^[\w.\-]+\.\w{1,16}$")
 
 
@@ -39,9 +40,10 @@ def looks_like_queue_entry(line: str) -> bool:
     return bool(_QUEUE_SINGLE.match(s))
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", os.getcwd())).resolve()
-QUEUE_PATH = REPO_ROOT / "audit-queue.md"
-BACKLOG_PATH = REPO_ROOT / "backlog.md"
-RESULTS_PATH = REPO_ROOT / "audit-results.md"
+DOCS_DIR = REPO_ROOT / "docs"
+QUEUE_PATH = DOCS_DIR / "audit-queue.md"
+BACKLOG_PATH = DOCS_DIR / "backlog.md"
+RESULTS_PATH = DOCS_DIR / "audit-results.md"
 API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 MODEL = (os.environ.get("GEMINI_MODEL") or "gemini-3.1-flash-lite-preview").strip() or "gemini-3.1-flash-lite-preview"
 MAX_FILE_CHARS = int(os.environ.get("MAX_FILE_CHARS", "120000"))
@@ -249,7 +251,17 @@ def append_audit_results(
 {findings}
 
 """
-    existing = path.read_text(encoding="utf-8")
+    if path.is_file():
+        existing = path.read_text(encoding="utf-8")
+    else:
+        DOCS_DIR.mkdir(parents=True, exist_ok=True)
+        existing = (
+            "# Audit results (archive)\n\n"
+            "Appended by `scripts/site-audit/audit.py`.\n\n"
+            "---\n\n"
+            "<!-- New audits are appended below this line -->\n\n"
+            "---\n\n"
+        )
     path.write_text(existing.rstrip() + "\n" + block, encoding="utf-8")
 
 
@@ -273,7 +285,7 @@ def append_backlog_tasks(
     if not lines_out:
         return
     block = "\n".join(lines_out) + "\n"
-    marker = "## To do"
+    marker = "## Audit inbox"
     if marker not in content:
         content = content.rstrip() + f"\n\n{marker}\n\n{block}"
         path.write_text(content, encoding="utf-8")
@@ -298,7 +310,7 @@ def main() -> None:
         die("GEMINI_API_KEY is not set", 2)
 
     if not QUEUE_PATH.is_file():
-        die(f"Missing {QUEUE_PATH}", 2)
+        die(f"Missing {QUEUE_PATH} — create it with path lines to audit (see comment in docstring).", 2)
 
     queue_text = QUEUE_PATH.read_text(encoding="utf-8")
     _, paths = split_queue(queue_text)
@@ -324,7 +336,7 @@ def main() -> None:
     if new_queue is not None:
         QUEUE_PATH.write_text(new_queue, encoding="utf-8")
 
-    print("Done: updated audit-results.md, backlog.md, audit-queue.md")
+    print("Done: updated docs/audit-results.md, docs/backlog.md, docs/audit-queue.md")
 
 
 if __name__ == "__main__":

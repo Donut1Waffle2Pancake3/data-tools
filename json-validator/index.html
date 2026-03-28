@@ -62,7 +62,7 @@
               <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
             </svg>
             <p class="drop-zone__label">Or upload a JSON file</p>
-            <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+            <p class="drop-zone__hint" id="drop-hint">Processed in your browser · JSON over 10 MB is not loaded</p>
             <input type="file" id="fileInput" accept=".json,application/json" aria-label="Select JSON file" />
           </div>
 
@@ -246,7 +246,7 @@
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div class="faq-answer" id="faq-11-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes. It works with large inputs, though performance depends on your browser and device.</span>
+              <span itemprop="text">Pasted or uploaded JSON over 10 MB is rejected so validation does not freeze your tab. Smaller files are fine; speed still depends on your device.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">

@@ -71,14 +71,10 @@ const NAV_GROUPS = [
 
 const PRODUCTION_HIDDEN_TOOL_IDS = new Set([
   'csv-viewer',
-  'text-diff',
-  'base64-encoder-decoder',
-  'regex-tester',
   'csv-to-excel',
   'json-to-excel',
   'csv-cleaner',
   'json-minifier',
-  'text-case-converter',
 ]);
 
 const ACTIVE_NAV_GROUPS = NAV_GROUPS.map(function (group) {
@@ -634,7 +630,7 @@ function copyWithFeedback(text, buttonEl, fallbackLabel, onFail) {
 
 /**
  * Wire a drop zone to a file input: click/keydown, change, dragover, dragleave, drop.
- * @param {Object} options - { dropZoneId, fileInputId, accept(file), setContent(text, filename), showError(msg) }
+ * @param {Object} options - { dropZoneId, fileInputId, accept(file), setContent(text, filename), showError(msg), maxFileBytes?, maxFileBytesMessage? }
  */
 function initDropZone(options) {
   var dropZone = document.getElementById(options.dropZoneId);
@@ -643,6 +639,16 @@ function initDropZone(options) {
   var setContent = options.setContent;
   var showError = options.showError;
   var accept = options.accept;
+  var maxFileBytes = options.maxFileBytes;
+  var maxFileBytesMessage = options.maxFileBytesMessage || 'This file is too large.';
+
+  function rejectIfOversized(file) {
+    if (maxFileBytes == null || !file || typeof file.size !== 'number') return false;
+    if (file.size <= maxFileBytes) return false;
+    if (showError) showError(maxFileBytesMessage);
+    fileInput.value = '';
+    return true;
+  }
 
   dropZone.addEventListener('click', function (e) {
     if (e.target !== fileInput) fileInput.click();
@@ -653,6 +659,7 @@ function initDropZone(options) {
   fileInput.addEventListener('change', function () {
     if (fileInput.files && fileInput.files[0]) {
       var file = fileInput.files[0];
+      if (rejectIfOversized(file)) return;
       readFileAsText(file).then(function (text) {
         if (setContent) setContent(text, file.name);
       }).catch(function (err) {
@@ -668,6 +675,7 @@ function initDropZone(options) {
     dropZone.classList.remove('drag-over');
     var file = e.dataTransfer.files[0];
     if (file && accept && accept(file)) {
+      if (rejectIfOversized(file)) return;
       readFileAsText(file).then(function (text) {
         if (setContent) setContent(text, file.name);
       }).catch(function (err) {

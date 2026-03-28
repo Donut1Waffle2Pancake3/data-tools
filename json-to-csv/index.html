@@ -117,6 +117,10 @@
             <span id="errorText"></span>
           </div>
 
+          <div class="status-message status-message--warning" id="recoveryWarningMsg" role="status" aria-live="polite" aria-atomic="true">
+            <span id="recoveryWarningText"></span>
+          </div>
+
           <!-- Output: CSV preview + Copy + Download -->
           <div class="result-section" id="resultSection" aria-live="polite">
             <div class="result-section__heading">
@@ -402,6 +406,8 @@
       const clearLink    = document.getElementById('clearLink');
       const errorMsg     = document.getElementById('errorMsg');
       const errorText    = document.getElementById('errorText');
+      const recoveryWarningMsg = document.getElementById('recoveryWarningMsg');
+      const recoveryWarningText = document.getElementById('recoveryWarningText');
       const resultSection = document.getElementById('resultSection');
       const resultMeta   = document.getElementById('resultMeta');
       const csvOutput    = document.getElementById('csvOutput');
@@ -463,6 +469,7 @@
       }
 
       function showError(msg) {
+        clearRecoveryWarning();
         errorText.textContent = msg;
         errorMsg.classList.add('visible');
       }
@@ -471,7 +478,20 @@
         errorMsg.classList.remove('visible');
       }
 
+      function showRecoveryWarning(msg) {
+        if (!recoveryWarningMsg || !recoveryWarningText) return;
+        recoveryWarningText.textContent = msg;
+        recoveryWarningMsg.classList.add('visible');
+      }
+
+      function clearRecoveryWarning() {
+        if (!recoveryWarningMsg || !recoveryWarningText) return;
+        recoveryWarningText.textContent = '';
+        recoveryWarningMsg.classList.remove('visible');
+      }
+
       function clearResult() {
+        clearRecoveryWarning();
         resultSection.classList.remove('visible');
         csvOutput.value = '';
         resultMeta.textContent = '';
@@ -642,6 +662,12 @@
           const parsed = parseJsonWithRecovery(text);
           const data = parsed.data;
           const csv = jsonToCsv(data);
+          clearRecoveryWarning();
+          if (parsed.recovered) {
+            showRecoveryWarning(
+              'Original JSON did not parse as-is; missing closing bracket(s) or brace(s) were added so conversion could run. Check the CSV carefully—it may not match incomplete source data.'
+            );
+          }
           resultSection.classList.add('visible');
           csvOutput.value = csv;
           const lineCount = csv.split(/\r\n|\r|\n/).length;
@@ -656,7 +682,12 @@
           hasRunCurrentInput = true;
         } catch (err) {
           if (err instanceof SyntaxError) {
-            showError('Invalid JSON. We can auto-fix simple missing closing brackets, but this input still has syntax issues.');
+            const detail = err.message ? String(err.message) : '';
+            showError(
+              detail
+                ? detail + ' Auto-fix only handles simple missing } or ] at the end; this input needs manual edits.'
+                : 'Invalid JSON. Auto-fix only handles simple missing closing brackets; this input needs manual edits.'
+            );
           } else {
             showError(err.message || 'Conversion failed.');
           }

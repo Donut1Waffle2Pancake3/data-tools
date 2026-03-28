@@ -273,6 +273,23 @@
         copySentenceBtn.disabled = !enabled;
       }
 
+      var DEBOUNCE_MS = 280;
+      var debounceTimer = null;
+
+      function updateClearLink() {
+        var hasInput = (textInput.value || '').length > 0;
+        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+      }
+
+      function scheduleRender() {
+        updateClearLink();
+        if (debounceTimer) window.clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(function () {
+          debounceTimer = null;
+          render();
+        }, DEBOUNCE_MS);
+      }
+
       function render() {
         clearError();
         var input = textInput.value || '';
@@ -321,10 +338,14 @@
         });
       }
 
-      textInput.addEventListener('input', render);
+      textInput.addEventListener('input', scheduleRender);
       clearLink.addEventListener('click', function (event) {
         event.preventDefault();
         if (clearLink.getAttribute('aria-disabled') === 'true') return;
+        if (debounceTimer) {
+          window.clearTimeout(debounceTimer);
+          debounceTimer = null;
+        }
         textInput.value = '';
         render();
       });

@@ -39,6 +39,7 @@ This updates `assets/favicon.ico` and `assets/apple-touch-icon.png`. Commit the 
 
 ## Project structure
 
+- `docs/` — Markdown notes (backlog, backlog archive, site/SEO rules)
 - `index.html` — Homepage
 - `404.html` — Custom not-found page
 - `split-csv/`, `merge-csv/`, `csv-column-remover/`, `csv-deduplicator/`, `csv-sorter/`, `json-formatter/`, `json-to-csv/`, `csv-to-json/`, `csv-to-tsv/`, `tsv-to-csv/` — Tool pages (each has `index.html`)

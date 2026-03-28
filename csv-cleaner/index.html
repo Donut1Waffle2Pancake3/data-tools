@@ -32,6 +32,38 @@
     .inline-fields { display: flex; flex-wrap: wrap; gap: var(--space-12); }
     .inline-fields .form-input,
     .inline-fields .field-md { min-width: 180px; }
+    #tool #dropZone {
+      position: relative;
+    }
+    #tool #dropZone .drop-zone__busy {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-12);
+      border-radius: var(--radius);
+      pointer-events: none;
+    }
+    #tool #dropZone.file-reading .drop-zone__busy {
+      display: flex;
+      background: var(--surface-secondary, var(--grey-2));
+    }
+    #tool #dropZone .drop-zone__spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border-strong);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    #tool #dropZone .drop-zone__busy-label {
+      margin: 0;
+      font-size: var(--text-sm);
+      color: var(--text-muted-on-surface, var(--grey-7));
+    }
   </style>
 </head>
 <body>
@@ -59,11 +91,15 @@
             </div>
 
             <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
+              <div class="drop-zone__busy" aria-hidden="true">
+                <span class="drop-zone__spinner"></span>
+                <p class="drop-zone__busy-label">Loading file…</p>
+              </div>
               <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
               </svg>
               <p class="drop-zone__label">Or upload a CSV file</p>
-              <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+              <p class="drop-zone__hint" id="drop-hint">In your browser · Up to 200 MB files (50+ MB may feel slow)</p>
               <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
             </div>
 
@@ -101,6 +137,10 @@
                 <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
               </svg>
             </button>
+
+            <div class="status-message status-message--warning" id="warningMsg" role="status" aria-live="polite" aria-atomic="true">
+              <span id="warningText"></span>
+            </div>
 
             <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
               <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -283,6 +323,8 @@
       var sortColumn = document.getElementById('sortColumn');
       var sortOrder = document.getElementById('sortOrder');
       var cleanBtn = document.getElementById('cleanBtn');
+      var warningMsg = document.getElementById('warningMsg');
+      var warningText = document.getElementById('warningText');
       var errorMsg = document.getElementById('errorMsg');
       var errorText = document.getElementById('errorText');
       var resultSection = document.getElementById('resultSection');
@@ -292,8 +334,29 @@
       var downloadLink = document.getElementById('downloadLink');
       var objectUrl = null;
       var outputText = '';
+      var MAX_WARN_BYTES = 50 * 1024 * 1024;
+      var MAX_HARD_BYTES = 200 * 1024 * 1024;
+
+      function utf8ByteLength(str) {
+        if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str).length;
+        return str.length;
+      }
+
+      function showWarning(message) {
+        if (!warningMsg || !warningText) return;
+        clearWarning();
+        warningText.textContent = message;
+        warningMsg.classList.add('visible');
+      }
+
+      function clearWarning() {
+        if (!warningMsg || !warningText) return;
+        warningText.textContent = '';
+        warningMsg.classList.remove('visible');
+      }
 
       function setError(message) {
+        clearWarning();
         errorText.textContent = message;
         errorMsg.classList.add('visible');
       }
@@ -302,6 +365,10 @@
         errorText.textContent = '';
         errorMsg.classList.remove('visible');
       }
+
+      var CSV_UNCLOSED_QUOTE_MSG =
+        'CSV appears malformed: a quoted field was never closed. ' +
+        'Check for a stray quote character, or try a different delimiter.';
 
       function parseCsv(text) {
         var rows = [];
@@ -333,6 +400,9 @@
         }
         row.push(field);
         if (row.length > 1 || row[0] !== '' || rows.length === 0) rows.push(row);
+        if (inQuotes) {
+          throw new Error(CSV_UNCLOSED_QUOTE_MSG);
+        }
         return rows;
       }
 
@@ -368,7 +438,20 @@
           setError('Paste or upload CSV data first.');
           return;
         }
+        if (utf8ByteLength(text) > MAX_HARD_BYTES) {
+          setError(
+            'This CSV is larger than the 200 MB limit. Split the file into smaller parts and clean each separately.'
+          );
+          return;
+        }
         clearError();
+        if (utf8ByteLength(text) > MAX_WARN_BYTES) {
+          showWarning(
+            'Large input (' + (utf8ByteLength(text) / 1024 / 1024).toFixed(0) + ' MB). Cleaning may take a moment; your browser may feel unresponsive briefly.'
+          );
+        } else {
+          clearWarning();
+        }
         cleanBtn.disabled = true;
         cleanBtn.classList.add('spinning');
         window.setTimeout(function () {
@@ -430,6 +513,7 @@
             copyBtn.disabled = false;
             resultMeta.textContent = dataRows.length.toLocaleString() + ' data rows cleaned';
             resultSection.classList.add('visible');
+            clearWarning();
           } catch (err) {
             setError(err && err.message ? err.message : 'Unable to clean CSV.');
             resultSection.classList.remove('visible');
@@ -442,7 +526,10 @@
         }, 0);
       }
 
-      csvInput.addEventListener('input', updateButtonState);
+      csvInput.addEventListener('input', function () {
+        clearWarning();
+        updateButtonState();
+      });
       [trimSpaces, removeEmptyRows, removeDuplicates, filterValue, sortColumn, sortOrder].forEach(function (el) {
         el.addEventListener('input', updateButtonState);
         el.addEventListener('change', updateButtonState);
@@ -465,18 +552,57 @@
           objectUrl = null;
         }
         clearError();
+        clearWarning();
         updateButtonState();
       });
 
+      function fileLooksLikeCsv(f) {
+        if (!f || !f.name) return false;
+        var n = f.name.toLowerCase();
+        return n.endsWith('.csv') || n.endsWith('.txt') || f.type === 'text/csv' || f.type === 'text/plain';
+      }
+
+      function loadUploadedFile(file) {
+        if (!file) return;
+        if (typeof readFileAsText !== 'function') {
+          setError(
+            'File upload is unavailable because a required script failed to load. Please refresh the page or paste your CSV.'
+          );
+          return;
+        }
+        clearWarning();
+        clearError();
+        if (typeof file.size === 'number' && file.size > MAX_HARD_BYTES) {
+          setError(
+            'This file is ' + (file.size / 1024 / 1024).toFixed(0) + ' MB, which exceeds the 200 MB limit. Split the file and try again.'
+          );
+          return;
+        }
+        if (typeof file.size === 'number' && file.size > MAX_WARN_BYTES) {
+          showWarning(
+            'Large file (' + (file.size / 1024 / 1024).toFixed(0) + ' MB). Loading may take a moment.'
+          );
+        }
+        dropZone.classList.add('file-reading');
+        dropZone.setAttribute('aria-busy', 'true');
+        readFileAsText(file)
+          .then(function (text) {
+            dropZone.classList.remove('file-reading');
+            dropZone.removeAttribute('aria-busy');
+            csvInput.value = String(text || '');
+            updateButtonState();
+          })
+          .catch(function (err) {
+            dropZone.classList.remove('file-reading');
+            dropZone.removeAttribute('aria-busy');
+            setError(err.message || 'Failed to read file.');
+          });
+      }
+
       fileInput.addEventListener('change', function (event) {
         var file = event.target.files && event.target.files[0];
-        if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          csvInput.value = String(e.target.result || '');
-          updateButtonState();
-        };
-        reader.readAsText(file);
+        if (file) loadUploadedFile(file);
+        fileInput.value = '';
       });
 
       dropZone.addEventListener('click', function () { fileInput.click(); });
@@ -495,13 +621,11 @@
         event.preventDefault();
         dropZone.classList.remove('is-dragover');
         var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-        if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          csvInput.value = String(e.target.result || '');
-          updateButtonState();
-        };
-        reader.readAsText(file);
+        if (file && fileLooksLikeCsv(file)) {
+          loadUploadedFile(file);
+        } else if (file) {
+          setError('Please drop a CSV or text file.');
+        }
       });
 
       cleanBtn.addEventListener('click', cleanCsv);
@@ -518,6 +642,7 @@
 
       updateButtonState();
       clearError();
+      clearWarning();
     })();
   </script>
 </body>

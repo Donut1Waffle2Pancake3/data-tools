@@ -71,7 +71,7 @@
           "name": "Can this tool handle large JSON files?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, it is optimized to handle large datasets efficiently using a virtualized tree view to maintain high performance."
+            "text": "Files and pasted text over 10 MB are blocked to keep your browser responsive. Smaller files run entirely in your browser; very large trees may still feel slower on low-end devices."
           }
         },
         {
@@ -268,7 +268,7 @@
                 <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
               </svg>
               <p class="drop-zone__label">Or upload a JSON file</p>
-              <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+              <p class="drop-zone__hint" id="drop-hint">Processed in your browser · JSON over 10 MB is not loaded</p>
               <input type="file" id="fileInput" accept=".json,application/json,text/plain" aria-label="Select JSON file" />
             </div>
 
@@ -437,7 +437,7 @@
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
             </button>
             <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">Yes, it can handle moderately large files directly in your browser. Performance depends on your device and browser, so very large files may take longer to render or expand.</span>
+              <span itemprop="text">Uploads and pasted JSON over 10 MB are not loaded, so your tab does not freeze. Under that limit, everything runs in your browser; huge nested trees may still feel slower on older devices.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
@@ -500,9 +500,18 @@
       var parsedData = null;
       var formattedOutput = '';
       var autoName = 'json-viewer-output.json';
+      /** Full tree build runs on the main thread; cap avoids tab freezes. */
+      var MAX_JSON_INPUT_BYTES = 10 * 1024 * 1024;
+      var MAX_JSON_SIZE_MSG =
+        'This input is larger than 10 MB. Use a smaller file, split the JSON, or try a desktop editor so your browser stays responsive.';
       var autoRenderTimer = null;
       var toastTimer = null;
       var currentPath = 'root';
+
+      function utf8ByteLength(str) {
+        if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str).length;
+        return str.length;
+      }
 
       function clearElementChildren(el) {
         while (el.firstChild) el.removeChild(el.firstChild);
@@ -695,6 +704,13 @@
           return;
         }
 
+        if (utf8ByteLength(text) > MAX_JSON_INPUT_BYTES) {
+          parsedData = null;
+          formattedOutput = '';
+          showError(MAX_JSON_SIZE_MSG);
+          return;
+        }
+
         try {
           parsedData = JSON.parse(text);
           formattedOutput = JSON.stringify(parsedData, null, 2);
@@ -712,7 +728,11 @@
         } catch (err) {
           parsedData = null;
           formattedOutput = '';
-          showError('Invalid JSON. Check commas, quotes, and brackets, then try again.');
+          var parseErrMsg =
+            err instanceof SyntaxError && err.message
+              ? err.message
+              : 'Invalid JSON. Check commas, quotes, and brackets, then try again.';
+          showError(parseErrMsg);
         }
       }
 
@@ -723,7 +743,14 @@
 
       function setInputFromFile(file) {
         if (!file) return;
+        if (typeof file.size === 'number' && file.size > MAX_JSON_INPUT_BYTES) {
+          showError(MAX_JSON_SIZE_MSG);
+          return;
+        }
         var reader = new FileReader();
+        reader.onerror = function () {
+          showError('Could not read that file. Try again or paste the JSON instead.');
+        };
         reader.onload = function (event) {
           jsonInput.value = String(event.target.result || '');
           autoName = (file.name || 'json-viewer-output').replace(/\.[^.]+$/, '') + '-viewed.json';
