@@ -72,7 +72,27 @@ Action items from [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.m
 
 Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or **closed** items go in [`backlog-archive.md`](backlog-archive.md); append there and remove them from this file.
 
-**No open numbered tickets.** Next run: [idle / audit rotation](#when-no-actionable-tasks-remain) unless the audit inbox adds work.
+| Priority | # | Focus |
+|----------|---|-------|
+| Low | **43** | Audit: Reliability |
+
+**Suggested order:** **43** (execute audit when selected).
+
+---
+
+## 43. Audit: Reliability
+
+**Status:** Not completed  
+**Source:** Idle rotation — successor to Audit: SEO #38 (2026-03-28)
+
+### In plain English
+
+- **What it is:** Reliability-only review: error handling, edge cases, size limits, async failure paths, and performance hotspots on representative tools plus [`js/site.js`](../js/site.js) shared helpers.
+- **Why you’d do it:** Catch crashes, silent failures, and runaway work without mixing Product, UX, or SEO tickets.
+
+**Action:** Apply [When executing an audit task](#when-executing-an-audit-task) for **Reliability** only. Deliverables: numbered backlog items with a concrete failure mode and fix each.
+
+**Acceptance:** This task archived as **`## N. Audit: Reliability`** after triage; follow-ups are shippable tickets.
 
 ---
 
