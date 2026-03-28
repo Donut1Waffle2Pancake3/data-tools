@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X X _ _`
+**Tracker (5 slots):** `X X X X _`
 
 **Rules**
 
@@ -74,27 +74,10 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Low | **49** | Client-side “files → one ZIP” (complement to Batch ZIP Extractor) |
 | Low | **50** | TOML ↔ JSON (or explicit defer) |
 | Low | **51** | CSV → Markdown / GFM table |
 
-**Suggested order:** **49**, **50**, **51**.
-
----
-
-## 49. Client-side ZIP packer
-
-**Status:** Not completed  
-**Source:** Audit: Product #47 (2026-03-28)
-
-### In plain English
-
-- **What it is:** [`zip-combiner`](../zip-combiner/index.html) is extract-only; many users want **multiple files → one `.zip`** in-browser.
-- **Why you’d do it:** Completes the file ZIP story without server upload.
-
-**Action:** New tool (e.g. `fflate` or similar, license OK) or document **out of scope** in product/README with reason (memory, UX).
-
-**Acceptance:** Shipped tool **or** explicit “won’t build” note—no ambiguous gap.
+**Suggested order:** **50**, **51**.
 
 ---
 

@@ -872,6 +872,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 49. Client-side ZIP packer
+
+**Status:** Closed (out of scope)  
+**Source:** Audit: Product #47 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Gap between extract-only [`zip-combiner`](../zip-combiner/index.html) and user demand for **many files → one `.zip`** in-browser.
+- **Why it mattered:** Product clarity vs build cost.
+
+**Action:** Ship packer **or** explicit defer with rationale.
+
+**Acceptance:** Tool live **or** documented “won’t build.”
+
+**Delivered:** [`docs/README.md`](../README.md) **Product scope** (memory, path conflicts, download variance; OS tools preferred); [`zip-combiner/index.html`](../zip-combiner/index.html) FAQ “pack many files into a new ZIP.”
+
+---
+
 <!--
 ## N. Short title
 

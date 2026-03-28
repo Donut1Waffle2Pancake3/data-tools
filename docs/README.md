@@ -12,6 +12,10 @@ The site ships **many** CSV, JSON, text, file, and converter tools. The list her
 - **Markdown catalog:** [docs/tools.md](tools.md) — URLs grouped like the navigation.
 - **Source of truth for names and order:** [`js/site.js`](../js/site.js) → `NAV_GROUPS`. Deployed pages outside nav: [`prod-hidden-tools.md`](prod-hidden-tools.md).
 
+## Product scope
+
+- **ZIP creation in the browser (many loose files → one `.zip`):** **Out of scope.** Whole-archive compression needs a full file tree in memory (or a streaming story we do not ship), duplicate path rules are easy to get wrong, and save/download behavior varies by browser. Desktop archive utilities already cover this well. The site’s ZIP tool is **[Batch ZIP Extractor](../zip-combiner/index.html)** — **extract multiple archives**, not build new ones.
+
 ## Run locally
 
 Static HTML/CSS/JS. Open `index.html` in a browser, or use a local server:
