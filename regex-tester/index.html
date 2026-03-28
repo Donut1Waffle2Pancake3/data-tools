@@ -44,6 +44,19 @@
     .regex-match { background: #fff2b8; color: #1f2937; }
     .regex-empty { color: var(--text-secondary); }
     .action-row { display: flex; flex-wrap: wrap; gap: var(--space-12); }
+    .regex-running-row {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-12);
+      padding: var(--space-12);
+      border-radius: var(--radius);
+      background: var(--surface-secondary, var(--grey-2));
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    .regex-running-row.visible { display: flex; }
+    .regex-running-row .btn-secondary { flex-shrink: 0; }
     @media (max-width: 768px) { .regex-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -96,6 +109,15 @@
                 <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
               </svg>
               <span id="errorText"></span>
+            </div>
+
+            <div class="status-message status-message--warning" id="limitWarningMsg" role="status" aria-live="polite" aria-atomic="true">
+              <span id="limitWarningText"></span>
+            </div>
+
+            <div class="regex-running-row" id="regexRunningRow" role="status" aria-live="polite" aria-atomic="true">
+              <span id="regexRunningText">Matching…</span>
+              <button type="button" class="btn-secondary" id="cancelMatchBtn">Stop</button>
             </div>
 
             <section class="result-section" id="resultSection" aria-live="polite">
@@ -250,6 +272,15 @@
               <span itemprop="text">No. All regex processing happens locally in your browser with no uploads and no server-side storage.</span>
             </div>
           </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
+              <span itemprop="name">What if matching feels stuck or very slow?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Some patterns cause heavy backtracking. While a match runs you’ll see “Matching…” with a Stop button. The tool also pauses after a few seconds and can show partial highlights, or stop entirely if one match takes too long—try a simpler pattern or shorter sample text.</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -273,6 +304,18 @@
       var matchOutput = document.getElementById('matchOutput');
       var previewOutput = document.getElementById('previewOutput');
       var copyBtn = document.getElementById('copyBtn');
+      var limitWarningMsg = document.getElementById('limitWarningMsg');
+      var limitWarningText = document.getElementById('limitWarningText');
+
+      var MAX_MATCH_ITERATIONS = 50000;
+      var MATCH_BUDGET_MS = 8000;
+      var MAIN_WORKER_KILL_MS = 12000;
+      var regexWorker = null;
+      var renderJobId = 0;
+      var inFlightWorkerJob = 0;
+      var matchKillTimer = null;
+      var regexRunningRow = document.getElementById('regexRunningRow');
+      var cancelMatchBtn = document.getElementById('cancelMatchBtn');
 
       function escapeHtml(value) {
         return String(value)
@@ -283,7 +326,51 @@
           .replace(/'/g, '&#39;');
       }
 
+      function clearLimitWarning() {
+        if (limitWarningText) limitWarningText.textContent = '';
+        if (limitWarningMsg) limitWarningMsg.classList.remove('visible');
+      }
+
+      function showLimitWarning(message) {
+        if (!limitWarningMsg || !limitWarningText) return;
+        limitWarningText.textContent = message;
+        limitWarningMsg.classList.add('visible');
+      }
+
+      function clearMatchKillTimer() {
+        if (matchKillTimer) {
+          window.clearTimeout(matchKillTimer);
+          matchKillTimer = null;
+        }
+      }
+
+      function setRunningVisible(visible) {
+        if (!regexRunningRow) return;
+        if (visible) regexRunningRow.classList.add('visible');
+        else regexRunningRow.classList.remove('visible');
+      }
+
+      function abortRegexWorker(reasonMessage) {
+        clearMatchKillTimer();
+        if (regexWorker) {
+          try {
+            regexWorker.terminate();
+          } catch (err) {}
+          regexWorker = null;
+        }
+        inFlightWorkerJob = 0;
+        renderJobId += 1;
+        setRunningVisible(false);
+        hideError();
+        if (reasonMessage) showLimitWarning(reasonMessage);
+        resultSection.classList.remove('visible');
+        copyBtn.disabled = true;
+        matchOutput.value = '';
+        previewOutput.innerHTML = '<span class="regex-empty">Matches will be highlighted here.</span>';
+      }
+
       function showError(message) {
+        clearLimitWarning();
         errorText.textContent = message;
         errorMsg.classList.add('visible');
       }
@@ -291,6 +378,107 @@
       function hideError() {
         errorText.textContent = '';
         errorMsg.classList.remove('visible');
+      }
+
+      function getRegexWorker() {
+        if (regexWorker) return regexWorker;
+        if (typeof Worker === 'undefined') return null;
+        try {
+          regexWorker = new Worker('regex-worker.js');
+        } catch (err) {
+          regexWorker = null;
+        }
+        return regexWorker;
+      }
+
+      function applyRegexResult(matches, html, truncated, matchCount, timedOut) {
+        timedOut = !!timedOut;
+        if (timedOut) {
+          showLimitWarning(
+            'Matching paused after about ' +
+              Math.round(MATCH_BUDGET_MS / 1000) +
+              ' seconds (possible slow backtracking). Showing partial results—simplify the pattern or shorten the text.'
+          );
+        } else if (truncated) {
+          showLimitWarning(
+            'Match search stopped at ' +
+              MAX_MATCH_ITERATIONS.toLocaleString() +
+              ' results. Your text may contain more matches—narrow the pattern, shorten the sample, or split the file.'
+          );
+        } else {
+          clearLimitWarning();
+        }
+
+        previewOutput.innerHTML = matchCount
+          ? html
+          : '<span class="regex-empty">No matches found for this pattern.</span>';
+        matchOutput.value = matchCount ? matches.join('\n') : '';
+        var meta =
+          matchCount.toLocaleString() + ' match' + (matchCount === 1 ? '' : 'es');
+        if (timedOut) {
+          meta += ' (partial—time limit)';
+        } else if (truncated) {
+          meta += ' (capped at ' + MAX_MATCH_ITERATIONS.toLocaleString() + ')';
+        }
+        resultMeta.textContent = meta;
+        copyBtn.disabled = matchCount === 0;
+        resultSection.classList.add('visible');
+      }
+
+      function runRegexSync(pattern, flags, text) {
+        var regex;
+        try {
+          regex = new RegExp(pattern, flags);
+        } catch (err) {
+          return { error: err.message };
+        }
+
+        var matches = [];
+        var html = '';
+        var sliceLast = 0;
+        var m;
+        var safety = 0;
+        var t0 = Date.now();
+
+        while ((m = regex.exec(text)) !== null && safety < MAX_MATCH_ITERATIONS) {
+          safety += 1;
+          if ((safety & 511) === 0 && Date.now() - t0 > MATCH_BUDGET_MS) {
+            html += escapeHtml(text.slice(sliceLast));
+            return {
+              matches: matches,
+              html: html,
+              truncated: true,
+              matchCount: matches.length,
+              timedOut: true,
+            };
+          }
+          var full = m[0];
+          var index = m.index;
+          var end = index + full.length;
+
+          html += escapeHtml(text.slice(sliceLast, index));
+          html += '<mark class="regex-match">' + escapeHtml(full) + '</mark>';
+          sliceLast = end;
+
+          matches.push(full);
+          if (full === '') regex.lastIndex += 1;
+        }
+        html += escapeHtml(text.slice(sliceLast));
+
+        var truncated = false;
+        if (safety >= MAX_MATCH_ITERATIONS) {
+          var probe = new RegExp(pattern, flags);
+          probe.lastIndex = regex.lastIndex;
+          truncated = probe.exec(text) !== null;
+        }
+
+        return {
+          matches: matches,
+          html: html,
+          truncated: truncated,
+          matchCount: matches.length,
+          timedOut: false,
+        };
       }
 
       var DEBOUNCE_MS = 280;
@@ -317,6 +505,17 @@
         hideError();
 
         if (!pattern.trim() || !text.length) {
+          renderJobId += 1;
+          clearMatchKillTimer();
+          if (inFlightWorkerJob !== 0 && regexWorker) {
+            try {
+              regexWorker.terminate();
+            } catch (err) {}
+            regexWorker = null;
+          }
+          inFlightWorkerJob = 0;
+          setRunningVisible(false);
+          clearLimitWarning();
           resultSection.classList.remove('visible');
           copyBtn.disabled = true;
           matchOutput.value = '';
@@ -328,41 +527,77 @@
         if (caseInsensitive.checked) flags += 'i';
         if (multiline.checked) flags += 'm';
 
-        var regex;
-        try {
-          regex = new RegExp(pattern, flags);
-        } catch (err) {
-          showError('Invalid regex: ' + err.message);
+        var w = getRegexWorker();
+        if (w) {
+          if (inFlightWorkerJob !== 0) {
+            clearMatchKillTimer();
+            try {
+              w.terminate();
+            } catch (err) {}
+            regexWorker = null;
+            w = getRegexWorker();
+          }
+          renderJobId += 1;
+          var jobId = renderJobId;
+          inFlightWorkerJob = jobId;
+          setRunningVisible(true);
+          clearMatchKillTimer();
+          matchKillTimer = window.setTimeout(function () {
+            matchKillTimer = null;
+            if (inFlightWorkerJob !== jobId) return;
+            abortRegexWorker(
+              'Matching hit a hard time limit and was stopped (the regex may be backtracking heavily on one match). Try a simpler pattern, shorter text, or click Stop sooner.'
+            );
+          }, MAIN_WORKER_KILL_MS);
+
+          w.onmessage = function (ev) {
+            var d = ev.data;
+            if (!d || d.id !== jobId) return;
+            clearMatchKillTimer();
+            inFlightWorkerJob = 0;
+            setRunningVisible(false);
+            if (d.error) {
+              showError('Invalid regex: ' + d.error);
+              resultSection.classList.remove('visible');
+              copyBtn.disabled = true;
+              return;
+            }
+            applyRegexResult(d.matches, d.html, d.truncated, d.matchCount, d.timedOut);
+          };
+          w.onerror = function () {
+            if (inFlightWorkerJob !== jobId) return;
+            clearMatchKillTimer();
+            inFlightWorkerJob = 0;
+            setRunningVisible(false);
+            regexWorker = null;
+            var sync = runRegexSync(pattern, flags, text);
+            if (sync.error) {
+              showError('Invalid regex: ' + sync.error);
+              resultSection.classList.remove('visible');
+              copyBtn.disabled = true;
+              return;
+            }
+            applyRegexResult(sync.matches, sync.html, sync.truncated, sync.matchCount, sync.timedOut);
+          };
+          w.postMessage({
+            id: jobId,
+            pattern: pattern,
+            flags: flags,
+            text: text,
+            maxMatches: MAX_MATCH_ITERATIONS,
+            budgetMs: MATCH_BUDGET_MS,
+          });
+          return;
+        }
+
+        var sync = runRegexSync(pattern, flags, text);
+        if (sync.error) {
+          showError('Invalid regex: ' + sync.error);
           resultSection.classList.remove('visible');
           copyBtn.disabled = true;
           return;
         }
-
-        var matches = [];
-        var html = '';
-        var lastIndex = 0;
-        var m;
-        var safety = 0;
-        while ((m = regex.exec(text)) !== null && safety < 50000) {
-          safety += 1;
-          var full = m[0];
-          var index = m.index;
-          var end = index + full.length;
-
-          html += escapeHtml(text.slice(lastIndex, index));
-          html += '<mark class="regex-match">' + escapeHtml(full) + '</mark>';
-          lastIndex = end;
-
-          matches.push(full);
-          if (full === '') regex.lastIndex += 1;
-        }
-        html += escapeHtml(text.slice(lastIndex));
-
-        previewOutput.innerHTML = matches.length ? html : '<span class="regex-empty">No matches found for this pattern.</span>';
-        matchOutput.value = matches.length ? matches.join('\n') : '';
-        resultMeta.textContent = matches.length.toLocaleString() + ' match' + (matches.length === 1 ? '' : 'es');
-        copyBtn.disabled = matches.length === 0;
-        resultSection.classList.add('visible');
+        applyRegexResult(sync.matches, sync.html, sync.truncated, sync.matchCount, sync.timedOut);
       }
 
       regexInput.addEventListener('input', scheduleRender);
@@ -382,6 +617,13 @@
         render();
       });
 
+      if (cancelMatchBtn) {
+        cancelMatchBtn.addEventListener('click', function () {
+          if (!inFlightWorkerJob) return;
+          abortRegexWorker('Matching stopped.');
+        });
+      }
+
       clearLink.addEventListener('click', function (event) {
         event.preventDefault();
         if (clearLink.getAttribute('aria-disabled') === 'true') return;
@@ -389,6 +631,15 @@
           window.clearTimeout(debounceTimer);
           debounceTimer = null;
         }
+        clearMatchKillTimer();
+        if (inFlightWorkerJob !== 0 && regexWorker) {
+          try {
+            regexWorker.terminate();
+          } catch (err) {}
+          regexWorker = null;
+        }
+        inFlightWorkerJob = 0;
+        setRunningVisible(false);
         regexInput.value = '';
         textInput.value = '';
         caseInsensitive.checked = false;
@@ -399,13 +650,9 @@
       copyBtn.addEventListener('click', function () {
         var content = matchOutput.value || '';
         if (!content) return;
-        var original = copyBtn.innerHTML;
-        navigator.clipboard.writeText(content).then(function () {
-          copyBtn.innerHTML = '<span>Copied!</span>';
-          window.setTimeout(function () { copyBtn.innerHTML = original; }, 1200);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(content, copyBtn, function () {
           showError('Copy failed. Please copy manually.');
-        });
+        }, { durationMs: 1200 });
       });
 
       render();

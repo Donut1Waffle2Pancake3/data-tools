@@ -35,6 +35,12 @@ function parseCSVLines(text) {
     }
   }
 
+  if (inQuotes) {
+    throw new Error(
+      'CSV appears malformed: a quoted field was never closed. ' +
+      'Check for a stray quote character, or try a different delimiter.'
+    );
+  }
   if (current !== '') lines.push(current);
   return lines;
 }
@@ -117,5 +123,15 @@ try {
   assert(e.message.includes('empty'), 'Error should mention empty');
 }
 console.log('  OK: Empty file throws\n');
+
+// Test 5: Unclosed quote in parseCSVLines
+console.log('Test 5: Unclosed quote rejects parse');
+try {
+  parseCSVLines('a,"b');
+  assert(false, 'Should throw on unclosed quote');
+} catch (e) {
+  assert(e.message.includes('never closed'), 'Error should mention unclosed quote');
+}
+console.log('  OK: Unclosed quote throws\n');
 
 console.log('All tests passed. Merge logic matches the tool behavior.');

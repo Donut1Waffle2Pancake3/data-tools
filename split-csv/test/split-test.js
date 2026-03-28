@@ -35,6 +35,12 @@ function parseCSVLines(text) {
     }
   }
 
+  if (inQuotes) {
+    throw new Error(
+      'CSV appears malformed: a quoted field was never closed. ' +
+      'Check for a stray quote character, or try a different delimiter.'
+    );
+  }
   if (current !== '') lines.push(current);
   return lines;
 }

@@ -1,27 +1,53 @@
 # Backlog
 
+## Push cadence (remote sync)
+
+Batch on **`main`** (or current branch). **Tracker below is source of truth.**
+
+**Tracker (5 slots):** `X X X X X`
+
+**Rules**
+
+1. **Start** — Check tracker **before** picking a task.  
+2. **If full (`X X X X X`)** — **Push-only run**: commit all → `git push origin`. Fix errors → retry. Reset to `_ _ _ _ _`. **Stop** (no task).  
+3. **After completed task** — Move ticket to [`backlog-archive.md`](backlog-archive.md), then add one `X` to the **leftmost `_`**. **Do not add** for: push-only runs; audit-only; backlog edits; incomplete tasks.
+
+**Why** — Batch pushes; simpler rollback.
+
+---
+
+### Writing style
+
+Be **extremely concise**. Use the **fewest words possible** while preserving meaning.  
+Prefer short phrases over sentences; remove filler, repetition, and commentary.  
+Keep this file **compact and scannable**.
+
+---
+
 ## Execution rules (read every run)
 
-You are an **execution agent** in this repo. **Sources of truth:** this file ([`backlog.md`](backlog.md)) for active work; [`backlog-archive.md`](backlog-archive.md) for completed/closed work.
+You are an **execution agent**. **Sources:** [`backlog.md`](backlog.md) (active), [`backlog-archive.md`](backlog-archive.md) (done).
 
-**Mindset:** Reassess priority every run—ordering may be wrong. Reprioritize when you find higher-impact work. Optimize for **product quality over time**.
+**Mindset:** Reprioritize every run. Optimize for **long-term product quality**.
 
 ### Each run
 
-1. **Evaluate** — Review all items; reorder only if clearly wrong (no unnecessary reshuffles).
-2. **Select** — One task: best mix of user impact, risk reduction, leverage, and effort vs payoff.
-3. **Scope** — Too large → split and reprioritize. Blocked by dependencies → reorder.
-4. **Execute** — Real changes (code, UX, SEO, etc.). No analysis-only stops. Tight, production-quality diffs.
-5. **Discover** — While working, note bugs, weak errors, UX dead ends, performance, SEO gaps, high-value features. Add to this file: short title, 1–2 line description, correct priority row + ticket section.
-6. **Complete** — Move finished items to [`backlog-archive.md`](backlog-archive.md); remove them here.
-7. **Maintain** — Merge duplicates, drop stale items, keep formatting consistent; **preserve stable ticket IDs** unless unavoidable.
-8. **Idle** — Nothing meaningful left to execute? See [When no actionable tasks remain](#when-no-actionable-tasks-remain): **one audit type per cycle** (rotation), not a broad mixed audit.
+0. **Push gate** — Follow [Push cadence](#push-cadence-remote-sync). If tracker = **`X X X X X`**, run push-only and **stop**.  
+1. **Evaluate** — Review all; reorder only if clearly wrong.  
+2. **Select** — One task (impact × leverage ÷ effort).  
+3. **Scope** — Split if large; reorder if blocked.  
+4. **Execute** — Ship real changes (code/UX/SEO). No analysis-only stops.  
+5. **Discover** — Add items (title + 1–2 lines + priority + ticket).  
+6. **Complete** — Move done → [`backlog-archive.md`](backlog-archive.md); remove here.  
+7. **Maintain** — Merge dupes; drop stale; keep format; **preserve IDs**.  
+8. **Idle** — If nothing actionable, run **one audit type** (see [no tasks](#when-no-actionable-tasks-remain)).  
+9. **Push tracker** — If a task was **completed** (incl. finished **`Audit:`**), add `X`; else no change.
 
-### Priority heuristic (override if clearly wrong)
+### Priority heuristic (override if wrong)
 
-1. Broken core functionality  
-2. Incorrect results / missing error handling  
-3. UX blockers / dead ends  
+1. Broken core  
+2. Incorrect results / missing errors  
+3. UX blockers  
 4. Trust & accuracy  
 5. High-leverage SEO  
 6. Performance  
@@ -30,15 +56,15 @@ You are an **execution agent** in this repo. **Sources of truth:** this file ([`
 
 ### Constraints
 
-Do not ask permission; do not over-explain; do not multitask unrelated tickets; do not ignore prioritization without reason.
+No permission; no over-explaining; no unrelated multitasking; follow priority.
 
 ### Output (concise)
 
-Task selected · why (1–2 lines) · what shipped · new backlog items (if any) · reprioritization (if any).
+Task · why (1–2 lines) · shipped · new items · reprioritization.
 
 ### Goal
 
-Each run improves **both** the product and this backlog (best task → execute → discover → refine).
+Each run improves **product + backlog** (select → execute → discover → refine).
 
 ---
 
@@ -49,18 +75,12 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 | Priority | # | Focus |
 |----------|---|-------|
 | High | **12** | New tool: JSON → JSON Transformer (JQ-style lite) |
-| High | **13** | Upgrade: CSV → JSON (schema-aware, types, nesting) |
 | High | **14** | New tool: JSON Diff (structured tree diff) |
 | High | **15** | New tool: CSV Diff (keyed rows, field highlights) |
 | Medium | **16** | New tool: SQL result / SQL formatter → CSV or JSON |
-| Medium | **17** | New tool: JSON Schema generator (+ optional validate later) |
-| Medium | **18** | New tool: CSV Column Analyzer (uniques, counts, light stats) |
 | Medium | **22** | JSON tools — Web Worker parse / higher cap (follow-up to #1) |
-| Optional | **25** | Regex Tester — wall-clock cancel / UX when worker is still pegged (ReDoS follow-up) |
-| Optional | **26** | CSV Cleaner — optional “no header” mode (first row is data) |
-| Optional | **27** | Text Diff — virtualized / incremental render beyond row cap |
 
-**Suggested order:** **Roadmap (new tools):** **13** → **17** → **18** → **16** → **14** → **15** → **12** (largest build last among greenfield). **22** when raising limits safely matters more than new tools.
+**Suggested order:** **Roadmap (new tools):** **14** → **15** → **12** (largest build last among greenfield). **22** when raising limits safely matters more than new tools.
 
 Each open item below includes **In plain English** — a short, non-technical read of what the ticket is, why you’d care, and what improves if you do it.
 
@@ -82,25 +102,6 @@ Each open item below includes **In plain English** — a short, non-technical re
 **SEO / content:** Target intent: “transform JSON online”, “JSON map fields”, “pick fields from JSON”, “filter JSON array online”. FAQ: large files, privacy (client-side), difference vs formatter. Avoid textbook “what is JSON” per [`seo-rules.md`](seo-rules.md).
 
 **Acceptance:** User can produce a transformed JSON document from sample input using at least pick + filter + map-style operations; errors are explicit (invalid path, type mismatch). Linked from `json-viewer`, `json-to-csv`, All Tools.
-
----
-
-## 13. Upgrade — CSV → JSON (schema-aware, smarter)
-
-**Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
-
-### In plain English
-
-- **What it is:** The existing **CSV → JSON** tool works; this ticket **levels it up** for a top real-world use case: typed values, sane headers, optional nested structure.
-- **Why you’d do it:** Many exports need `numbers` and `booleans` as real JSON types, not strings; headers often need normalization for APIs.
-- **Upside:** Stronger reason to choose this site over a one-line converter. **Limit:** Nested JSON from flat CSV is heuristic — document behavior (e.g. column prefix `parent.child` or explicit JSON path column).
-
-**Action:** Extend [`csv-to-json/`](../csv-to-json/) (or split “advanced” panel): (1) **type inference** — detect int/float/bool/null from cells (with override toggles per column). (2) **header normalization** — trim, optional snake_case, dedupe. (3) **nested object option** — configurable rules; fallback flat array of objects remains default. Preserve current behavior as “Simple” preset.
-
-**SEO / content:** “CSV to JSON with types”, “convert CSV to nested JSON”. FAQ: delimiter, encoding, row as object vs array of arrays.
-
-**Acceptance:** Same CSV can export as today (strings) or as typed/nested JSON per user options; documented limits; no silent wrong nesting without user opting in.
 
 ---
 
@@ -142,63 +143,6 @@ Each open item below includes **In plain English** — a short, non-technical re
 
 ---
 
-## 16. New tool — SQL result formatter (→ CSV / JSON) + optional SQL pretty-print
-
-**Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
-
-### In plain English
-
-- **What it is:** Paste **tabular query output** (spaces/tabs/pipes) or a **SQL string** and get a clean **CSV** or **JSON** table — or pretty-printed SQL for reading.
-- **Why you’d do it:** Bridges everyday dev/BI workflows without another desktop app.
-- **Upside:** Strong long-tail: “format SQL result as CSV”, “SQL output to JSON online”. **Limit:** Not a full SQL engine — parsing is heuristic for result grids; document supported patterns.
-
-**Action:** New tool (e.g. `sql-formatter/` or split tabs: “Result grid” vs “SQL text”). **Result path:** detect columns (fixed-width vs delimiter), normalize to CSV/JSON array of objects. **SQL path:** use a client-side SQL formatter library (bundle size + license check). Export copy/download.
-
-**SEO / content:** Target paste-from-SSMS/pgAdmin style examples in FAQ. Clarify “no execution — format/convert only”.
-
-**Acceptance:** Representative pasted result sets convert to valid CSV and JSON; SQL pretty-print works on common SELECT snippets; clear error when input is ambiguous.
-
----
-
-## 17. New tool — JSON Schema generator
-
-**Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
-
-### In plain English
-
-- **What it is:** Paste sample **JSON** → generated **JSON Schema** (types, required keys, array item shapes) that teams can refine for APIs and validation.
-- **Why you’d do it:** High dev-intent traffic; constant need when standing up endpoints or OpenAPI-adjacent docs.
-- **Upside:** Future hook: “validate instance against this schema” (separate ticket or phase 2). **Limit:** Inference from one sample can be wrong — UI should say “draft schema” and offer strictness options.
-
-**Action:** New tool (e.g. `json-schema-generator/`). Walk parsed JSON; emit draft Schema (JSON Schema version pinned in UI). Options: infer `required` vs all optional, `additionalProperties`, array tuple vs list. Copy/download schema.
-
-**SEO / content:** “JSON to JSON Schema”, “generate JSON Schema online”. FAQ: one sample vs multiple samples (future), compatibility with validators.
-
-**Acceptance:** Valid JSON in → valid JSON Schema document out; options change output predictably. Link from `json-validator`, `json-viewer`.
-
----
-
-## 18. New tool — CSV Column Analyzer (light analytics)
-
-**Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
-
-### In plain English
-
-- **What it is:** Pick a CSV column (or all columns) and see **unique values**, **counts**, and light **stats** (numeric min/max/mean where applicable) — “understand this file” not just edit it.
-- **Why you’d do it:** Small step upstack toward exploration; complements row filter and deduplicator.
-- **Upside:** Differentiated utility for QA and quick profiling. **Limit:** Client-side memory — row caps or streaming strategy for huge files (align with backlog **#2**).
-
-**Action:** New tool (e.g. `csv-column-analyzer/`). Upload/paste CSV; column picker; results panel: cardinality, top-N values, null/empty counts; numeric column histogram optional (simple bins). Export summary as CSV/JSON optional.
-
-**SEO / content:** “CSV column frequency”, “count unique values in CSV online”. FAQ: file size, delimiter.
-
-**Acceptance:** Works on multi-column CSV with clear stats per selected column; performance acceptable on moderately large files with documented limits. Linked from `csv-row-filter`, `csv-deduplicator`, `csv-viewer`.
-
----
-
 ## 22. JSON tools — Web Worker parse / higher size cap (optional follow-up)
 
 **Status:** Not completed  
@@ -213,57 +157,6 @@ Each open item below includes **In plain English** — a short, non-technical re
 **Action:** Spike `JSON.parse` or tokenizer in a Web Worker for `json-validator`; consider text-only or lazy tree for viewer. Coordinate caps with any future virtualization ticket.
 
 **Acceptance:** Documented higher safe limit or same limit with materially less UI freeze on multi-MB paste; no regression on sub-10 MB flows.
-
----
-
-## 25. Regex Tester — wall-clock cancel / UX when worker is still pegged (ReDoS follow-up)
-
-**Status:** Not completed  
-**Source:** Gap after #7 (2026-03-28)
-
-### In plain English
-
-- **What it is:** Matching now runs in a **Web Worker** and the **50k** cap shows a warning, but catastrophic backtracking can still pin a CPU core until the engine yields—no hard wall-clock stop yet.
-- **Why you’d do it:** Power users may still think the site “hung” even though the tab stays clickable.
-- **Upside:** Clear “still working / cancelled” state and optional time budget without blocking the main thread.
-
-**Action:** Explore chunked matching, `postMessage` ping + `worker.terminate()` after N ms, or engine-specific mitigations; pair with visible “running…” / cancel UI.
-
-**Acceptance:** Pathological pattern cannot peg the experience indefinitely without user-visible feedback or a clean abort path.
-
----
-
-## 26. CSV Cleaner — optional “no header” mode (first row is data)
-
-**Status:** Not completed  
-**Source:** Gap after #4 (2026-03-28)
-
-### In plain English
-
-- **What it is:** The cleaner always treats row 1 as column headers; files with no header row get a misleading “header” and wrong sort column semantics.
-- **Why you’d do it:** Exports from some systems are all data rows.
-- **Upside:** Sort/filter apply to real data without inventing a fake header.
-
-**Action:** Add a checkbox (e.g. “First row is header”) defaulting to on; when off, treat every row as data and use synthetic column labels or 1-based indices in UI copy.
-
-**Acceptance:** A no-header TSV/CSV can be deduped and sorted without corrupting the first record.
-
----
-
-## 27. Text Diff — virtualized / incremental render beyond row cap
-
-**Status:** Not completed  
-**Source:** Gap after #11 (2026-03-28)
-
-### In plain English
-
-- **What it is:** Large diffs now cap **rendered** table rows, but users who need the full inline table still hit a wall.
-- **Why you’d do it:** Power users comparing logs want scroll-through without splitting files manually.
-- **Upside:** Keeps DOM bounded while exposing more than a fixed row budget.
-
-**Action:** Virtualize the diff table (e.g. recycle rows on scroll) or stream chunks with “Load more”; ensure accessibility and copy/export behavior stay predictable.
-
-**Acceptance:** 50k+ line diffs remain scrollable without creating tens of thousands of live `<tr>` nodes.
 
 ---
 
@@ -295,48 +188,50 @@ Copy and place above **Audit inbox** for each new ticket:
 
 ## When no actionable tasks remain
 
-If no meaningful tasks are available (everything completed, archived, or not worth doing), **do not** run a broad, mixed-domain audit.
+If nothing meaningful remains, **do not** run a mixed audit.
 
-If this file already has an **open** ticket whose heading includes **`Audit:`** (e.g. `## 28. Audit: SEO`), do **not** add another—pick up that ticket on a later run instead of idling into a duplicate.
+If an **open** `Audit:` ticket exists, **do not create another**—pick it up later.
 
-1. **Select the next audit type** from the rotation (see [Audit rotation](#audit-rotation)). Infer the last **completed** audit from [`backlog-archive.md`](backlog-archive.md): find ticket headings whose title includes **`Audit:`** (e.g. `## 28. Audit: SEO`) and use the **last** such section in the file—[`backlog-archive.md`](backlog-archive.md) keeps **newest at the bottom**, so the final match is the one to use. If none exists, start with **Product**. The next idle-spawned audit is always the **successor** of that type in the cycle (never the same type twice in a row).
-2. **Create a new backlog task** (then stop execution for this run):
-   - **Title:** `Audit: <type>` (type is one of: Product, UX, SEO, Reliability)
-   - Clear, scoped description of what to review in that category only
-   - **LOW** priority; place at the **bottom** of the backlog (new stable ID + table row + ticket section)
-3. **Stop** — Do not execute the audit in the same run; the next run picks up the audit ticket or other work.
+1. **Select next audit type** (see [Audit rotation](#audit-rotation)).  
+   Check [`backlog-archive.md`](backlog-archive.md) for the **last completed `Audit:`** (newest = bottom).  
+   If none, start with **Product**. Always pick the **next** type (no repeats).
+
+2. **Create backlog task** (then stop):
+   - **Title:** `Audit: <type>` (Product, UX, SEO, Reliability)  
+   - Scoped description (that category only)  
+   - **LOW** priority; add to **bottom** (new ID + row + ticket)
+
+3. **Stop** — Do not execute the audit this run.
 
 ---
 
 ## When executing an audit task
 
-When **`Audit: <type>`** is the selected task:
+When **`Audit: <type>`** is selected:
 
-- Audit **only** that category (no mixing Product + SEO in one pass, etc.).
-- Work systematically across: key tool pages, shared components / [`js/site.js`](../js/site.js) patterns, and relevant docs ([`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.md)).
-- **Output:** concrete backlog items only—no vague observations. Each finding needs a **clear problem** and a **specific fix**.
-- Add findings to this file with correct priority; merge duplicates and trim overlap.
-- **Completion:** Move the audit task to [`backlog-archive.md`](backlog-archive.md), keeping a heading that includes **`Audit:`** (same pattern as open tickets, e.g. `## N. Audit: SEO`) so rotation stays traceable. The next time you hit idle, the new `Audit:` task must be the **next** type in the rotation (never the same type twice in a row).
+- Audit **only that category** (no mixing).  
+- Review: key tool pages, shared components / [`js/site.js`](../js/site.js), and relevant docs ([`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.md)).  
+- **Output:** backlog items only—each with a **clear problem + specific fix** (no vague notes).  
+- Add with correct priority; merge dupes; trim overlap.  
+- **Complete:** move to [`backlog-archive.md`](backlog-archive.md) with heading **`Audit:`** (e.g. `## N. Audit: SEO`). Next idle audit = **next type in rotation** (no repeats).
 
 ---
 
 ## Audit rotation
 
-**Order (cycle):** Product → UX → SEO → Reliability → repeat.
+**Cycle:** Product → UX → SEO → Reliability → repeat  
+**Rule:** No consecutive types. Next = successor (UX→SEO, Reliability→Product).
 
-**Successors:** Product → UX → SEO → Reliability → Product (loop).
-
-**Rule:** Do not use the same audit type on consecutive idle spawns. After archiving `Audit: UX`, the next idle-created audit is **SEO**; after **Reliability**, the next is **Product**.
-
-**Types (scope hint):**
+**Types (scope):**
 
 | Type | Focus |
-|------|--------|
-| **Product** | New tools, new pages, meaningful feature gaps on existing tools |
+|------|-------|
+| **Product** | New tools/pages, feature gaps |
 | **UX** | Flows, friction, clarity, accessibility |
-| **SEO** | Titles, metadata, internal linking, content gaps |
+| **SEO** | Titles, metadata, links, content gaps |
 | **Reliability** | Errors, edge cases, performance |
 
 ## Agent workspace notes
 
-You may add **other `.md` files** under `docs/` (or elsewhere in the repo) whenever they help you work faster or more consistently—e.g. audit checklists, per-sprint scratchpads, decision logs, tool-specific investigation notes, or copy-paste templates. Keep them **focused and maintained** so they stay trustworthy; avoid duplicating what already lives in [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.md), or this backlog unless it genuinely reduces friction.
+You may add `.md` files (e.g. in `docs/`) to work faster—checklists, scratchpads, logs, notes, templates.  
+Keep them **focused and maintained**; avoid duplicating [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.md), or this backlog unless it reduces friction.

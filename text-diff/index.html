@@ -67,6 +67,19 @@
     .diff-row--change td { background: #fffbeb; }
     .diff-line-number { color: var(--text-secondary); width: 56px; }
     .diff-actions { display: flex; gap: var(--space-12); flex-wrap: wrap; }
+    .diff-truncate-note {
+      margin: 0;
+      padding: var(--space-12);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--grey-6);
+      background: var(--grey-2);
+    }
+    .diff-load-more-wrap {
+      padding: 0 var(--space-12) var(--space-12);
+      border-bottom: 1px solid var(--grey-6);
+      background: var(--grey-2);
+    }
     @media (max-width: 768px) {
       .diff-inputs { grid-template-columns: 1fr; }
       .diff-actions .btn-download { width: 100%; justify-content: center; }
@@ -263,6 +276,15 @@
               <span itemprop="text">No. All comparison runs locally in your browser with no uploads and no server storage.</span>
             </div>
           </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
+              <span itemprop="name">What if my files are very large?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The table starts with the first several thousand diff rows so the page stays fast. Use “Load more rows” to grow the table in chunks; summary counts always reflect the full comparison. Extremely large diffs cap at 50,000 rendered rows in the browser—split the file if you need more than that visible at once.</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -287,6 +309,13 @@
       var copyBtn = document.getElementById('copyBtn');
 
       var diffTextOutput = '';
+      /** First paint row budget; user can load more in chunks. */
+      var INITIAL_DIFF_ROWS = 4000;
+      var LOAD_MORE_CHUNK = 4000;
+      /** Hard cap on table rows in the DOM (scroll + memory safety). */
+      var MAX_VISIBLE_DIFF_ROWS = 50000;
+      var cachedDiffRows = null;
+      var visibleDiffLimit = 0;
 
       function updateButtonState() {
         var hasLeft = (leftInput.value || '').length > 0;
@@ -396,13 +425,114 @@
           .replace(/'/g, '&#39;');
       }
 
-      function renderDiffTable(rows) {
-        var leftLine = 0;
-        var rightLine = 0;
+      function countDiffStats(rows) {
         var added = 0;
         var removed = 0;
         var changed = 0;
         var same = 0;
+        for (var i = 0; i < rows.length; i += 1) {
+          var row = rows[i];
+          if (row.type === 'add') added += 1;
+          else if (row.type === 'remove') removed += 1;
+          else if (row.type === 'change') changed += 1;
+          else if (row.type === 'same') same += 1;
+        }
+        return { added: added, removed: removed, changed: changed, same: same, total: rows.length };
+      }
+
+      function effectiveRowCap(totalRows) {
+        return Math.min(totalRows, MAX_VISIBLE_DIFF_ROWS);
+      }
+
+      function paintDiffFromCache() {
+        if (!cachedDiffRows || !cachedDiffRows.length) return;
+        var rows = cachedDiffRows;
+        var fullStats = countDiffStats(rows);
+        var cap = effectiveRowCap(rows.length);
+        var limit = Math.min(visibleDiffLimit, cap);
+        var displayRows = rows.slice(0, limit);
+        var rendered = renderDiffTable(displayRows);
+        var hasMoreInTable = limit < cap;
+        var totalCapped = rows.length > MAX_VISIBLE_DIFF_ROWS;
+
+        var noteHtml = '';
+        if (hasMoreInTable || totalCapped) {
+          var parts = [];
+          parts.push(
+            'Showing ' +
+              limit.toLocaleString() +
+              ' of ' +
+              cap.toLocaleString() +
+              ' diff rows in the table'
+          );
+          if (totalCapped) {
+            parts.push(
+              ' (full diff has ' +
+                fullStats.total.toLocaleString() +
+                ' rows; table caps at ' +
+                MAX_VISIBLE_DIFF_ROWS.toLocaleString() +
+                ' for browser performance)'
+            );
+            if (!hasMoreInTable && fullStats.total > cap) {
+              parts.push(
+                '. Split the file or compare a smaller excerpt to review the remaining ' +
+                (fullStats.total - cap).toLocaleString() +
+                ' rows.'
+              );
+            }
+          } else {
+            parts.push(' · summary counts are for all ' + fullStats.total.toLocaleString() + ' rows');
+          }
+          if (hasMoreInTable) {
+            parts.push('. Load more to append the next chunk.');
+          }
+          noteHtml =
+            '<p class="diff-truncate-note" role="status">' +
+            escapeHtml(parts.join('')) +
+            '</p>';
+        }
+        if (hasMoreInTable) {
+          noteHtml +=
+            '<div class="diff-load-more-wrap">' +
+            '<button type="button" class="btn-secondary" id="diffLoadMoreBtn">Load more rows</button>' +
+            '</div>';
+        }
+        diffWrap.innerHTML = noteHtml + rendered.html;
+
+        var metaPrefix = hasMoreInTable || totalCapped
+          ? 'Showing ' + limit.toLocaleString() + ' of ' + cap.toLocaleString() + ' table rows · '
+          : '';
+        resultMeta.textContent =
+          metaPrefix +
+          fullStats.added +
+          ' added · ' +
+          fullStats.removed +
+          ' removed · ' +
+          fullStats.changed +
+          ' changed';
+
+        diffTextOutput = rendered.plain;
+        if (hasMoreInTable || (totalCapped && limit < fullStats.total)) {
+          diffTextOutput +=
+            '\n\n[Copy includes only the ' +
+            limit.toLocaleString() +
+            ' diff rows currently shown in the table. Load more, then copy again to include additional rows.]';
+        }
+        copyBtn.disabled = false;
+        hideError();
+        resultSection.classList.add('visible');
+      }
+
+      function loadMoreDiffRows() {
+        if (!cachedDiffRows || !cachedDiffRows.length) return;
+        var cap = effectiveRowCap(cachedDiffRows.length);
+        visibleDiffLimit = Math.min(visibleDiffLimit + LOAD_MORE_CHUNK, cap);
+        paintDiffFromCache();
+      }
+
+      function renderDiffTable(rows) {
+        var leftLine = 0;
+        var rightLine = 0;
 
         var html = '<table class="diff-table"><thead><tr><th colspan="2">Original text</th><th colspan="2">Updated text</th></tr></thead><tbody>';
         var plain = [];
@@ -419,11 +549,6 @@
             rightLine += 1;
             rightNo = String(rightLine);
           }
-
-          if (row.type === 'add') added += 1;
-          if (row.type === 'remove') removed += 1;
-          if (row.type === 'change') changed += 1;
-          if (row.type === 'same') same += 1;
 
           html += '<tr class="diff-row--' + row.type + '">';
           html += '<td class="diff-line-number">' + escapeHtml(leftNo) + '</td>';
@@ -442,7 +567,6 @@
 
         return {
           html: html,
-          stats: { added: added, removed: removed, changed: changed, same: same, total: rows.length },
           plain: plain.join('\n')
         };
       }
@@ -461,15 +585,13 @@
             var leftLines = splitLines(left);
             var rightLines = splitLines(right);
             var rows = buildLineDiff(leftLines, rightLines);
-            var rendered = renderDiffTable(rows);
-
-            diffWrap.innerHTML = rendered.html;
-            resultMeta.textContent = rendered.stats.added + ' added · ' + rendered.stats.removed + ' removed · ' + rendered.stats.changed + ' changed';
-            diffTextOutput = rendered.plain;
-            copyBtn.disabled = false;
-            hideError();
-            resultSection.classList.add('visible');
+            cachedDiffRows = rows;
+            var cap = effectiveRowCap(rows.length);
+            visibleDiffLimit = Math.min(INITIAL_DIFF_ROWS, cap);
+            paintDiffFromCache();
           } catch (err) {
+            cachedDiffRows = null;
+            visibleDiffLimit = 0;
             showError('Could not compare text. Please try again with smaller input.');
           } finally {
             setBusy(false);
@@ -481,11 +603,20 @@
       rightInput.addEventListener('input', updateButtonState);
       compareBtn.addEventListener('click', compareTexts);
 
+      resultSection.addEventListener('click', function (ev) {
+        if (ev.target && ev.target.id === 'diffLoadMoreBtn') {
+          ev.preventDefault();
+          loadMoreDiffRows();
+        }
+      });
+
       clearLink.addEventListener('click', function (event) {
         event.preventDefault();
         if (clearLink.getAttribute('aria-disabled') === 'true') return;
         leftInput.value = '';
         rightInput.value = '';
+        cachedDiffRows = null;
+        visibleDiffLimit = 0;
         diffWrap.innerHTML = '';
         diffTextOutput = '';
         resultSection.classList.remove('visible');
@@ -496,13 +627,9 @@
 
       copyBtn.addEventListener('click', function () {
         if (!diffTextOutput) return;
-        var original = copyBtn.innerHTML;
-        navigator.clipboard.writeText(diffTextOutput).then(function () {
-          copyBtn.innerHTML = '<span>Copied!</span>';
-          window.setTimeout(function () { copyBtn.innerHTML = original; }, 1200);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(diffTextOutput, copyBtn, function () {
           showError('Copy failed. Please copy manually.');
-        });
+        }, { durationMs: 1200 });
       });
 
       updateButtonState();

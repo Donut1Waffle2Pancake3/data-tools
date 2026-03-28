@@ -531,10 +531,7 @@
       copyBtn.addEventListener('click', function () {
         var json = jsonOutput.value;
         if (!json) return;
-        navigator.clipboard.writeText(json).then(function () {
-          copyBtn.textContent = 'Copied!';
-          setTimeout(function () { copyBtn.textContent = 'Copy JSON'; }, 2000);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(json, copyBtn, function () {
           showError('Copy failed. You can select and copy the preview text manually.');
         });
       });

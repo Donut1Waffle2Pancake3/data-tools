@@ -31,7 +31,7 @@
     .case-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }
     .case-card { border: 1px solid var(--grey-6); border-radius: var(--radius); padding: var(--space-12); background: var(--grey-1); display: flex; flex-direction: column; gap: var(--space-8); }
     .case-label { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .04em; }
-    .case-value { min-height: 56px; font-family: var(--font-body); font-size: 15px; line-height: var(--line-height-loose); white-space: pre-wrap; word-break: break-word; }
+    .case-value { min-height: 56px; max-height: 320px; overflow: auto; font-family: var(--font-body); font-size: 15px; line-height: var(--line-height-loose); white-space: pre-wrap; word-break: break-word; }
     .case-actions { display: flex; justify-content: flex-end; }
     @media (max-width: 768px) { .case-grid { grid-template-columns: 1fr; } }
   </style>
@@ -222,6 +222,15 @@
               <span itemprop="text">No. Conversion happens locally in your browser with no uploads and no server-side storage.</span>
             </div>
           </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
+              <span itemprop="name">Is there a limit on how much text I can paste?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Very long text may show a shortened on-screen preview in each case panel to keep the page fast, but the Copy buttons still copy the full converted text for that style.</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -247,6 +256,10 @@
       var copyLowerBtn = document.getElementById('copyLowerBtn');
       var copyTitleBtn = document.getElementById('copyTitleBtn');
       var copySentenceBtn = document.getElementById('copySentenceBtn');
+
+      /** Max characters written into each preview panel; full strings stay in memory for Copy. */
+      var MAX_PREVIEW_CHARS = 12000;
+      var outputs = { upper: '', lower: '', title: '', sentence: '' };
 
       function showError(message) {
         errorText.textContent = message;
@@ -298,6 +311,7 @@
 
         if (!hasInput) {
           resultSection.classList.remove('visible');
+          outputs.upper = outputs.lower = outputs.title = outputs.sentence = '';
           upperValue.textContent = '';
           lowerValue.textContent = '';
           titleValue.textContent = '';
@@ -307,35 +321,49 @@
         }
 
         try {
-          var upper = input.toUpperCase();
-          var lower = input.toLowerCase();
-          var title = toTitleCase(input);
-          var sentence = toSentenceCase(input);
+          outputs.upper = input.toUpperCase();
+          outputs.lower = input.toLowerCase();
+          outputs.title = toTitleCase(input);
+          outputs.sentence = toSentenceCase(input);
 
-          upperValue.textContent = upper;
-          lowerValue.textContent = lower;
-          titleValue.textContent = title;
-          sentenceValue.textContent = sentence;
-          resultMeta.textContent = input.length.toLocaleString() + ' characters converted';
+          function fillPreview(el, text) {
+            if (text.length <= MAX_PREVIEW_CHARS) {
+              el.textContent = text;
+            } else {
+              var rest = text.length - MAX_PREVIEW_CHARS;
+              el.textContent =
+                text.slice(0, MAX_PREVIEW_CHARS) +
+                '\n\n… ' +
+                rest.toLocaleString() +
+                ' more characters not shown here. Copy still uses the full converted text.';
+            }
+          }
+          fillPreview(upperValue, outputs.upper);
+          fillPreview(lowerValue, outputs.lower);
+          fillPreview(titleValue, outputs.title);
+          fillPreview(sentenceValue, outputs.sentence);
+
+          var meta = input.length.toLocaleString() + ' characters converted';
+          if (input.length > MAX_PREVIEW_CHARS) {
+            meta += ' · previews capped for performance';
+          }
+          resultMeta.textContent = meta;
           setCopyEnabled(true);
           resultSection.classList.add('visible');
         } catch (err) {
+          outputs.upper = outputs.lower = outputs.title = outputs.sentence = '';
           showError('Unable to convert text case.');
           resultSection.classList.remove('visible');
           setCopyEnabled(false);
         }
       }
 
-      function copyFrom(el, btn) {
-        var text = el.textContent || '';
+      function copyFrom(key, btn) {
+        var text = outputs[key] || '';
         if (!text) return;
-        var original = btn.innerHTML;
-        navigator.clipboard.writeText(text).then(function () {
-          btn.innerHTML = 'Copied!';
-          window.setTimeout(function () { btn.innerHTML = original; }, 1000);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(text, btn, function () {
           showError('Copy failed. Please copy manually.');
-        });
+        }, { durationMs: 1000 });
       }
 
       textInput.addEventListener('input', scheduleRender);
@@ -349,10 +377,10 @@
         textInput.value = '';
         render();
       });
-      copyUpperBtn.addEventListener('click', function () { copyFrom(upperValue, copyUpperBtn); });
-      copyLowerBtn.addEventListener('click', function () { copyFrom(lowerValue, copyLowerBtn); });
-      copyTitleBtn.addEventListener('click', function () { copyFrom(titleValue, copyTitleBtn); });
-      copySentenceBtn.addEventListener('click', function () { copyFrom(sentenceValue, copySentenceBtn); });
+      copyUpperBtn.addEventListener('click', function () { copyFrom('upper', copyUpperBtn); });
+      copyLowerBtn.addEventListener('click', function () { copyFrom('lower', copyLowerBtn); });
+      copyTitleBtn.addEventListener('click', function () { copyFrom('title', copyTitleBtn); });
+      copySentenceBtn.addEventListener('click', function () { copyFrom('sentence', copySentenceBtn); });
 
       render();
     })();

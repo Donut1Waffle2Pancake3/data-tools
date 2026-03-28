@@ -420,6 +420,25 @@
       });
 
       convertBtn.addEventListener('click', convert);
+
+      window.setTimeout(function () {
+        var h = window.TinyDataToolExcelHandoff;
+        if (!h) return;
+        var pre = h.takeJsonForExcel();
+        if (!pre) return;
+        jsonInput.value = pre;
+        hasRunCurrentInput = false;
+        lastInputKey = '';
+        clearError();
+        resultSection.classList.remove('visible');
+        if (currentObjectUrl) {
+          URL.revokeObjectURL(currentObjectUrl);
+          currentObjectUrl = null;
+        }
+        downloadLink.style.display = 'none';
+        updateButtonState();
+      }, 0);
+
       updateButtonState();
       clearError();
     })();

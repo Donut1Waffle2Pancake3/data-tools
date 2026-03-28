@@ -362,13 +362,9 @@
 
       copyBtn.addEventListener('click', function () {
         if (!outputText) return;
-        var original = copyBtn.innerHTML;
-        navigator.clipboard.writeText(outputText).then(function () {
-          copyBtn.innerHTML = '<span>Copied!</span>';
-          window.setTimeout(function () { copyBtn.innerHTML = original; }, 1200);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(outputText, copyBtn, function () {
           setError('Copy failed. Please copy manually.');
-        });
+        }, { durationMs: 1200 });
       });
 
       updateState();

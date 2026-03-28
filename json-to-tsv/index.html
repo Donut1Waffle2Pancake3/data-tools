@@ -734,10 +734,7 @@
   copyBtn.addEventListener('click', function () {
     var tsv = tsvOutput.value;
     if (!tsv) return;
-    navigator.clipboard.writeText(tsv).then(function () {
-      copyBtn.textContent = 'Copied!';
-      setTimeout(function () { copyBtn.textContent = 'Copy Output'; }, 2000);
-    }).catch(function () {
+    window.TinyDataToolClipboard.copyWithFeedback(tsv, copyBtn, function () {
       showError('Copy failed. You can select and copy the preview text manually.');
     });
   });

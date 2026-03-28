@@ -171,7 +171,6 @@
 
   validateBtn.addEventListener('click', runValidate);
 
-  var copyErrorBtnLabel = 'Copy Error Message';
   copyErrorBtn.addEventListener('click', function () {
     if (!lastErrorMessage) return;
     var toCopy = lastErrorMessage;
@@ -184,15 +183,14 @@
         toCopy += '\nLine: ' + lineText + '\nColumn: ' + colText;
       }
     }
-    navigator.clipboard.writeText(toCopy).then(function () {
-      var textNode = copyErrorBtn.querySelector('span');
-      if (textNode) {
-        textNode.textContent = 'Copied!';
-        setTimeout(function () { textNode.textContent = copyErrorBtnLabel; }, 2000);
-      }
-    }).catch(function () {
-      showError('Copy failed. Select and copy the error text manually.');
-    });
+    window.TinyDataToolClipboard.copyWithFeedback(
+      toCopy,
+      copyErrorBtn,
+      function () {
+        showError('Copy failed. Select and copy the error text manually.');
+      },
+      { durationMs: 2000, labelSelector: 'span' }
+    );
   });
 
   function setInputFromFile(text) {

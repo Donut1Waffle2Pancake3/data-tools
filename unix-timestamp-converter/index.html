@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Unix Timestamp Converter | Epoch to Date (ms &amp; s) | TinyDataTool</title>
+  <meta name="description" content="Convert Unix timestamps to human-readable dates and back. Supports seconds or milliseconds, time zones, batch lines, and a one-click Now. Private, in your browser—no upload." />
+  <link rel="canonical" href="https://tinydatatool.com/unix-timestamp-converter/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Unix Timestamp Converter | TinyDataTool" />
+  <meta property="og:description" content="Epoch ↔ date in your browser. Time zones, ISO output, batch mode." />
+  <meta property="og:url" content="https://tinydatatool.com/unix-timestamp-converter/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Unix Timestamp Converter | TinyDataTool" />
+  <meta name="twitter:description" content="Convert Unix time to dates locally. No signup." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Unix Timestamp Converter","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/unix-timestamp-converter/","description":"Convert Unix epoch seconds or milliseconds to readable dates and ISO strings, and parse ISO dates back to epoch. Runs in your browser."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .tool-panel { display: none; }
+    .tool-panel.is-active { display: block; }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .ts-out-grid { display: grid; gap: 16px; }
+    @media (min-width: 640px) { .ts-out-grid { grid-template-columns: 1fr 1fr; } }
+    #tzSelect { max-width: 100%; }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="unix-timestamp-converter"></div>
+
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">Unix Timestamp Converter</h1>
+        <p class="hero__sub">Turn <strong>Unix epoch</strong> values (seconds or milliseconds) into <strong>UTC ISO</strong> strings and a readable date in a <strong>chosen time zone</strong>, or paste an <strong>ISO 8601</strong> date to get the epoch. Use <strong>batch mode</strong> for one value per line—ideal for logs and JSON exports. Everything stays in your browser.</p>
+      </div>
+    </section>
+
+    <section aria-label="Unix timestamp converter" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="Unix timestamp converter">
+
+          <div class="form-group">
+            <label class="form-label" for="tzSelect">Display time zone</label>
+            <select id="tzSelect" class="form-input" aria-describedby="tzHint"></select>
+            <p class="form-hint" id="tzHint">Uses the IANA time zone database. <strong>Daylight saving</strong> is applied automatically for the region you pick. “Local” follows this device’s clock.</p>
+          </div>
+
+          <div class="form-section" role="group" aria-labelledby="mode-label">
+            <span class="form-section__label" id="mode-label">Mode</span>
+            <div class="form-inline-row" style="flex-wrap: wrap;">
+              <label class="form-option" for="modeEpoch">
+                <input type="radio" name="toolMode" id="modeEpoch" value="epoch" checked />
+                <span>Epoch → date</span>
+              </label>
+              <label class="form-option" for="modeHuman">
+                <input type="radio" name="toolMode" id="modeHuman" value="human" />
+                <span>Date → epoch</span>
+              </label>
+              <label class="form-option" for="modeBatch">
+                <input type="radio" name="toolMode" id="modeBatch" value="batch" />
+                <span>Batch (epochs → dates)</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="panelEpoch" class="tool-panel is-active" role="tabpanel">
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="epochInput">Unix timestamp</label>
+                <button type="button" class="clear-link clear-link--enabled" id="nowBtn">Now</button>
+              </div>
+              <input type="text" id="epochInput" class="form-input" inputmode="numeric" placeholder="e.g. 1711537200 or 1711537200000" autocomplete="off" aria-describedby="unitHint" />
+              <div class="form-inline-row" style="margin-top: 12px; flex-wrap: wrap;">
+                <label class="form-option" for="unitSeconds">
+                  <input type="radio" name="epochUnit" id="unitSeconds" value="seconds" />
+                  <span>Seconds</span>
+                </label>
+                <label class="form-option" for="unitMillis">
+                  <input type="radio" name="epochUnit" id="unitMillis" value="millis" checked />
+                  <span>Milliseconds</span>
+                </label>
+              </div>
+              <p class="form-hint" id="unitHint">JSON and JavaScript usually use <strong>milliseconds</strong>. Some APIs and CLIs use <strong>seconds</strong>.</p>
+            </div>
+            <div class="result-section visible" aria-live="polite">
+              <p class="result-section__title">Result</p>
+              <div class="ts-out-grid">
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="outIso">UTC (ISO 8601)</label>
+                  <textarea id="outIso" class="form-input" readonly rows="2" style="min-height: 0;"></textarea>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="outZoned">Selected zone</label>
+                  <textarea id="outZoned" class="form-input" readonly rows="3" style="min-height: 0;"></textarea>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="outSeconds">Unix seconds</label>
+                  <input type="text" id="outSeconds" class="form-input" readonly />
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="outMillis">Unix milliseconds</label>
+                  <input type="text" id="outMillis" class="form-input" readonly />
+                </div>
+              </div>
+              <div class="result-actions" style="margin-top: 8px;">
+                <button type="button" class="btn-download" id="copyEpochBtn" disabled>
+                  <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true"><path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/></svg>
+                  Copy summary
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="panelHuman" class="tool-panel" role="tabpanel" hidden>
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="humanInput">Date/time (ISO 8601)</label>
+                <button type="button" class="clear-link clear-link--enabled" id="humanNowBtn">Now</button>
+              </div>
+              <textarea id="humanInput" class="form-input" rows="2" placeholder="2026-03-28T15:30:00Z&#10;2026-03-28T12:30:00-04:00" spellcheck="false" aria-describedby="humanHint"></textarea>
+              <p class="form-hint" id="humanHint">Include a <strong>Z</strong> (UTC) or a numeric <strong>offset</strong> (e.g. <code>-04:00</code>) so the instant is unambiguous.</p>
+            </div>
+            <div class="result-section visible" aria-live="polite">
+              <p class="result-section__title">Epoch</p>
+              <div class="ts-out-grid">
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="humanOutMs">Milliseconds</label>
+                  <input type="text" id="humanOutMs" class="form-input" readonly />
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="humanOutS">Seconds</label>
+                  <input type="text" id="humanOutS" class="form-input" readonly />
+                </div>
+              </div>
+              <div class="form-group" style="margin-top: 16px;">
+                <label class="form-label" for="humanOutZoned">Same instant in selected zone</label>
+                <textarea id="humanOutZoned" class="form-input" readonly rows="2"></textarea>
+              </div>
+              <div class="result-actions" style="margin-top: 8px;">
+                <button type="button" class="btn-download" id="copyHumanBtn" disabled>
+                  <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true"><path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/></svg>
+                  Copy summary
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="panelBatch" class="tool-panel" role="tabpanel" hidden>
+            <div class="form-group">
+              <label class="form-label" for="batchInput">One Unix timestamp per line</label>
+              <textarea id="batchInput" class="form-input" rows="4" placeholder="1711537200&#10;1711537200000" spellcheck="false" aria-describedby="batchHint"></textarea>
+              <div class="form-inline-row" style="margin-top: 12px; flex-wrap: wrap;">
+                <label class="form-option" for="batchUnitSeconds">
+                  <input type="radio" name="batchUnit" id="batchUnitSeconds" value="seconds" />
+                  <span>Interpret as seconds</span>
+                </label>
+                <label class="form-option" for="batchUnitAuto">
+                  <input type="radio" name="batchUnit" id="batchUnitAuto" value="auto" checked />
+                  <span>Auto (≥ 1e12 → ms, else seconds)</span>
+                </label>
+                <label class="form-option" for="batchUnitMillis">
+                  <input type="radio" name="batchUnit" id="batchUnitMillis" value="millis" />
+                  <span>Interpret as milliseconds</span>
+                </label>
+              </div>
+              <p class="form-hint" id="batchHint">Up to <strong>500</strong> non-empty lines. Output: <code>input → ISO (UTC) | localized</code> per line.</p>
+            </div>
+            <div class="result-section visible" aria-live="polite">
+              <p class="result-section__title">Batch output</p>
+              <div class="form-group">
+                <label class="form-label" for="batchOutput">Results</label>
+                <textarea id="batchOutput" class="form-input" readonly rows="8" style="min-height: 120px;"></textarea>
+              </div>
+              <div class="result-actions">
+                <button type="button" class="btn-download" id="copyBatchBtn" disabled>
+                  <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true"><path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/></svg>
+                  Copy output
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Timestamps and dates are processed only in your browser; nothing is uploaded.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to convert Unix time</h2>
+        <p class="section-body">Unix time counts seconds (or milliseconds) from 1 January 1970 UTC. Pick seconds or milliseconds, choose a zone for readable output, and copy ISO or epoch values for logs, APIs, and databases.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Choose a mode</p>
+            <p class="step__desc">Convert a single epoch, parse an ISO string into epoch values, or paste many numbers at once.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Set units and zone</p>
+            <p class="step__desc">Match seconds vs milliseconds to your source (CLI vs JavaScript). Pick a time zone for the human-friendly line.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy the result</p>
+            <p class="step__desc">Use UTC ISO for APIs, localized text for reading, or batch lines for spreadsheets.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Why convert timestamps online?</h2>
+        <p class="section-body">Logs, webhooks, and JSON fields often carry raw epoch numbers. Converting them quickly—with correct time zones and DST—saves context switching to a shell or spreadsheet.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v4M9 14v2M4 9H2M16 9h-2M5.2 5.2L3.8 3.8M14.2 14.2l-1.4-1.4M5.2 12.8l-1.4 1.4M14.2 3.8l-1.4 1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <p class="benefit__title">Debug faster</p>
+              <p class="benefit__desc">Turn opaque integers into moments you can read and compare across regions.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="4" width="12" height="11" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M3 8h12M7 3v2M11 3v2" stroke="currentColor" stroke-width="1.5"/></svg>
+            </div>
+            <div>
+              <p class="benefit__title">Match your stack</p>
+              <p class="benefit__desc">Switch between seconds and milliseconds to align with Postgres, JavaScript, or Unix tools.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9h14M9 2v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <p class="benefit__title">Batch from logs</p>
+              <p class="benefit__desc">Paste many epochs and get one readable block for notes or tickets.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <p class="benefit__title">Stay private</p>
+              <p class="benefit__desc">Sensitive log lines never leave your device—no paste-to-server risk.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="secure-heading">
+      <div class="container--wide">
+        <p class="section-label">Privacy</p>
+        <h2 class="section-title" id="secure-heading">Private and secure</h2>
+        <p class="section-body">All math and formatting run locally. We do not store timestamps or share them with any server.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <p class="benefit__title">On-device only</p>
+              <p class="benefit__desc">Your input stays in the page until you close the tab.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <p class="benefit__title">No account</p>
+              <p class="benefit__desc">Use it instantly without signing up or granting permissions beyond the browser.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="ts-faq-1-answer">
+              <span itemprop="name">What is the difference between Unix seconds and milliseconds?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="ts-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">They measure the same instant: seconds are 1000× smaller than milliseconds. JavaScript <code>Date.now()</code> uses milliseconds; many CLIs and databases use seconds.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="ts-faq-2-answer">
+              <span itemprop="name">Is UTC the same as Unix time?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="ts-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The Unix epoch is defined in UTC. The ISO string we show as “UTC” is that instant expressed with a <code>Z</code> suffix (zero offset).</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="ts-faq-3-answer">
+              <span itemprop="name">How does batch “auto” detect seconds vs milliseconds?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="ts-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">If the absolute value is at least <code>1e12</code>, it is treated as milliseconds; otherwise as seconds. Very large second counts may be misread—then pick seconds or milliseconds explicitly.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="ts-faq-4-answer">
+              <span itemprop="name">Why must ISO strings include Z or an offset?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="ts-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Without a zone, browsers interpret “local” time differently per user. For a single unambiguous instant, use <code>Z</code> or an explicit offset like <code>+01:00</code>.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="ts-faq-5-answer">
+              <span itemprop="name">Are my timestamps uploaded?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="ts-faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. Conversion runs entirely in your browser; nothing is sent to TinyDataTool.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="unix-timestamp-converter"></div>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+
+  <script>
+    (function () {
+      var TZ_OPTIONS = [
+        { v: '__local__', l: 'Local time (this device)' },
+        { v: 'UTC', l: 'UTC' },
+        { v: 'Europe/London', l: 'Europe / London' },
+        { v: 'Europe/Paris', l: 'Europe / Paris' },
+        { v: 'Europe/Berlin', l: 'Europe / Berlin' },
+        { v: 'America/New_York', l: 'America / New York' },
+        { v: 'America/Chicago', l: 'America / Chicago' },
+        { v: 'America/Denver', l: 'America / Denver' },
+        { v: 'America/Los_Angeles', l: 'America / Los Angeles' },
+        { v: 'America/Sao_Paulo', l: 'America / São Paulo' },
+        { v: 'Asia/Dubai', l: 'Asia / Dubai' },
+        { v: 'Asia/Kolkata', l: 'Asia / Kolkata' },
+        { v: 'Asia/Tokyo', l: 'Asia / Tokyo' },
+        { v: 'Asia/Shanghai', l: 'Asia / Shanghai' },
+        { v: 'Australia/Sydney', l: 'Australia / Sydney' },
+        { v: 'Pacific/Auckland', l: 'Pacific / Auckland' }
+      ];
+
+      var MS_MIN = -8640000000000000;
+      var MS_MAX = 8640000000000000;
+      var BATCH_MAX_LINES = 500;
+
+      var tzSelect = document.getElementById('tzSelect');
+      var modeEpoch = document.getElementById('modeEpoch');
+      var modeHuman = document.getElementById('modeHuman');
+      var modeBatch = document.getElementById('modeBatch');
+      var panelEpoch = document.getElementById('panelEpoch');
+      var panelHuman = document.getElementById('panelHuman');
+      var panelBatch = document.getElementById('panelBatch');
+      var epochInput = document.getElementById('epochInput');
+      var unitSeconds = document.getElementById('unitSeconds');
+      var unitMillis = document.getElementById('unitMillis');
+      var nowBtn = document.getElementById('nowBtn');
+      var outIso = document.getElementById('outIso');
+      var outZoned = document.getElementById('outZoned');
+      var outSeconds = document.getElementById('outSeconds');
+      var outMillis = document.getElementById('outMillis');
+      var copyEpochBtn = document.getElementById('copyEpochBtn');
+      var humanInput = document.getElementById('humanInput');
+      var humanOutMs = document.getElementById('humanOutMs');
+      var humanOutS = document.getElementById('humanOutS');
+      var humanOutZoned = document.getElementById('humanOutZoned');
+      var copyHumanBtn = document.getElementById('copyHumanBtn');
+      var batchInput = document.getElementById('batchInput');
+      var batchUnitSeconds = document.getElementById('batchUnitSeconds');
+      var batchUnitAuto = document.getElementById('batchUnitAuto');
+      var batchUnitMillis = document.getElementById('batchUnitMillis');
+      var batchOutput = document.getElementById('batchOutput');
+      var copyBatchBtn = document.getElementById('copyBatchBtn');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+
+      var debEpoch = null;
+      var debHuman = null;
+      var debBatch = null;
+
+      for (var t = 0; t < TZ_OPTIONS.length; t++) {
+        var o = document.createElement('option');
+        o.value = TZ_OPTIONS[t].v;
+        o.textContent = TZ_OPTIONS[t].l;
+        tzSelect.appendChild(o);
+      }
+
+      function clearError() {
+        errorMsg.classList.remove('visible');
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function getTzValue() {
+        return tzSelect.value || '__local__';
+      }
+
+      function formatZoned(ms, tzVal) {
+        var opts = { dateStyle: 'full', timeStyle: 'long' };
+        if (tzVal !== '__local__') opts.timeZone = tzVal;
+        try {
+          return new Intl.DateTimeFormat(undefined, opts).format(ms);
+        } catch (e) {
+          return '(invalid zone)';
+        }
+      }
+
+      function parseEpochDigits(str, unitSecondsMode) {
+        var s = String(str || '').replace(/\s+/g, '').replace(/_/g, '');
+        if (!s) return null;
+        if (!/^-?\d+$/.test(s)) return NaN;
+        var n = Number(s);
+        if (!Number.isFinite(n)) return NaN;
+        var ms = unitSecondsMode ? n * 1000 : n;
+        if (ms < MS_MIN || ms > MS_MAX) return NaN;
+        return ms;
+      }
+
+      function lineMsFromBatchLine(str, batchMode) {
+        var s = String(str || '').trim();
+        if (!s) return null;
+        if (!/^-?\d+$/.test(s)) return NaN;
+        var n = Number(s);
+        if (!Number.isFinite(n)) return NaN;
+        var ms;
+        if (batchMode === 'seconds') ms = n * 1000;
+        else if (batchMode === 'millis') ms = n;
+        else {
+          var a = Math.abs(n);
+          ms = a >= 1e12 ? n : n * 1000;
+        }
+        if (ms < MS_MIN || ms > MS_MAX) return NaN;
+        return ms;
+      }
+
+      function clearEpochOut() {
+        outIso.value = '';
+        outZoned.value = '';
+        outSeconds.value = '';
+        outMillis.value = '';
+        copyEpochBtn.disabled = true;
+      }
+
+      function runEpoch() {
+        clearError();
+        var ms = parseEpochDigits(epochInput.value, unitSeconds.checked);
+        if (epochInput.value.trim() === '') {
+          clearEpochOut();
+          return;
+        }
+        if (ms == null || Number.isNaN(ms)) {
+          clearEpochOut();
+          showError('Enter digits only (Unix seconds or milliseconds).');
+          return;
+        }
+        var d = new Date(ms);
+        outIso.value = d.toISOString();
+        outZoned.value = formatZoned(ms, getTzValue());
+        outSeconds.value = String(Math.floor(ms / 1000));
+        outMillis.value = String(ms);
+        copyEpochBtn.disabled = false;
+      }
+
+      function clearHumanOut() {
+        humanOutMs.value = '';
+        humanOutS.value = '';
+        humanOutZoned.value = '';
+        copyHumanBtn.disabled = true;
+      }
+
+      function runHuman() {
+        clearError();
+        var raw = (humanInput.value || '').trim();
+        if (!raw) {
+          clearHumanOut();
+          return;
+        }
+        var ms = Date.parse(raw);
+        if (Number.isNaN(ms)) {
+          clearHumanOut();
+          showError('Could not parse date. Use ISO 8601 with Z or a numeric offset (e.g. 2026-03-28T12:00:00Z).');
+          return;
+        }
+        humanOutMs.value = String(ms);
+        humanOutS.value = String(Math.floor(ms / 1000));
+        humanOutZoned.value = formatZoned(ms, getTzValue());
+        copyHumanBtn.disabled = false;
+      }
+
+      function batchMode() {
+        if (batchUnitSeconds.checked) return 'seconds';
+        if (batchUnitMillis.checked) return 'millis';
+        return 'auto';
+      }
+
+      function runBatch() {
+        clearError();
+        var text = batchInput.value || '';
+        var lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+        var bm = batchMode();
+        var out = [];
+        var nonEmpty = 0;
+        var mode = bm;
+
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          var trimmed = line.trim();
+          if (!trimmed) {
+            out.push('');
+            continue;
+          }
+          nonEmpty++;
+          if (nonEmpty > BATCH_MAX_LINES) {
+            showError('Batch mode supports at most ' + BATCH_MAX_LINES + ' non-empty lines.');
+            batchOutput.value = out.join('\n');
+            copyBatchBtn.disabled = out.join('\n').trim().length === 0;
+            return;
+          }
+          var ms = lineMsFromBatchLine(trimmed, mode);
+          if (ms == null || Number.isNaN(ms)) {
+            out.push(trimmed + ' → invalid');
+            continue;
+          }
+          var d = new Date(ms);
+          var iso = d.toISOString();
+          var z = formatZoned(ms, getTzValue());
+          out.push(trimmed + ' → ' + iso + ' | ' + z);
+        }
+
+        batchOutput.value = out.join('\n');
+        copyBatchBtn.disabled = nonEmpty === 0;
+      }
+
+      function setMode(which) {
+        panelEpoch.classList.toggle('is-active', which === 'epoch');
+        panelHuman.classList.toggle('is-active', which === 'human');
+        panelBatch.classList.toggle('is-active', which === 'batch');
+        panelEpoch.hidden = which !== 'epoch';
+        panelHuman.hidden = which !== 'human';
+        panelBatch.hidden = which !== 'batch';
+        clearError();
+      }
+
+      modeEpoch.addEventListener('change', function () { if (modeEpoch.checked) setMode('epoch'); });
+      modeHuman.addEventListener('change', function () { if (modeHuman.checked) setMode('human'); });
+      modeBatch.addEventListener('change', function () { if (modeBatch.checked) setMode('batch'); });
+
+      tzSelect.addEventListener('change', function () {
+        runEpoch();
+        runHuman();
+        runBatch();
+      });
+
+      epochInput.addEventListener('input', function () {
+        if (debEpoch) window.clearTimeout(debEpoch);
+        debEpoch = window.setTimeout(function () {
+          debEpoch = null;
+          runEpoch();
+        }, 160);
+      });
+
+      unitSeconds.addEventListener('change', runEpoch);
+      unitMillis.addEventListener('change', runEpoch);
+
+      nowBtn.addEventListener('click', function () {
+        clearError();
+        unitMillis.checked = true;
+        epochInput.value = String(Date.now());
+        runEpoch();
+      });
+
+      humanInput.addEventListener('input', function () {
+        if (debHuman) window.clearTimeout(debHuman);
+        debHuman = window.setTimeout(function () {
+          debHuman = null;
+          runHuman();
+        }, 200);
+      });
+
+      batchInput.addEventListener('input', function () {
+        if (debBatch) window.clearTimeout(debBatch);
+        debBatch = window.setTimeout(function () {
+          debBatch = null;
+          runBatch();
+        }, 200);
+      });
+      batchUnitSeconds.addEventListener('change', runBatch);
+      batchUnitAuto.addEventListener('change', runBatch);
+      batchUnitMillis.addEventListener('change', runBatch);
+
+      copyEpochBtn.addEventListener('click', function () {
+        var summary = 'UTC: ' + outIso.value + '\n' + outZoned.value + '\nSeconds: ' + outSeconds.value + '\nMilliseconds: ' + outMillis.value;
+        if (!outIso.value) return;
+        window.TinyDataToolClipboard.copyWithFeedback(summary, copyEpochBtn, function () {
+          showError('Copy failed. Select text and copy manually.');
+        });
+      });
+
+      copyHumanBtn.addEventListener('click', function () {
+        var summary = 'Milliseconds: ' + humanOutMs.value + '\nSeconds: ' + humanOutS.value + '\n' + humanOutZoned.value;
+        if (!humanOutMs.value) return;
+        window.TinyDataToolClipboard.copyWithFeedback(summary, copyHumanBtn, function () {
+          showError('Copy failed. Select text and copy manually.');
+        });
+      });
+
+      copyBatchBtn.addEventListener('click', function () {
+        var t = batchOutput.value;
+        if (!t) return;
+        window.TinyDataToolClipboard.copyWithFeedback(t, copyBatchBtn, function () {
+          showError('Copy failed. Select output and copy manually.');
+        });
+      });
+
+      document.getElementById('humanNowBtn').addEventListener('click', function () {
+        clearError();
+        humanInput.value = new Date().toISOString();
+        runHuman();
+      });
+
+      setMode('epoch');
+      runEpoch();
+      runHuman();
+      runBatch();
+    })();
+  </script>
+</body>
+</html>

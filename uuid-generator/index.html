@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>UUID Generator &amp; Validator (v4) | Free &amp; Private | TinyDataTool</title>
+  <meta name="description" content="Generate RFC 4122 UUID v4 values in bulk and validate UUID strings in your browser. Uses crypto-safe randomness when available. Private, client-side—nothing is uploaded." />
+  <link rel="canonical" href="https://tinydatatool.com/uuid-generator/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="UUID Generator &amp; Validator (v4) | Free &amp; Private | TinyDataTool" />
+  <meta property="og:description" content="Generate and validate UUIDs locally. Bulk up to 10,000 IDs; paste multi-line lists to check each line." />
+  <meta property="og:url" content="https://tinydatatool.com/uuid-generator/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="UUID Generator &amp; Validator | TinyDataTool" />
+  <meta name="twitter:description" content="Generate UUID v4 and validate UUID strings. Private, in your browser." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"UUID Generator & Validator","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/uuid-generator/","description":"Generate cryptographically random UUID v4 values and validate UUID strings. Runs entirely in your browser."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .tool-panel { display: none; }
+    .tool-panel.is-active { display: block; }
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    #bulkWarning.visible { display: block !important; }
+    #countInput { max-width: 120px; }
+    .uuid-validate-output {
+      font-family: var(--font-mono, ui-monospace, monospace);
+      font-size: var(--text-sm);
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 120px;
+      padding: 12px 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      background: var(--surface-raised);
+      margin: 0;
+    }
+    .uuid-validate-output .ok { color: var(--text-primary); }
+    .uuid-validate-output .bad { color: var(--status-error-fg, #b42318); }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="uuid-generator"></div>
+
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">UUID Generator &amp; Validator</h1>
+        <p class="hero__sub">Create random <strong>UUID version 4</strong> identifiers for APIs, databases, and tests—or paste a list to verify each value. Up to 10,000 IDs per batch, chunked so the tab stays responsive. Everything runs locally in your browser.</p>
+      </div>
+    </section>
+
+    <section aria-label="UUID tool" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="UUID generator and validator">
+
+          <div class="form-section" role="group" aria-labelledby="mode-label">
+            <span class="form-section__label" id="mode-label">Mode</span>
+            <div class="form-inline-row" style="flex-wrap: wrap;">
+              <label class="form-option" for="modeGenerate">
+                <input type="radio" name="toolMode" id="modeGenerate" value="generate" checked />
+                <span>Generate</span>
+              </label>
+              <label class="form-option" for="modeValidate">
+                <input type="radio" name="toolMode" id="modeValidate" value="validate" />
+                <span>Validate</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="panelGenerate" class="tool-panel is-active" role="tabpanel" aria-labelledby="mode-label">
+            <div class="form-group">
+              <label class="form-label" for="countInput">How many UUIDs?</label>
+              <div class="form-inline-row" style="align-items: center; gap: 12px; flex-wrap: wrap;">
+                <input type="number" id="countInput" class="form-input" min="1" max="10000" value="1" inputmode="numeric" aria-describedby="countHint" />
+                <button type="button" class="btn-primary" id="generateBtn" aria-label="Generate UUIDs">
+                  <span class="spinner" aria-hidden="true"></span>
+                  <span id="generateBtnLabel">Generate</span>
+                </button>
+              </div>
+              <p class="form-hint" id="countHint">Maximum 10,000 per run. Large batches are built in small chunks so the page stays usable.</p>
+              <p class="form-hint" id="bulkWarning" role="status" style="display: none; margin-top: 8px;">Generating more than 1,000 UUIDs may take a few seconds. Your browser tab may feel busy until it finishes.</p>
+            </div>
+            <div class="result-section visible" id="generateResult" aria-live="polite">
+              <div class="result-section__heading">
+                <p class="result-section__title">Output</p>
+                <p class="result-section__meta" id="generateMeta">No UUIDs generated yet.</p>
+              </div>
+              <div class="result-section__body">
+                <div class="form-group">
+                  <label class="form-label" for="generateOutput">UUIDs</label>
+                  <textarea id="generateOutput" class="form-input" readonly placeholder="Generated UUIDs appear here." aria-label="Generated UUID list" style="min-height: 160px;"></textarea>
+                </div>
+                <div class="result-actions">
+                  <button class="btn-download" id="copyGenerateBtn" type="button" disabled aria-label="Copy UUIDs to clipboard">
+                    <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
+                    </svg>
+                    Copy output
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="panelValidate" class="tool-panel" role="tabpanel" aria-labelledby="mode-label" hidden>
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="validateInput">UUIDs to check</label>
+                <a href="#" class="clear-link" id="validateClearLink" role="button" aria-disabled="true">Clear</a>
+              </div>
+              <textarea id="validateInput" class="form-input" placeholder="Paste one UUID per line. Braces, quotes, and urn:uuid: prefixes are accepted." spellcheck="false" style="min-height: 120px;"></textarea>
+            </div>
+            <div class="result-section visible" id="validateResult" aria-live="polite">
+              <div class="result-section__heading">
+                <p class="result-section__title">Results</p>
+                <p class="result-section__meta" id="validateMeta">Paste UUIDs to validate.</p>
+              </div>
+              <div class="result-section__body">
+                <p class="form-label" id="validateOutputLabel">Status per line</p>
+                <pre id="validateOutputPre" class="uuid-validate-output" aria-labelledby="validateOutputLabel"></pre>
+                <div class="result-actions" style="margin-top: 12px;">
+                  <button class="btn-download" id="copyValidateBtn" type="button" disabled aria-label="Copy validation summary">
+                    <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
+                    </svg>
+                    Copy summary
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            UUIDs are created and checked entirely in your browser and are never uploaded to any server.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to generate or validate UUIDs</h2>
+        <p class="section-body">Pick generate or validate, run the action, and copy the result. Random IDs use your browser’s crypto APIs when available; validation accepts common formatting extras like braces.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Choose a mode</p>
+            <p class="step__desc">Generate fresh v4 UUIDs or switch to validate to audit a pasted list.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Set count or paste values</p>
+            <p class="step__desc">Enter how many UUIDs you need (up to 10,000), or paste one identifier per line to check.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy the output</p>
+            <p class="step__desc">Copy generated IDs or the validation summary for specs, seed data, or logs.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Why generate UUIDs in the browser?</h2>
+        <p class="section-body">UUIDs are the default primary keys and correlation IDs in many APIs. A quick, private generator avoids shell snippets or pasting into untrusted sites when you just need a handful—or thousands—of values.</p>
+        <p class="section-body" style="margin-top: 12px;">Useful when you need to:</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="3" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 9h6M9 6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Seed test data</p>
+              <p class="benefit__desc">Bulk-generate v4 UUIDs for fixtures, mocks, and staging imports without leaving the tab.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L4 4.5v5c0 2.5 2 4.5 5 5 3-.5 5-2.5 5-5v-5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 8.5l1.5 1.5 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Verify pasted IDs</p>
+              <p class="benefit__desc">Confirm whether each line is a well-formed RFC-style UUID before merging configs or logs.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Stay on v4</p>
+              <p class="benefit__desc">Generation is limited to version 4 (random) so behavior matches what most stacks expect for new keys.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 9h14M9 2v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Keep data local</p>
+              <p class="benefit__desc">Nothing is sent to a server—suitable for internal IDs and pre-production data.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="secure-heading">
+      <div class="container--wide">
+        <p class="section-label">Privacy</p>
+        <h2 class="section-title" id="secure-heading">Private and secure</h2>
+        <p class="section-body">UUID generation and validation use JavaScript in your browser only. Values are not stored, logged, or transmitted.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Data stays on your device</p>
+              <p class="benefit__desc">Random bytes never leave memory except when you copy them yourself.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M184 64C135.4 64 96 103.4 96 152L96 496C96 540.2 131.8 576 176 576L520 576C533.3 576 544 565.3 544 552C544 538.7 533.3 528 520 528L512 528L512 451.9C531.3 439 544 417 544 392L544 136C544 96.2 511.8 64 472 64L184 64zM464 464L464 528L176 528C158.3 528 144 513.7 144 496C144 478.3 158.3 464 176 464L464 464zM176 416C164.6 416 153.8 418.4 144 422.7L144 152C144 129.9 161.9 112 184 112L472 112C485.3 112 496 122.7 496 136L496 392C496 405.3 485.3 416 472 416L176 416z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">No uploads</p>
+              <p class="benefit__desc">Validation compares strings locally; pasted lists are not sent anywhere.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Modern randomness</p>
+              <p class="benefit__desc">When supported, generation uses <code>crypto.randomUUID</code> or <code>getRandomValues</code> for unpredictable bits.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="uuid-faq-1-answer">
+              <span itemprop="name">What is a UUID v4?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="uuid-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Version 4 is a random UUID: 122 random bits plus fixed version and variant bits, written as 8-4-4-4-12 hexadecimal groups. It is the most common choice for new database keys.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="uuid-faq-2-answer">
+              <span itemprop="name">Will these UUIDs collide?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="uuid-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Practically never for normal use: the space is so large that accidental duplicates are negligible if the random source is good.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="uuid-faq-3-answer">
+              <span itemprop="name">What does the validator accept?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="uuid-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Standard hyphenated hex form, case-insensitive, optional braces or <code>urn:uuid:</code> prefix. Nil UUID (<code>00000000-0000-0000-0000-000000000000</code>) counts as valid.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="uuid-faq-4-answer">
+              <span itemprop="name">Does validation check that a UUID is v4?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="uuid-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">It checks RFC-style structure (versions 1–5 and correct variant bits). v1 and v5 strings can still be valid UUIDs even though this tool only generates v4.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="uuid-faq-5-answer">
+              <span itemprop="name">Why is bulk generation chunked?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="uuid-faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Creating tens of thousands of IDs in one synchronous loop can freeze the page. This tool yields between chunks so the browser can stay responsive.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="uuid-faq-6-answer">
+              <span itemprop="name">Are UUIDs uploaded when I use this tool?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="uuid-faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. Generation and validation run entirely in your browser; nothing is sent to TinyDataTool or any third party.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="uuid-generator"></div>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+
+  <script>
+    (function () {
+      var MAX_COUNT = 10000;
+      var CHUNK = 400;
+
+      var modeGenerate = document.getElementById('modeGenerate');
+      var modeValidate = document.getElementById('modeValidate');
+      var panelGenerate = document.getElementById('panelGenerate');
+      var panelValidate = document.getElementById('panelValidate');
+      var countInput = document.getElementById('countInput');
+      var generateBtn = document.getElementById('generateBtn');
+      var generateBtnLabel = document.getElementById('generateBtnLabel');
+      var bulkWarning = document.getElementById('bulkWarning');
+      var generateOutput = document.getElementById('generateOutput');
+      var generateMeta = document.getElementById('generateMeta');
+      var copyGenerateBtn = document.getElementById('copyGenerateBtn');
+      var validateInput = document.getElementById('validateInput');
+      var validateClearLink = document.getElementById('validateClearLink');
+      var validateOutputPre = document.getElementById('validateOutputPre');
+      var validateMeta = document.getElementById('validateMeta');
+      var copyValidateBtn = document.getElementById('copyValidateBtn');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+
+      var validatePlainText = '';
+      var validateDebounce = null;
+
+      function clearError() {
+        errorMsg.classList.remove('visible');
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function hex2(b) {
+        var h = (b & 255).toString(16);
+        return h.length < 2 ? '0' + h : h;
+      }
+
+      function randomUuidV4() {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+          return crypto.randomUUID();
+        }
+        if (typeof crypto === 'undefined' || typeof crypto.getRandomValues !== 'function') {
+          throw new Error('CRYPTO');
+        }
+        var u = new Uint8Array(16);
+        crypto.getRandomValues(u);
+        u[6] = (u[6] & 15) | 64;
+        u[8] = (u[8] & 63) | 128;
+        var h = [];
+        for (var k = 0; k < 16; k++) h.push(hex2(u[k]));
+        return (
+          h.slice(0, 4).join('') + '-' +
+          h.slice(4, 6).join('') + '-' +
+          h.slice(6, 8).join('') + '-' +
+          h.slice(8, 10).join('') + '-' +
+          h.slice(10, 16).join('')
+        );
+      }
+
+      function normalizeUuidInput(raw) {
+        var s = String(raw || '').trim();
+        if (!s) return '';
+        var q0 = s.charAt(0);
+        if ((q0 === '"' || q0 === "'") && s.charAt(s.length - 1) === q0) {
+          s = s.slice(1, -1).trim();
+        }
+        var lower = s.toLowerCase();
+        if (lower.indexOf('urn:uuid:') === 0) s = s.slice(9);
+        s = s.trim();
+        if (s.charAt(0) === '{' && s.charAt(s.length - 1) === '}') s = s.slice(1, -1).trim();
+        return s;
+      }
+
+      function validateUuidLine(raw) {
+        var s = normalizeUuidInput(raw);
+        if (!s) return { empty: true };
+        var n = s.toLowerCase();
+        if (n === '00000000-0000-0000-0000-000000000000') {
+          return { valid: true, canonical: n, detail: 'nil UUID' };
+        }
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s)) {
+          return { valid: false, reason: 'not a well-formed UUID' };
+        }
+        return { valid: true, canonical: n };
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function updateBulkWarning() {
+        var c = parseInt(countInput.value, 10);
+        bulkWarning.classList.toggle('visible', !isNaN(c) && c > 1000);
+      }
+
+      function setMode(isGenerate) {
+        panelGenerate.classList.toggle('is-active', isGenerate);
+        panelValidate.classList.toggle('is-active', !isGenerate);
+        panelGenerate.hidden = !isGenerate;
+        panelValidate.hidden = isGenerate;
+        clearError();
+      }
+
+      modeGenerate.addEventListener('change', function () {
+        if (modeGenerate.checked) setMode(true);
+      });
+      modeValidate.addEventListener('change', function () {
+        if (modeValidate.checked) setMode(false);
+      });
+
+      countInput.addEventListener('input', updateBulkWarning);
+      updateBulkWarning();
+
+      generateBtn.addEventListener('click', function () {
+        clearError();
+        var n = parseInt(countInput.value, 10);
+        if (isNaN(n) || n < 1 || n > MAX_COUNT) {
+          showError('Enter a count between 1 and ' + MAX_COUNT.toLocaleString() + '.');
+          return;
+        }
+
+        generateBtn.disabled = true;
+        generateBtn.classList.add('spinning');
+        generateBtn.setAttribute('aria-busy', 'true');
+        generateBtnLabel.textContent = 'Generating…';
+        generateOutput.value = '';
+        copyGenerateBtn.disabled = true;
+        generateMeta.textContent = 'Generating…';
+
+        var i = 0;
+        var lines = [];
+
+        function fail(err) {
+          generateBtn.disabled = false;
+          generateBtn.classList.remove('spinning');
+          generateBtn.removeAttribute('aria-busy');
+          generateBtnLabel.textContent = 'Generate';
+          if (err && err.message === 'CRYPTO') {
+            showError('This browser does not expose secure randomness (crypto.getRandomValues). Try a modern browser or HTTPS.');
+          } else {
+            showError(err && err.message ? err.message : 'Generation failed.');
+          }
+          generateMeta.textContent = 'Generation failed.';
+        }
+
+        function tick() {
+          try {
+            var end = Math.min(i + CHUNK, n);
+            for (; i < end; i++) lines.push(randomUuidV4());
+          } catch (e) {
+            fail(e);
+            return;
+          }
+          generateMeta.textContent = 'Generated ' + i.toLocaleString() + ' / ' + n.toLocaleString() + '…';
+          if (i < n) {
+            window.setTimeout(tick, 0);
+          } else {
+            generateOutput.value = lines.join('\n');
+            generateMeta.textContent = n.toLocaleString() + ' UUID' + (n !== 1 ? 's' : '') + ' (v4)';
+            copyGenerateBtn.disabled = false;
+            generateBtn.disabled = false;
+            generateBtn.classList.remove('spinning');
+            generateBtn.removeAttribute('aria-busy');
+            generateBtnLabel.textContent = 'Generate';
+          }
+        }
+
+        tick();
+      });
+
+      copyGenerateBtn.addEventListener('click', function () {
+        var t = generateOutput.value;
+        if (!t) return;
+        window.TinyDataToolClipboard.copyWithFeedback(t, copyGenerateBtn, function () {
+          showError('Copy failed. Select the output and copy manually.');
+        });
+      });
+
+      function renderValidation() {
+        clearError();
+        var raw = validateInput.value || '';
+        var lines = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+        var htmlParts = [];
+        var textParts = [];
+        var nonEmpty = 0;
+        var ok = 0;
+        var bad = 0;
+
+        for (var li = 0; li < lines.length; li++) {
+          var line = lines[li];
+          var r = validateUuidLine(line);
+          if (r.empty) {
+            htmlParts.push('<span class="bad">— empty line</span>');
+            textParts.push('— empty line');
+            continue;
+          }
+          nonEmpty++;
+          if (r.valid) {
+            ok++;
+            var d = r.detail ? ' (' + r.detail + ')' : '';
+            htmlParts.push('<span class="ok">OK — ' + escapeHtml(r.canonical) + d + '</span>');
+            textParts.push('OK — ' + r.canonical + d);
+          } else {
+            bad++;
+            htmlParts.push('<span class="bad">Invalid — ' + escapeHtml(r.reason) + ' — ' + escapeHtml(line.trim()) + '</span>');
+            textParts.push('Invalid — ' + r.reason + ' — ' + line.trim());
+          }
+        }
+
+        validateOutputPre.innerHTML = htmlParts.length ? htmlParts.join('\n') : '';
+        validatePlainText = textParts.join('\n');
+        copyValidateBtn.disabled = !validatePlainText;
+
+        if (!raw.trim()) {
+          validateMeta.textContent = 'Paste UUIDs to validate.';
+        } else {
+          validateMeta.textContent = nonEmpty + ' non-empty line' + (nonEmpty !== 1 ? 's' : '') + ' · ' + ok + ' valid · ' + bad + ' invalid';
+        }
+
+        validateClearLink.classList.toggle('clear-link--enabled', raw.trim().length > 0);
+        validateClearLink.setAttribute('aria-disabled', raw.trim().length ? 'false' : 'true');
+      }
+
+      function scheduleValidation() {
+        if (validateDebounce) window.clearTimeout(validateDebounce);
+        validateDebounce = window.setTimeout(function () {
+          validateDebounce = null;
+          renderValidation();
+        }, 200);
+      }
+
+      validateInput.addEventListener('input', scheduleValidation);
+
+      validateClearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (validateClearLink.getAttribute('aria-disabled') === 'true') return;
+        validateInput.value = '';
+        clearError();
+        renderValidation();
+        validateInput.focus();
+      });
+
+      copyValidateBtn.addEventListener('click', function () {
+        if (!validatePlainText) return;
+        window.TinyDataToolClipboard.copyWithFeedback(validatePlainText, copyValidateBtn, function () {
+          showError('Copy failed. Select the summary and copy manually.');
+        });
+      });
+
+      setMode(true);
+      renderValidation();
+    })();
+  </script>
+</body>
+</html>

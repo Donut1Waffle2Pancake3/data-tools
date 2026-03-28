@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CSV Column Analyzer | Free &amp; Private | TinyDataTool</title>
+  <meta name="description" content="Count unique values, frequencies, and simple stats per CSV column. Private, in-browser—paste or upload. No signup. Free." />
+  <link rel="canonical" href="https://tinydatatool.com/csv-column-analyzer/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CSV Column Analyzer | Free &amp; Private | TinyDataTool" />
+  <meta property="og:description" content="Profile CSV columns: cardinality, top values, nulls, and numeric min/max/mean. Runs locally in your browser." />
+  <meta property="og:url" content="https://tinydatatool.com/csv-column-analyzer/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="CSV Column Analyzer | Free &amp; Private | TinyDataTool" />
+  <meta name="twitter:description" content="Analyze CSV column stats in your browser. Private, client-side." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CSV Column Analyzer","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/csv-column-analyzer/","description":"Analyze CSV columns for unique counts, value frequencies, and basic numeric statistics in your browser."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .analyzer-summary { margin: 0 0 var(--space-16); font-size: var(--text-sm); color: var(--text-secondary); }
+    .analyzer-grid { display: flex; flex-direction: column; gap: var(--space-16); max-height: 560px; overflow: auto; padding-right: var(--space-4); }
+    .analyzer-card {
+      border: 1px solid var(--grey-6);
+      border-radius: var(--radius);
+      padding: var(--space-16);
+      background: var(--grey-1);
+    }
+    .analyzer-card__title { margin: 0 0 var(--space-8); font-size: var(--text-md); font-weight: 600; }
+    .analyzer-card__meta { margin: 0 0 var(--space-12); font-size: var(--text-sm); color: var(--text-secondary); }
+    .analyzer-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+    .analyzer-table th,
+    .analyzer-table td { padding: var(--space-8) var(--space-12); text-align: left; border-bottom: 1px solid var(--grey-6); }
+    .analyzer-table th { background: var(--grey-2); font-weight: 600; }
+    .analyzer-actions { display: flex; flex-wrap: wrap; gap: var(--space-12); margin-top: var(--space-16); }
+    #tool #dropZone { position: relative; }
+    #tool #dropZone .drop-zone__busy { display: none; position: absolute; inset: 0; z-index: 5; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-12); border-radius: var(--radius); pointer-events: none; }
+    #tool #dropZone.file-reading .drop-zone__busy { display: flex; background: var(--surface-secondary, var(--grey-2)); }
+    #tool #dropZone .drop-zone__spinner { width: 24px; height: 24px; border: 2px solid var(--border-strong); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    #tool #dropZone .drop-zone__busy-label { margin: 0; font-size: var(--text-sm); color: var(--text-muted-on-surface, var(--grey-7)); }
+  </style>
+</head>
+<body>
+  <div id="site-header-root" data-base="../" data-active="csv-column-analyzer"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">CSV Column Analyzer</h1>
+        <p class="hero__sub">Paste or upload a CSV to see per-column <strong>distinct counts</strong>, <strong>top values</strong>, empty cells, and <strong>numeric min / max / mean</strong> when the column looks numeric. Everything runs in your browser.</p>
+      </div>
+    </section>
+
+    <section aria-label="CSV column analyzer" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="CSV column analyzer tool">
+          <div class="form-body">
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="csvInput">CSV input</label>
+                <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+              </div>
+              <textarea id="csvInput" class="form-input" placeholder="Paste CSV or TSV — one row per line." spellcheck="false"></textarea>
+            </div>
+
+            <div class="form-section" role="group" aria-labelledby="ca-delim-label">
+              <span class="form-section__label" id="ca-delim-label">Delimiter</span>
+              <div class="form-inline-row">
+                <select id="delimiterSelect" class="field-md" aria-labelledby="ca-delim-label">
+                  <option value="auto" selected>Auto-detect</option>
+                  <option value=",">Comma</option>
+                  <option value="tab">Tab</option>
+                  <option value=";">Semicolon</option>
+                  <option value="|">Pipe</option>
+                  <option value="custom">Custom…</option>
+                </select>
+                <input type="text" id="customDelimiter" class="form-input field-md" maxlength="3" autocomplete="off" spellcheck="false" aria-label="Custom delimiter" title="Up to 3 characters" placeholder="e.g. ~" hidden />
+              </div>
+            </div>
+
+            <div class="form-section">
+              <label class="form-option"><input type="checkbox" id="hasHeader" checked /><span>First row is header</span></label>
+            </div>
+
+            <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file" aria-describedby="drop-hint">
+              <div class="drop-zone__busy" aria-hidden="true">
+                <span class="drop-zone__spinner"></span>
+                <p class="drop-zone__busy-label">Loading file…</p>
+              </div>
+              <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+              </svg>
+              <p class="drop-zone__label">Or upload a CSV file</p>
+              <p class="drop-zone__hint" id="drop-hint">In your browser · Up to 200 MB (50+ MB may feel slow)</p>
+              <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
+            </div>
+
+            <button class="btn-primary" id="analyzeBtn" type="button" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              Analyze columns
+            </button>
+
+            <div class="status-message status-message--warning" id="warningMsg" role="status" aria-live="polite" aria-atomic="true">
+              <span id="warningText"></span>
+            </div>
+
+            <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+              <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
+                <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+              <span id="errorText"></span>
+            </div>
+
+            <section class="result-section" id="resultSection" aria-live="polite">
+              <header class="result-section__heading">
+                <div>
+                  <p class="result-section__title">Column profiles</p>
+                  <p class="result-section__meta" id="resultMeta"></p>
+                </div>
+              </header>
+              <p class="analyzer-summary" id="resultSummary"></p>
+              <div class="analyzer-grid" id="analyzerGrid"></div>
+              <div class="analyzer-actions">
+                <button type="button" class="btn-download" id="copyJsonBtn" disabled>Copy summary (JSON)</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to analyze CSV columns</h2>
+        <p class="section-body">Load a delimited file, run analysis once, and review frequency tables and basic stats for each column.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste or upload CSV</p>
+            <p class="step__desc">Provide your data and pick delimiter (or auto-detect) and whether the first row is a header.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Run Analyze columns</p>
+            <p class="step__desc">The tool scans every data row once and builds counts per column.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Review stats and export</p>
+            <p class="step__desc">See distinct values, top frequencies, empties, and numeric summaries; copy a JSON summary if needed.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">WHY USE THIS TOOL</p>
+        <h2 class="section-title" id="why-heading">Why profile CSV columns?</h2>
+        <p class="section-body">Before cleaning or importing, it helps to know cardinality, dominant values, and whether columns are numeric.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M3 7h12M7 3v12" stroke="currentColor" stroke-width="1.5"/></svg></div><div><p class="benefit__title">Quick data QA</p><p class="benefit__desc">Spot unexpected distinct counts and frequent values without opening a spreadsheet.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Numeric hints</p><p class="benefit__desc">Columns that look numeric get min, max, and mean automatically.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Private processing</p><p class="benefit__desc">Files never leave your browser; analysis runs entirely on-device.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9.5 2H14a1 1 0 011 1v4.5a1 1 0 01-.29.71l-6.5 6.5a1 1 0 01-1.42 0l-4.5-4.5a1 1 0 010-1.42l6.5-6.5A1 1 0 019.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12.5" cy="5.5" r="1" fill="currentColor"/></svg></div><div><p class="benefit__title">JSON export</p><p class="benefit__desc">Copy a compact JSON summary for notes, tickets, or pipelines.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="privacy-heading">
+      <div class="container--wide">
+        <p class="section-label">PRIVACY</p>
+        <h2 class="section-title" id="privacy-heading">Private CSV analysis</h2>
+        <p class="section-body">Your CSV is read only in local memory. Nothing is uploaded, logged, or stored on a server.</p>
+        <div class="benefits" role="list">
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Data stays on device</p><p class="benefit__desc">Parsing and counting happen in your tab only.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M6 12h4M6 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">No uploads</p><p class="benefit__desc">We never receive your file contents.</p></div></div>
+          <div class="benefit" role="listitem"><div class="benefit__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><p class="benefit__title">Runs in browser</p><p class="benefit__desc">No install or account—open the page and go.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">Is there a row limit?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Very large files may hit a 250,000 data-row cap for responsiveness; a warning appears if analysis is truncated. For huge files, split or sample first.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">How are numeric columns detected?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Non-empty cells are tested as finite numbers. If at least 95% of non-empty values parse as numbers, the column is summarized with min, max, and mean.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">What does “distinct” mean?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The number of unique string values after trimming, including empty string as its own value when present.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">Can I analyze TSV?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Choose Tab as the delimiter or use auto-detect on tab-separated text.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">Is my CSV uploaded?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. All work happens locally in your browser.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="csv-column-analyzer"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var csvInput = document.getElementById('csvInput');
+      var clearLink = document.getElementById('clearLink');
+      var delimiterSelect = document.getElementById('delimiterSelect');
+      var customDelimiter = document.getElementById('customDelimiter');
+      var hasHeader = document.getElementById('hasHeader');
+      var dropZone = document.getElementById('dropZone');
+      var fileInput = document.getElementById('fileInput');
+      var analyzeBtn = document.getElementById('analyzeBtn');
+      var warningMsg = document.getElementById('warningMsg');
+      var warningText = document.getElementById('warningText');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var resultSummary = document.getElementById('resultSummary');
+      var analyzerGrid = document.getElementById('analyzerGrid');
+      var copyJsonBtn = document.getElementById('copyJsonBtn');
+
+      var MAX_ANALYZE_ROWS = 250000;
+      var TOP_N = 10;
+      var NUMERIC_RATIO = 0.95;
+      var lastSummaryJson = '';
+
+      var CSV_UNCLOSED =
+        'CSV appears malformed: a quoted field was never closed. Try another delimiter or fix stray quotes.';
+
+      function clearWarning() {
+        warningText.textContent = '';
+        warningMsg.classList.remove('visible');
+      }
+
+      function showWarning(msg) {
+        warningText.textContent = msg;
+        warningMsg.classList.add('visible');
+      }
+
+      function setError(msg) {
+        clearWarning();
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+        resultSection.classList.remove('visible');
+        copyJsonBtn.disabled = true;
+        lastSummaryJson = '';
+      }
+
+      function clearError() {
+        errorText.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+
+      function detectDelimiter(text) {
+        var sample = (text || '').slice(0, 2000);
+        var counts = { ',': 0, '\t': 0, ';': 0, '|': 0 };
+        for (var i = 0; i < sample.length; i++) {
+          var c = sample[i];
+          if (c === ',') counts[',']++;
+          else if (c === '\t') counts['\t']++;
+          else if (c === ';') counts[';']++;
+          else if (c === '|') counts['|']++;
+        }
+        var order = [',', '\t', ';', '|'];
+        var best = ',';
+        var bestN = -1;
+        for (var j = 0; j < order.length; j++) {
+          var d = order[j];
+          if (counts[d] > bestN) {
+            bestN = counts[d];
+            best = d;
+          }
+        }
+        return best;
+      }
+
+      function getDelimiter() {
+        var mode = delimiterSelect.value;
+        if (mode === 'auto') {
+          var t = (csvInput.value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+          return detectDelimiter(t);
+        }
+        if (mode === 'tab') return '\t';
+        if (mode === 'custom') {
+          var c = (customDelimiter.value || '').slice(0, 3);
+          return c.length ? c : ',';
+        }
+        return mode;
+      }
+
+      function updateCustomDelimVis() {
+        if (delimiterSelect.value === 'custom') customDelimiter.removeAttribute('hidden');
+        else customDelimiter.setAttribute('hidden', '');
+      }
+
+      function delimMatchesAt(s, i, delimiter) {
+        if (!delimiter || i + delimiter.length > s.length) return false;
+        for (var k = 0; k < delimiter.length; k++) {
+          if (s[i + k] !== delimiter[k]) return false;
+        }
+        return true;
+      }
+
+      function parseCsv(text, delimiter) {
+        var delim = delimiter || ',';
+        var normalized = (text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+        if (!normalized) return [];
+        var rows = [];
+        var row = [];
+        var cell = '';
+        var inQuotes = false;
+        for (var i = 0; i < normalized.length; i++) {
+          var ch = normalized[i];
+          if (ch === '"') {
+            if (inQuotes && normalized[i + 1] === '"') {
+              cell += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (!inQuotes) {
+            if (delimMatchesAt(normalized, i, delim)) {
+              row.push(cell);
+              cell = '';
+              i += delim.length - 1;
+            } else if (ch === '\n') {
+              row.push(cell);
+              rows.push(row);
+              row = [];
+              cell = '';
+            } else {
+              cell += ch;
+            }
+          } else {
+            cell += ch;
+          }
+        }
+        row.push(cell);
+        rows.push(row);
+        if (inQuotes) throw new Error(CSV_UNCLOSED);
+        return rows;
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function parseNumericCell(raw) {
+        var t = String(raw).trim();
+        if (!t) return null;
+        var n = Number(t);
+        return Number.isFinite(n) ? n : null;
+      }
+
+      function analyzeColumn(name, values) {
+        var counts = Object.create(null);
+        var empty = 0;
+        var nonEmpty = 0;
+        var numericOk = 0;
+        var nums = [];
+        for (var i = 0; i < values.length; i++) {
+          var v = values[i];
+          var t = String(v == null ? '' : v).trim();
+          if (t === '') {
+            empty++;
+            var ek = '';
+            counts[ek] = (counts[ek] || 0) + 1;
+            continue;
+          }
+          nonEmpty++;
+          counts[t] = (counts[t] || 0) + 1;
+          var pn = parseNumericCell(t);
+          if (pn !== null) {
+            numericOk++;
+            nums.push(pn);
+          }
+        }
+        var distinct = Object.keys(counts).length;
+        var pairs = Object.keys(counts).map(function (k) {
+          return { value: k, count: counts[k] };
+        });
+        pairs.sort(function (a, b) {
+          if (b.count !== a.count) return b.count - a.count;
+          return String(a.value).localeCompare(String(b.value));
+        });
+        var top = pairs.slice(0, TOP_N);
+        var numeric =
+          nonEmpty > 0 && numericOk / nonEmpty >= NUMERIC_RATIO
+            ? (function () {
+                var min = nums[0];
+                var max = nums[0];
+                var sum = 0;
+                for (var j = 0; j < nums.length; j++) {
+                  if (nums[j] < min) min = nums[j];
+                  if (nums[j] > max) max = nums[j];
+                  sum += nums[j];
+                }
+                return {
+                  min: min,
+                  max: max,
+                  mean: sum / nums.length,
+                };
+              })()
+            : null;
+
+        return {
+          name: name,
+          rowCount: values.length,
+          empty: empty,
+          nonEmpty: nonEmpty,
+          distinct: distinct,
+          top: top,
+          numeric: numeric,
+        };
+      }
+
+      function renderCard(col) {
+        var meta =
+          col.rowCount.toLocaleString() +
+          ' values · ' +
+          col.distinct.toLocaleString() +
+          ' distinct · ' +
+          col.empty.toLocaleString() +
+          ' empty';
+        var numRow = '';
+        if (col.numeric) {
+          numRow =
+            '<p class="analyzer-card__meta">Numeric: min ' +
+            escapeHtml(String(col.numeric.min)) +
+            ' · max ' +
+            escapeHtml(String(col.numeric.max)) +
+            ' · mean ' +
+            escapeHtml(col.numeric.mean.toFixed(4)) +
+            '</p>';
+        }
+        var rows = col.top
+          .map(function (t) {
+            return (
+              '<tr><td>' +
+              escapeHtml(t.value === '' ? '(empty)' : t.value) +
+              '</td><td>' +
+              t.count.toLocaleString() +
+              '</td></tr>'
+            );
+          })
+          .join('');
+        return (
+          '<article class="analyzer-card">' +
+          '<h3 class="analyzer-card__title">' +
+          escapeHtml(col.name) +
+          '</h3>' +
+          '<p class="analyzer-card__meta">' +
+          escapeHtml(meta) +
+          '</p>' +
+          numRow +
+          '<table class="analyzer-table"><thead><tr><th>Value</th><th>Count</th></tr></thead><tbody>' +
+          rows +
+          '</tbody></table></article>'
+        );
+      }
+
+      function runAnalyze() {
+        clearError();
+        clearWarning();
+        var text = (csvInput.value || '').trim();
+        if (!text) {
+          setError('Paste or upload CSV data first.');
+          return;
+        }
+        var L = window.TinyDataToolCsvLimits;
+        if (L && L.checkPaste) {
+          var pasteCheck = L.checkPaste(text);
+          if (!pasteCheck.allowed) {
+            setError(pasteCheck.message || 'Input too large.');
+            return;
+          }
+          if (pasteCheck.warning) showWarning(pasteCheck.warning);
+        }
+        var delim = getDelimiter();
+        var rows;
+        try {
+          rows = parseCsv(text, delim);
+        } catch (e) {
+          setError(e.message || 'Could not parse CSV.');
+          return;
+        }
+        if (!rows.length) {
+          setError('No rows found.');
+          return;
+        }
+        var headerRow = hasHeader.checked;
+        var headers;
+        var dataRows;
+        if (headerRow) {
+          headers = rows[0].map(function (c, idx) {
+            var h = String(c == null ? '' : c).trim();
+            return h || 'column_' + (idx + 1);
+          });
+          dataRows = rows.slice(1);
+        } else {
+          var colCount = rows[0] ? rows[0].length : 0;
+          headers = [];
+          for (var ci = 0; ci < colCount; ci++) headers.push('col' + (ci + 1));
+          dataRows = rows.slice();
+        }
+        var truncated = false;
+        if (dataRows.length > MAX_ANALYZE_ROWS) {
+          dataRows = dataRows.slice(0, MAX_ANALYZE_ROWS);
+          truncated = true;
+          showWarning(
+            'Analysis uses the first ' +
+              MAX_ANALYZE_ROWS.toLocaleString() +
+              ' data rows only so the page stays responsive.'
+          );
+        }
+        var numCols = headers.length;
+        if (numCols === 0) {
+          setError('No columns detected.');
+          return;
+        }
+        var columnsData = [];
+        for (var c = 0; c < numCols; c++) {
+          var vals = [];
+          for (var r = 0; r < dataRows.length; r++) {
+            var row = dataRows[r] || [];
+            vals.push(row[c] != null ? row[c] : '');
+          }
+          columnsData.push(analyzeColumn(headers[c], vals));
+        }
+
+        analyzerGrid.innerHTML = columnsData.map(renderCard).join('');
+        resultMeta.textContent =
+          dataRows.length.toLocaleString() +
+          ' data rows · ' +
+          numCols +
+          ' column' +
+          (numCols === 1 ? '' : 's') +
+          (truncated ? ' (truncated)' : '');
+        resultSummary.textContent =
+          'Top ' +
+          TOP_N +
+          ' values per column by frequency. Distinct counts include empty cells as a category when present.';
+
+        lastSummaryJson = JSON.stringify(
+          {
+            dataRowsAnalyzed: dataRows.length,
+            truncated: truncated,
+            columns: columnsData.map(function (c) {
+              return {
+                name: c.name,
+                distinct: c.distinct,
+                empty: c.empty,
+                nonEmpty: c.nonEmpty,
+                top: c.top,
+                numeric: c.numeric,
+              };
+            }),
+          },
+          null,
+          2
+        );
+        resultSection.classList.add('visible');
+        copyJsonBtn.disabled = false;
+      }
+
+      function updateBtn() {
+        analyzeBtn.disabled = !(csvInput.value || '').trim().length;
+        clearLink.setAttribute('aria-disabled', analyzeBtn.disabled ? 'true' : 'false');
+      }
+
+      delimiterSelect.addEventListener('change', function () {
+        updateCustomDelimVis();
+      });
+      customDelimiter.addEventListener('input', updateBtn);
+      csvInput.addEventListener('input', function () {
+        clearWarning();
+        clearError();
+        updateBtn();
+      });
+
+      analyzeBtn.addEventListener('click', function () {
+        analyzeBtn.classList.add('spinning');
+        window.setTimeout(function () {
+          try {
+            runAnalyze();
+          } catch (err) {
+            setError(err.message || 'Analysis failed.');
+          } finally {
+            analyzeBtn.classList.remove('spinning');
+          }
+        }, 0);
+      });
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (clearLink.getAttribute('aria-disabled') === 'true') return;
+        csvInput.value = '';
+        fileInput.value = '';
+        clearWarning();
+        clearError();
+        resultSection.classList.remove('visible');
+        analyzerGrid.innerHTML = '';
+        lastSummaryJson = '';
+        copyJsonBtn.disabled = true;
+        updateBtn();
+      });
+
+      copyJsonBtn.addEventListener('click', function () {
+        if (!lastSummaryJson) return;
+        window.TinyDataToolClipboard.copyWithFeedback(lastSummaryJson, copyJsonBtn, function () {
+          setError('Copy failed. Select JSON manually.');
+        }, { durationMs: 1200 });
+      });
+
+      function fileOk(f) {
+        if (!f || !f.name) return false;
+        var n = f.name.toLowerCase();
+        return n.endsWith('.csv') || n.endsWith('.txt') || f.type === 'text/csv' || f.type === 'text/plain';
+      }
+
+      function loadFile(file) {
+        if (!file) return;
+        if (typeof readFileAsText !== 'function') {
+          setError('File read unavailable. Refresh the page or paste CSV.');
+          return;
+        }
+        var L = window.TinyDataToolCsvLimits;
+        if (L && L.checkFile) {
+          var fc = L.checkFile(file);
+          if (!fc.allowed) {
+            setError(fc.message || 'File too large.');
+            return;
+          }
+          if (fc.warning) showWarning(fc.warning);
+        }
+        clearError();
+        dropZone.classList.add('file-reading');
+        dropZone.setAttribute('aria-busy', 'true');
+        readFileAsText(file)
+          .then(function (t) {
+            dropZone.classList.remove('file-reading');
+            dropZone.removeAttribute('aria-busy');
+            csvInput.value = String(t || '');
+            updateBtn();
+          })
+          .catch(function (err) {
+            dropZone.classList.remove('file-reading');
+            dropZone.removeAttribute('aria-busy');
+            setError(err.message || 'Failed to read file.');
+          });
+      }
+
+      fileInput.addEventListener('change', function () {
+        var f = fileInput.files && fileInput.files[0];
+        if (f) loadFile(f);
+        fileInput.value = '';
+      });
+      dropZone.addEventListener('click', function () {
+        fileInput.click();
+      });
+      dropZone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+      dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropZone.classList.add('is-dragover');
+      });
+      dropZone.addEventListener('dragleave', function () {
+        dropZone.classList.remove('is-dragover');
+      });
+      dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZone.classList.remove('is-dragover');
+        var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f && fileOk(f)) loadFile(f);
+        else if (f) setError('Please drop a CSV or text file.');
+      });
+
+      updateCustomDelimVis();
+      updateBtn();
+      clearError();
+      clearWarning();
+    })();
+  </script>
+</body>
+</html>

@@ -541,6 +541,12 @@
                 </svg>
                 Download CSV
               </a>
+              <button type="button" class="btn-download" id="openCsvExcelBtn" style="display: none;" aria-label="Open this CSV in the CSV to Excel converter">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                  <path d="M6.5 1.5v7M3.5 6l3 3 3-3M1.5 11.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Open in CSV → Excel</span>
+              </button>
             </div>
             </div>
           </div>
@@ -816,6 +822,7 @@
       const copyBtn = document.getElementById('copyBtn');
       const copyBtnLabel = document.getElementById('copyBtnLabel');
       const downloadLink = document.getElementById('downloadLink');
+      const openCsvExcelBtn = document.getElementById('openCsvExcelBtn');
       const outDelimSelect = document.getElementById('outDelimSelect');
       const outQuoteSelect = document.getElementById('outQuoteSelect');
       const outNewlineSelect = document.getElementById('outNewlineSelect');
@@ -1029,6 +1036,7 @@
         csvBlobUrl = URL.createObjectURL(blob);
         downloadLink.href = csvBlobUrl;
         downloadLink.style.display = 'inline-flex';
+        if (openCsvExcelBtn) openCsvExcelBtn.style.display = 'inline-flex';
       }
 
       function detectValueType(values) {
@@ -1261,6 +1269,7 @@
         lastSortedOutRows = null;
         if (csvBlobUrl) { URL.revokeObjectURL(csvBlobUrl); csvBlobUrl = null; }
         downloadLink.style.display = 'none';
+        if (openCsvExcelBtn) openCsvExcelBtn.style.display = 'none';
       }
 
       function formatFileSize(bytes) {
@@ -1370,6 +1379,9 @@
               var dataRows = Math.max(0, lines.length - 1);
               var rowPart = dataRows.toLocaleString() + ' rows';
               fileInfoSize.textContent = sizePart ? sizePart + ' · ' + rowPart : rowPart;
+            } catch (rowCountErr) {
+              var rowErrMsg = rowCountErr && rowCountErr.message ? rowCountErr.message : 'Could not count rows.';
+              fileInfoSize.textContent = sizePart ? sizePart + ' · ' + rowErrMsg : rowErrMsg;
             } finally {
               fileLoadProcessing.rowsReady = true;
               tryFinishFileLoadProcessing();
@@ -1771,41 +1783,46 @@
         }, 2000);
       }
 
-      async function handleCopyClick() {
+      function handleCopyClick() {
         var csv = csvOutput.value;
         if (!csv) return;
-
-        try {
-          var canUseClipboard =
-            window.isSecureContext &&
-            typeof navigator !== 'undefined' &&
-            navigator.clipboard &&
-            typeof navigator.clipboard.writeText === 'function';
-
-          if (canUseClipboard) {
-            await navigator.clipboard.writeText(csv);
+        window.TinyDataToolClipboard.copyText(csv).then(function (ok) {
+          if (ok) {
             showCopySuccess();
             return;
           }
-
-          csvOutput.focus();
-          csvOutput.select();
-          showError(
-            'Automatic copy is not available in this context. ' +
-            'The output text is selected — press Ctrl+C (or Cmd+C on Mac) to copy.'
-          );
-        } catch (err) {
           csvOutput.focus();
           csvOutput.select();
           showError(
             'Copy failed. The output is selected — press Ctrl+C (or Cmd+C) to copy manually.'
           );
-        }
+        });
       }
 
       copyBtn.addEventListener('click', function () {
         handleCopyClick();
       });
+
+      if (openCsvExcelBtn) {
+        openCsvExcelBtn.addEventListener('click', function () {
+          var text = (csvOutput && csvOutput.value) || '';
+          if (!String(text).trim()) return;
+          var h = window.TinyDataToolExcelHandoff;
+          if (!h) {
+            showError(
+              'Excel handoff is unavailable. Copy your CSV, open CSV → Excel from the menu, and paste it there.'
+            );
+            return;
+          }
+          if (!h.stashCsvForExcel(text)) {
+            showError(
+              'Could not save your CSV for the Excel step (browser storage may be full or blocked). Copy the output, open CSV → Excel, and paste—or clear site data and try again.'
+            );
+            return;
+          }
+          window.location.href = '../csv-to-excel/index.html';
+        });
+      }
 
       updateCustomDelimiterVisibility();
     })();

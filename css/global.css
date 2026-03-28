@@ -672,6 +672,40 @@ body.nav-drawer-open .nav-drawer {
   color: var(--text-muted-on-surface);
 }
 
+/* Full-zone overlay while FileReader runs — toggle .file-reading on .drop-zone */
+.drop-zone .drop-zone__busy {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-12, 12px);
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+}
+
+.drop-zone.file-reading .drop-zone__busy {
+  display: flex;
+  background: var(--surface-secondary);
+}
+
+.drop-zone .drop-zone__spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.drop-zone .drop-zone__busy-label {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-muted-on-surface);
+}
+
 /* Hidden file input sits over the entire drop zone */
 .drop-zone input[type="file"] {
   position: absolute;

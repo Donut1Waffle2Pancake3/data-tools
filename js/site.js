@@ -16,6 +16,7 @@ const NAV_GROUPS = [
         { id: 'csv-column-joiner', href: 'csv-column-joiner/index.html', label: 'CSV Column Joiner' },
         { id: 'csv-deduplicator', href: 'csv-deduplicator/index.html', label: 'CSV Deduplicator' },
         { id: 'csv-row-filter', href: 'csv-row-filter/index.html', label: 'CSV Row Filter' },
+        { id: 'csv-column-analyzer', href: 'csv-column-analyzer/index.html', label: 'CSV Column Analyzer' },
         { id: 'csv-sorter', href: 'csv-sorter/index.html', label: 'CSV Sorter' },
         { id: 'csv-cleaner', href: 'csv-cleaner/index.html', label: 'CSV Cleaner' },
       ],
@@ -26,10 +27,13 @@ const NAV_GROUPS = [
       items: [
         { id: 'json-viewer', href: 'json-viewer/index.html', label: 'JSON Viewer' },
         { id: 'json-validator', href: 'json-validator/index.html', label: 'JSON Validator' },
+        { id: 'json-schema-generator', href: 'json-schema-generator/index.html', label: 'JSON Schema Generator' },
         { id: 'json-formatter', href: 'json-formatter/index.html', label: 'JSON Formatter' },
         { id: 'json-minifier', href: 'json-minifier/index.html', label: 'JSON Minifier' },
         { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON → CSV' },
         { id: 'json-to-tsv', href: 'json-to-tsv/index.html', label: 'JSON → TSV' },
+        { id: 'uuid-generator', href: 'uuid-generator/index.html', label: 'UUID Generator' },
+        { id: 'unix-timestamp-converter', href: 'unix-timestamp-converter/index.html', label: 'Unix Timestamp Converter' },
         { id: 'csv-to-json', href: 'csv-to-json/index.html', label: 'CSV → JSON' },
       ],
     },
@@ -43,6 +47,7 @@ const NAV_GROUPS = [
         { id: 'text-counter', href: 'text-counter/index.html', label: 'Word, Line, and Character Counter' },
         { id: 'find-and-replace-text', href: 'find-and-replace-text/index.html', label: 'Find and Replace' },
         { id: 'trim-whitespace', href: 'trim-whitespace/index.html', label: 'Trim Whitespace' },
+        { id: 'slug-generator', href: 'slug-generator/index.html', label: 'URL Slug Generator' },
         { id: 'base64-encoder-decoder', href: 'base64-encoder-decoder/index.html', label: 'Base64 Encoder / Decoder' },
         { id: 'regex-tester', href: 'regex-tester/index.html', label: 'Regex Tester' },
         { id: 'text-case-converter', href: 'text-case-converter/index.html', label: 'Text Case Converter' },
@@ -65,6 +70,7 @@ const NAV_GROUPS = [
         { id: 'json-to-excel', href: 'json-to-excel/index.html', label: 'JSON → Excel' },
         { id: 'csv-to-tsv', href: 'csv-to-tsv/index.html', label: 'CSV → TSV' },
         { id: 'tsv-to-csv', href: 'tsv-to-csv/index.html', label: 'TSV → CSV' },
+        { id: 'sql-result', href: 'sql-result/index.html', label: 'SQL result → CSV / JSON' },
       ],
     },
   ];
@@ -95,11 +101,14 @@ const ACTIVE_NAV_GROUPS = NAV_GROUPS.map(function (group) {
 ============================================================ */
 const RELATED_TOOL_OVERRIDES = {
   'csv-viewer': ['csv-to-json', 'csv-column-remover', 'csv-row-filter'],
-  'json-viewer': ['json-formatter', 'json-validator', 'json-to-csv'],
-  'json-minifier': ['json-formatter', 'json-validator', 'json-viewer'],
+  'json-viewer': ['json-schema-generator', 'json-formatter', 'uuid-generator'],
+  'uuid-generator': ['unix-timestamp-converter', 'json-formatter', 'json-viewer'],
+  'unix-timestamp-converter': ['json-viewer', 'json-formatter', 'uuid-generator'],
+  'json-minifier': ['json-formatter', 'json-validator', 'json-schema-generator'],
   'text-diff': ['remove-duplicate-lines', 'sort-lines', 'find-and-replace-text'],
-  'regex-tester': ['find-and-replace-text', 'text-diff', 'remove-duplicate-lines'],
-  'text-case-converter': ['trim-whitespace', 'find-and-replace-text', 'remove-duplicate-lines'],
+  'regex-tester': ['uuid-generator', 'find-and-replace-text', 'text-diff'],
+  'text-case-converter': ['trim-whitespace', 'slug-generator', 'url-encoder-decoder'],
+  'slug-generator': ['text-case-converter', 'trim-whitespace', 'url-encoder-decoder'],
   'base64-encoder-decoder': ['url-encoder-decoder', 'json-formatter', 'html-encoder-decoder'],
   'csv-to-excel': ['csv-to-json', 'csv-viewer', 'csv-to-tsv'],
   'json-to-excel': ['json-to-csv', 'csv-to-excel', 'json-viewer'],
@@ -108,13 +117,19 @@ const RELATED_TOOL_OVERRIDES = {
   'sort-lines': ['remove-duplicate-lines', 'csv-sorter', 'trim-whitespace'],
   'text-counter': ['trim-whitespace', 'json-formatter'],
   'find-and-replace-text': ['trim-whitespace', 'remove-duplicate-lines', 'json-formatter'],
-  'trim-whitespace': ['find-and-replace-text', 'remove-duplicate-lines', 'csv-row-filter'],
-  'url-encoder-decoder': ['find-and-replace-text', 'trim-whitespace', 'html-encoder-decoder', 'json-formatter'],
+  'trim-whitespace': ['slug-generator', 'text-case-converter', 'url-encoder-decoder'],
+  'url-encoder-decoder': ['slug-generator', 'trim-whitespace', 'html-encoder-decoder', 'json-formatter'],
   'html-encoder-decoder': ['url-encoder-decoder', 'find-and-replace-text', 'trim-whitespace', 'json-formatter'],
-  'csv-deduplicator': ['remove-duplicate-lines'],
+  'csv-deduplicator': ['csv-column-analyzer', 'remove-duplicate-lines'],
   'csv-sorter': ['sort-lines'],
-  'csv-row-filter': ['find-and-replace-text', 'trim-whitespace'],
-  'json-formatter': ['find-and-replace-text', 'trim-whitespace'],
+  'csv-row-filter': ['csv-column-analyzer', 'find-and-replace-text', 'trim-whitespace'],
+  'csv-column-analyzer': ['csv-row-filter', 'csv-deduplicator', 'csv-sorter'],
+  'json-formatter': ['json-schema-generator', 'uuid-generator', 'json-validator'],
+  'json-validator': ['json-schema-generator', 'json-formatter', 'json-viewer'],
+  'json-schema-generator': ['json-validator', 'json-viewer', 'json-formatter'],
+  'sql-result': ['csv-to-json', 'json-to-csv', 'tsv-to-csv'],
+  'csv-to-json': ['json-to-csv', 'sql-result', 'csv-to-tsv'],
+  'json-to-csv': ['csv-to-json', 'sql-result', 'json-to-tsv'],
 };
 
 /* ============================================================
@@ -580,6 +595,82 @@ function readFileAsText(file) {
 }
 
 /**
+ * Shared CSV/TSV size policy (aligned with csv-viewer / csv-cleaner / csv-sorter).
+ * Use for file picks and pasted text before heavy work.
+ */
+(function (global) {
+  var MAX_WARN_BYTES = 50 * 1024 * 1024;
+  var MAX_HARD_BYTES = 200 * 1024 * 1024;
+
+  function utf8ByteLength(str) {
+    if (typeof TextEncoder !== 'undefined') {
+      return new TextEncoder().encode(String(str || '')).length;
+    }
+    return String(str || '').length;
+  }
+
+  /**
+   * @param {File} file
+   * @returns {{ allowed: boolean, hardError?: string, warnMessage?: string }}
+   */
+  function checkFile(file) {
+    if (!file || typeof file.size !== 'number') return { allowed: true };
+    if (file.size > MAX_HARD_BYTES) {
+      return {
+        allowed: false,
+        hardError:
+          'This file is ' +
+          (file.size / (1024 * 1024)).toFixed(0) +
+          ' MB, which exceeds the 200 MB limit. Split the file and try again.',
+      };
+    }
+    if (file.size > MAX_WARN_BYTES) {
+      return {
+        allowed: true,
+        warnMessage:
+          'Large file (' +
+          (file.size / (1024 * 1024)).toFixed(0) +
+          ' MB). Loading and processing may take a moment.',
+      };
+    }
+    return { allowed: true };
+  }
+
+  /**
+   * @param {string} text
+   * @returns {{ allowed: boolean, hardError?: string, warnMessage?: string }}
+   */
+  function checkPaste(text) {
+    var len = utf8ByteLength(text);
+    if (len > MAX_HARD_BYTES) {
+      return {
+        allowed: false,
+        hardError:
+          'This input is larger than the 200 MB limit. Split the file into smaller parts and try again.',
+      };
+    }
+    if (len > MAX_WARN_BYTES) {
+      return {
+        allowed: true,
+        warnMessage:
+          'Large input (' +
+          (len / (1024 * 1024)).toFixed(0) +
+          ' MB). Processing may take a moment; your browser may feel unresponsive briefly.',
+      };
+    }
+    return { allowed: true };
+  }
+
+  global.TinyDataToolCsvLimits = {
+    MAX_WARN_BYTES: MAX_WARN_BYTES,
+    MAX_HARD_BYTES: MAX_HARD_BYTES,
+    utf8ByteLength: utf8ByteLength,
+    checkFile: checkFile,
+    checkPaste: checkPaste,
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/**
  * Show a tool error message (sets text and makes container visible).
  * @param {HTMLElement} containerEl - .status-message element
  * @param {HTMLElement} textEl - element that holds the message (e.g. #errorText)
@@ -608,24 +699,6 @@ function clearToolResult(opts) {
   if (opts.metaEl) opts.metaEl.textContent = '';
   if (typeof opts.revokeBlob === 'function') opts.revokeBlob();
   if (opts.downloadLink) opts.downloadLink.style.display = 'none';
-}
-
-/**
- * Copy text to clipboard and show "Copied!" on a button, then revert after 2s.
- * Use for buttons whose content is a single label (no icon). On fail calls onFail().
- * @param {string} text
- * @param {HTMLElement} buttonEl
- * @param {string} fallbackLabel
- * @param {function} [onFail]
- */
-function copyWithFeedback(text, buttonEl, fallbackLabel, onFail) {
-  if (!text) return;
-  navigator.clipboard.writeText(text).then(function () {
-    buttonEl.textContent = 'Copied!';
-    setTimeout(function () { buttonEl.textContent = fallbackLabel; }, 2000);
-  }).catch(function () {
-    if (typeof onFail === 'function') onFail();
-  });
 }
 
 /**
@@ -742,10 +815,190 @@ function parseCSVLines(text) {
     }
   }
 
+  if (inQuotes) {
+    throw new Error(
+      'CSV appears malformed: a quoted field was never closed. ' +
+      'Check for a stray quote character, or try a different delimiter.'
+    );
+  }
   if (current !== '') lines.push(current);
 
   return lines;
 }
+
+/* ============================================================
+   Clipboard: Async Clipboard API + execCommand fallback
+============================================================ */
+(function (global) {
+  function execCopyFallback(text) {
+    try {
+      var t = String(text == null ? '' : text);
+      var ta = document.createElement('textarea');
+      ta.value = t;
+      ta.setAttribute('readonly', '');
+      ta.setAttribute('aria-hidden', 'true');
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, t.length);
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return !!ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function copyTextToClipboard(text) {
+    var t = String(text == null ? '' : text);
+    if (
+      typeof navigator !== 'undefined' &&
+      navigator.clipboard &&
+      typeof navigator.clipboard.writeText === 'function'
+    ) {
+      return navigator.clipboard.writeText(t).then(
+        function () {
+          return true;
+        },
+        function () {
+          return execCopyFallback(t);
+        }
+      );
+    }
+    return Promise.resolve(execCopyFallback(t));
+  }
+
+  function lastDirectSpan(button) {
+    var ch = button.children;
+    var last = null;
+    for (var i = 0; i < ch.length; i++) {
+      if (ch[i].tagName === 'SPAN') last = ch[i];
+    }
+    return last;
+  }
+
+  function firstMeaningfulTextNode(button) {
+    for (var i = 0; i < button.childNodes.length; i++) {
+      var n = button.childNodes[i];
+      if (n.nodeType === Node.TEXT_NODE && n.textContent.replace(/\s/g, '').length) {
+        return n;
+      }
+    }
+    return null;
+  }
+
+  function flashCopySuccess(button, opts) {
+    opts = opts || {};
+    var successText = opts.successText != null ? opts.successText : 'Copied!';
+    var durationMs = opts.durationMs != null ? opts.durationMs : 1600;
+    if (!button) return;
+
+    if (!button.querySelector('svg') && !button.querySelector('span')) {
+      var plain = button.textContent;
+      button.textContent = successText;
+      window.setTimeout(function () {
+        button.textContent = plain;
+      }, durationMs);
+      return;
+    }
+
+    var labelEl =
+      (opts.labelSelector && button.querySelector(opts.labelSelector)) ||
+      button.querySelector('[data-copy-label]') ||
+      button.querySelector('#copyBtnLabel');
+
+    if (!labelEl) {
+      labelEl = lastDirectSpan(button);
+    }
+
+    if (labelEl) {
+      var prev = labelEl.textContent;
+      labelEl.textContent = successText;
+      window.setTimeout(function () {
+        labelEl.textContent = prev;
+      }, durationMs);
+      return;
+    }
+
+    var tn = firstMeaningfulTextNode(button);
+    if (tn) {
+      var oldT = tn.textContent;
+      tn.textContent = ' ' + successText + ' ';
+      window.setTimeout(function () {
+        tn.textContent = oldT;
+      }, durationMs);
+      return;
+    }
+
+    var origHtml = button.innerHTML;
+    button.innerHTML = '<span>' + successText + '</span>';
+    window.setTimeout(function () {
+      button.innerHTML = origHtml;
+    }, durationMs);
+  }
+
+  function copyWithFeedback(text, button, onFail, flashOpts) {
+    return copyTextToClipboard(text).then(function (ok) {
+      if (ok) {
+        flashCopySuccess(button, flashOpts);
+        return true;
+      }
+      if (typeof onFail === 'function') onFail();
+      return false;
+    });
+  }
+
+  global.TinyDataToolClipboard = {
+    copyText: copyTextToClipboard,
+    flashCopySuccess: flashCopySuccess,
+    copyWithFeedback: copyWithFeedback,
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ============================================================
+   Cross-page handoff: CSV / JSON → Excel converters (sessionStorage)
+============================================================ */
+(function (global) {
+  var KEYS = { csv: 'tt_handoff_csv_to_excel_v1', json: 'tt_handoff_json_to_excel_v1' };
+
+  function safeSet(key, value) {
+    try {
+      if (value == null) return false;
+      sessionStorage.setItem(key, String(value));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function safeTake(key) {
+    try {
+      var v = sessionStorage.getItem(key);
+      if (v != null) sessionStorage.removeItem(key);
+      return v || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  global.TinyDataToolExcelHandoff = {
+    stashCsvForExcel: function (text) {
+      return safeSet(KEYS.csv, text);
+    },
+    stashJsonForExcel: function (text) {
+      return safeSet(KEYS.json, text);
+    },
+    takeCsvForExcel: function () {
+      return safeTake(KEYS.csv);
+    },
+    takeJsonForExcel: function () {
+      return safeTake(KEYS.json);
+    },
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
 
 /* ============================================================
    AUTO-INIT on DOMContentLoaded

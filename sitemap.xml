@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Tool URLs match js/site.js NAV_GROUPS minus PRODUCTION_HIDDEN_TOOL_IDS (csv-viewer, csv-to-excel, json-to-excel, csv-cleaner, json-minifier). Update when nav or visibility changes. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tinydatatool.com/</loc>
@@ -17,21 +18,6 @@
   </url>
   <url>
     <loc>https://tinydatatool.com/merge-csv/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tinydatatool.com/json-to-csv/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tinydatatool.com/csv-to-tsv/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tinydatatool.com/tsv-to-csv/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -56,22 +42,22 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tinydatatool.com/csv-sorter/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
     <loc>https://tinydatatool.com/csv-row-filter/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tinydatatool.com/csv-to-json/</loc>
+    <loc>https://tinydatatool.com/csv-column-analyzer/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tinydatatool.com/json-to-tsv/</loc>
+    <loc>https://tinydatatool.com/csv-sorter/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/json-viewer/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -81,12 +67,42 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://tinydatatool.com/json-schema-generator/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://tinydatatool.com/json-formatter/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tinydatatool.com/find-and-replace-text/</loc>
+    <loc>https://tinydatatool.com/json-to-csv/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/json-to-tsv/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/uuid-generator/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/unix-timestamp-converter/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/csv-to-json/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/text-diff/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -106,12 +122,62 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://tinydatatool.com/find-and-replace-text/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://tinydatatool.com/trim-whitespace/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://tinydatatool.com/slug-generator/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/base64-encoder-decoder/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/regex-tester/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/text-case-converter/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://tinydatatool.com/url-encoder-decoder/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/html-encoder-decoder/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/zip-combiner/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/csv-to-tsv/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/tsv-to-csv/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tinydatatool.com/sql-result/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>

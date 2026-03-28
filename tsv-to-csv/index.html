@@ -61,11 +61,15 @@
           </div>
 
           <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload TSV file. Click or drag and drop." aria-describedby="drop-hint">
+            <div class="drop-zone__busy" aria-hidden="true">
+              <span class="drop-zone__spinner"></span>
+              <p class="drop-zone__busy-label">Loading file…</p>
+            </div>
             <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
             </svg>
             <p class="drop-zone__label">Or upload a TSV or text file</p>
-            <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+            <p class="drop-zone__hint" id="drop-hint">In your browser · Up to 200 MB (50+ MB may feel slow)</p>
             <input type="file" id="fileInput" accept=".tsv,.txt,text/tab-separated-values,text/plain" aria-label="Select TSV file" />
           </div>
 
@@ -76,6 +80,10 @@
               <path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L401 135C391.6 125.6 376.4 125.6 367.1 135C357.8 144.4 357.7 159.6 367.1 168.9L494.1 295.9L88 295.9C74.7 295.9 64 306.6 64 319.9C64 333.2 74.7 343.9 88 343.9L494.1 343.9L367.1 470.9C357.7 480.3 357.7 495.5 367.1 504.8C376.5 514.1 391.7 514.2 401 504.8L569 337z"/>
             </svg>
           </button>
+
+          <div class="status-message status-message--warning" id="warningMsg" role="status" aria-live="polite" aria-atomic="true">
+            <span id="warningText"></span>
+          </div>
 
           <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
             <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -343,6 +351,8 @@
       const dropZone     = document.getElementById('dropZone');
       const convertBtn   = document.getElementById('convertBtn');
       const clearLink    = document.getElementById('clearLink');
+      const warningMsg   = document.getElementById('warningMsg');
+      const warningText  = document.getElementById('warningText');
       const errorMsg     = document.getElementById('errorMsg');
       const errorText    = document.getElementById('errorText');
       const resultSection = document.getElementById('resultSection');
@@ -383,6 +393,12 @@
             current += ch;
           }
         }
+        if (inQuotes) {
+          throw new Error(
+            'TSV appears malformed: a quoted field was never closed. ' +
+            'Check for a stray quote character, or try a different delimiter.'
+          );
+        }
         currentRow.push(current);
         rows.push(currentRow);
         return rows;
@@ -406,7 +422,21 @@
         }).join('\n');
       }
 
+      function showWarning(msg) {
+        if (!warningMsg || !warningText) return;
+        errorMsg.classList.remove('visible');
+        warningText.textContent = msg;
+        warningMsg.classList.add('visible');
+      }
+
+      function clearWarning() {
+        if (!warningMsg || !warningText) return;
+        warningText.textContent = '';
+        warningMsg.classList.remove('visible');
+      }
+
       function showError(msg) {
+        clearWarning();
         errorText.textContent = msg;
         errorMsg.classList.add('visible');
       }
@@ -438,6 +468,36 @@
         checkReady();
       }
 
+      function loadTsvFileForCsv(file) {
+        if (!file) return;
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var fr = TinyDataToolCsvLimits.checkFile(file);
+          if (!fr.allowed) {
+            showError(fr.hardError || 'File exceeds size limit.');
+            return;
+          }
+        }
+        clearError();
+        clearWarning();
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var wr = TinyDataToolCsvLimits.checkFile(file);
+          if (wr.warnMessage) showWarning(wr.warnMessage);
+        }
+        dropZone.classList.add('file-reading');
+        dropZone.setAttribute('aria-busy', 'true');
+        readFileAsText(file)
+          .then(function (text) {
+            setInputText(text, file.name);
+          })
+          .catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          })
+          .finally(function () {
+            dropZone.classList.remove('file-reading');
+            dropZone.removeAttribute('aria-busy');
+          });
+      }
+
       function isInputValid() {
         return getInputText().length > 0;
       }
@@ -463,6 +523,7 @@
         tsvInput.value = '';
         lastUploadFilename = '';
         clearError();
+        clearWarning();
         clearResult();
         checkReady();
         tsvInput.focus();
@@ -476,12 +537,7 @@
       });
       fileInput.addEventListener('change', function () {
         if (fileInput.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          readFileAsText(file).then(function (text) {
-            setInputText(text, file.name);
-          }).catch(function (err) {
-            showError(err.message || 'Failed to read file.');
-          });
+          loadTsvFileForCsv(fileInput.files[0]);
           fileInput.value = '';
         }
       });
@@ -492,11 +548,7 @@
         dropZone.classList.remove('drag-over');
         const file = e.dataTransfer.files[0];
         if (file && (file.name.toLowerCase().endsWith('.tsv') || file.name.toLowerCase().endsWith('.txt') || file.type === 'text/tab-separated-values' || file.type === 'text/plain')) {
-          readFileAsText(file).then(function (text) {
-            setInputText(text, file.name);
-          }).catch(function (err) {
-            showError(err.message || 'Failed to read file.');
-          });
+          loadTsvFileForCsv(file);
         } else if (file) {
           showError('Please drop a TSV or text file.');
         }
@@ -515,6 +567,15 @@
           showError('Please paste TSV or upload a TSV or text file.');
           tsvInput.focus();
           return;
+        }
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var cr = TinyDataToolCsvLimits.checkPaste(text);
+          if (!cr.allowed) {
+            showError(cr.hardError || 'Input exceeds size limit.');
+            return;
+          }
+          if (cr.warnMessage) showWarning(cr.warnMessage);
+          else clearWarning();
         }
         convertBtn.disabled = true;
         convertBtn.classList.add('spinning');
@@ -543,10 +604,7 @@
       copyBtn.addEventListener('click', function () {
         var csv = csvOutput.value;
         if (!csv) return;
-        navigator.clipboard.writeText(csv).then(function () {
-          copyBtn.textContent = 'Copied!';
-          setTimeout(function () { copyBtn.textContent = 'Copy CSV'; }, 2000);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(csv, copyBtn, function () {
           showError('Copy failed. You can select and copy the preview text manually.');
         });
       });

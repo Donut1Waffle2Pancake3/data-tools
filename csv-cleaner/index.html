@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>CSV Cleaner | Free &amp; Private | TinyDataTool</title>
-  <meta name="description" content="Trim, dedupe, filter, and sort CSV in one workflow. Private, client-side processing in your browser—your data never leaves your device. No signup required. Free." />
+  <meta name="description" content="Trim, dedupe, filter, and sort CSV or TSV in one workflow. Choose comma, tab, semicolon, pipe, or auto-detect. Private, in-browser—no uploads. Free." />
   <link rel="canonical" href="https://tinydatatool.com/csv-cleaner/" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="CSV Cleaner | Free &amp; Private | TinyDataTool" />
-  <meta property="og:description" content="Trim, dedupe, filter, and sort CSV in one workflow. Private, client-side processing in your browser—your data never leaves your device. No signup required. Free." />
+  <meta property="og:description" content="Trim, dedupe, filter, and sort CSV or TSV. Delimiter auto-detect or manual. Private, in your browser. No signup. Free." />
   <meta property="og:url" content="https://tinydatatool.com/csv-cleaner/" />
   <meta property="og:site_name" content="TinyDataTool" />
 
@@ -19,7 +19,7 @@
   <meta name="twitter:description" content="Clean CSV in your browser. Private, client-side processing. No signup." />
 
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CSV Cleaner","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/csv-cleaner/","description":"Clean CSV data by trimming whitespace, removing duplicates, filtering rows, and sorting in your browser. Free, private, and no uploads required."}
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CSV Cleaner","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/csv-cleaner/","description":"Clean comma-, tab-, or semicolon-separated data: trim, dedupe, filter, and sort in your browser. Free, private, no uploads."}
   </script>
 
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
@@ -87,7 +87,35 @@
                 <label class="form-label" for="csvInput">CSV input</label>
                 <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
               </div>
-              <textarea id="csvInput" class="form-input" placeholder="Paste CSV here — one row per line, comma-separated columns." spellcheck="false"></textarea>
+              <textarea id="csvInput" class="form-input" placeholder="Paste CSV or TSV here — one row per line. Pick a delimiter below or use auto-detect." spellcheck="false"></textarea>
+            </div>
+
+            <div class="form-section" role="group" aria-labelledby="cleaner-delim-label">
+              <span class="form-section__label" id="cleaner-delim-label">Delimiter</span>
+              <div class="form-inline-row">
+                <select id="delimiterSelect" class="field-md" aria-labelledby="cleaner-delim-label">
+                  <option value="auto" selected>Auto-detect</option>
+                  <option value=",">Comma (CSV)</option>
+                  <option value="tab">Tab (TSV)</option>
+                  <option value=";">Semicolon (;)</option>
+                  <option value="|">Pipe (|)</option>
+                  <option value="custom">Custom…</option>
+                </select>
+                <input type="text" id="customDelimiter" class="form-input field-md" maxlength="3" autocomplete="off" spellcheck="false" aria-label="Custom delimiter (up to 3 characters)" title="Up to 3 characters" placeholder="e.g. ~" hidden />
+              </div>
+            </div>
+
+            <div class="form-section" role="group" aria-labelledby="cleaner-out-delim-label">
+              <span class="form-section__label" id="cleaner-out-delim-label">Output delimiter</span>
+              <div class="form-inline-row">
+                <select id="outDelimSelect" class="field-md" aria-labelledby="cleaner-out-delim-label">
+                  <option value="comma" selected>Comma (CSV)</option>
+                  <option value="same">Same as input</option>
+                  <option value="tab">Tab (TSV)</option>
+                  <option value=";">Semicolon (;)</option>
+                  <option value="|">Pipe (|)</option>
+                </select>
+              </div>
             </div>
 
             <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
@@ -106,10 +134,12 @@
             <div class="form-section">
               <span class="form-section__label">Cleanup options</span>
               <div class="form-inline-row">
+                <label class="form-option"><input type="checkbox" id="firstRowIsHeader" checked /><span>First row is column header</span></label>
                 <label class="form-option"><input type="checkbox" id="trimSpaces" checked /><span>Trim whitespace in each cell</span></label>
                 <label class="form-option"><input type="checkbox" id="removeEmptyRows" /><span>Remove empty rows</span></label>
                 <label class="form-option"><input type="checkbox" id="removeDuplicates" /><span>Remove duplicate rows</span></label>
               </div>
+              <p class="form-hint" id="noHeaderHint" hidden>When off, every row is treated as data. Output adds a synthetic header row (<code>col1</code>, <code>col2</code>, …) so spreadsheets stay aligned.</p>
             </div>
 
             <div class="form-section">
@@ -169,6 +199,12 @@
                     </svg>
                     <span>Download CSV</span>
                   </a>
+                  <button type="button" class="btn-download" id="openCsvExcelBtn" style="display: none;" aria-label="Open this CSV in the CSV to Excel converter">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                      <path d="M6.5 1.5v7M3.5 6l3 3 3-3M1.5 11.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <span>Open in CSV → Excel</span>
+                  </button>
                 </div>
               </header>
               <div class="form-group">
@@ -195,7 +231,7 @@
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
             <p class="step__title">Choose cleanup options</p>
-            <p class="step__desc">Enable trimming, dedupe, filtering, and sorting options for your workflow.</p>
+            <p class="step__desc">Set the delimiter (comma, tab, semicolon, etc.) or auto-detect, then enable trimming, dedupe, filtering, and sorting.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
@@ -271,7 +307,7 @@
               <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
             </button>
             <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-              <span itemprop="text">The cleaner parses rows, applies selected transformations in sequence, and returns a new CSV output. You can choose only the steps relevant to your dataset.</span>
+              <span itemprop="text">The cleaner parses rows with your chosen delimiter (or auto-detect), applies selected transformations in sequence, and returns new delimited output. You can choose only the steps relevant to your dataset.</span>
             </div>
           </div>
           <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
@@ -301,6 +337,24 @@
               <span itemprop="text">No. All processing runs locally in your browser with no uploads and no server-side storage.</span>
             </div>
           </div>
+            <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-8-answer">
+              <span itemprop="name">Can I clean tab-separated (TSV) or semicolon-separated files?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-8-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Under Delimiter, pick Tab, Semicolon, Pipe, or Custom, or use Auto-detect. Use Output delimiter if you want the result as standard comma CSV or to keep the same separator.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-9-answer">
+              <span itemprop="name">What if my file has no header row?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="faq-answer" id="faq-9-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Turn off “First row is column header” under Cleanup options. Every line is then treated as data. The tool adds a synthetic header row (col1, col2, …) to the downloaded CSV so columns stay aligned in Excel and other apps.</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -316,12 +370,17 @@
       var clearLink = document.getElementById('clearLink');
       var dropZone = document.getElementById('dropZone');
       var fileInput = document.getElementById('fileInput');
+      var firstRowIsHeader = document.getElementById('firstRowIsHeader');
+      var noHeaderHint = document.getElementById('noHeaderHint');
       var trimSpaces = document.getElementById('trimSpaces');
       var removeEmptyRows = document.getElementById('removeEmptyRows');
       var removeDuplicates = document.getElementById('removeDuplicates');
       var filterValue = document.getElementById('filterValue');
       var sortColumn = document.getElementById('sortColumn');
       var sortOrder = document.getElementById('sortOrder');
+      var delimiterSelect = document.getElementById('delimiterSelect');
+      var customDelimiter = document.getElementById('customDelimiter');
+      var outDelimSelect = document.getElementById('outDelimSelect');
       var cleanBtn = document.getElementById('cleanBtn');
       var warningMsg = document.getElementById('warningMsg');
       var warningText = document.getElementById('warningText');
@@ -332,6 +391,7 @@
       var csvOutput = document.getElementById('csvOutput');
       var copyBtn = document.getElementById('copyBtn');
       var downloadLink = document.getElementById('downloadLink');
+      var openCsvExcelBtn = document.getElementById('openCsvExcelBtn');
       var objectUrl = null;
       var outputText = '';
       var MAX_WARN_BYTES = 50 * 1024 * 1024;
@@ -370,53 +430,127 @@
         'CSV appears malformed: a quoted field was never closed. ' +
         'Check for a stray quote character, or try a different delimiter.';
 
-      function parseCsv(text) {
+      function detectDelimiter(text) {
+        var sample = (text || '').slice(0, 2000);
+        var counts = { ',': 0, '\t': 0, ';': 0, '|': 0 };
+        for (var i = 0; i < sample.length; i++) {
+          var c = sample[i];
+          if (c === ',') counts[',']++;
+          else if (c === '\t') counts['\t']++;
+          else if (c === ';') counts[';']++;
+          else if (c === '|') counts['|']++;
+        }
+        var order = [',', '\t', ';', '|'];
+        var best = ',';
+        var bestN = -1;
+        for (var j = 0; j < order.length; j++) {
+          var d = order[j];
+          if (counts[d] > bestN) {
+            bestN = counts[d];
+            best = d;
+          }
+        }
+        return best;
+      }
+
+      function getInputDelimiter() {
+        var mode = delimiterSelect.value;
+        if (mode === 'auto') {
+          var n = (csvInput.value || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+          return detectDelimiter(n);
+        }
+        if (mode === 'tab') return '\t';
+        if (mode === 'custom') {
+          var c = (customDelimiter.value || '').slice(0, 3);
+          return c.length ? c : ',';
+        }
+        return mode;
+      }
+
+      function updateCustomDelimiterVisibility() {
+        if (delimiterSelect.value === 'custom') customDelimiter.removeAttribute('hidden');
+        else customDelimiter.setAttribute('hidden', '');
+      }
+
+      function delimMatchesAt(s, i, delimiter) {
+        if (!delimiter || i + delimiter.length > s.length) return false;
+        for (var k = 0; k < delimiter.length; k++) {
+          if (s[i + k] !== delimiter[k]) return false;
+        }
+        return true;
+      }
+
+      function parseCsv(text, delimiter) {
+        var delim = delimiter || ',';
+        var normalized = (text || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+        if (!normalized) return [];
         var rows = [];
         var row = [];
-        var field = '';
+        var cell = '';
         var inQuotes = false;
-        for (var i = 0; i < text.length; i += 1) {
-          var ch = text[i];
-          var next = text[i + 1];
+        for (var i = 0; i < normalized.length; i++) {
+          var ch = normalized[i];
           if (ch === '"') {
-            if (inQuotes && next === '"') {
-              field += '"';
-              i += 1;
+            if (inQuotes && normalized[i + 1] === '"') {
+              cell += '"';
+              i++;
             } else {
               inQuotes = !inQuotes;
             }
-          } else if (ch === ',' && !inQuotes) {
-            row.push(field);
-            field = '';
-          } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
-            if (ch === '\r' && next === '\n') i += 1;
-            row.push(field);
-            rows.push(row);
-            row = [];
-            field = '';
+          } else if (!inQuotes) {
+            if (delimMatchesAt(normalized, i, delim)) {
+              row.push(cell);
+              cell = '';
+              i += delim.length - 1;
+            } else if (ch === '\n') {
+              row.push(cell);
+              rows.push(row);
+              row = [];
+              cell = '';
+            } else {
+              cell += ch;
+            }
           } else {
-            field += ch;
+            cell += ch;
           }
         }
-        row.push(field);
-        if (row.length > 1 || row[0] !== '' || rows.length === 0) rows.push(row);
+        row.push(cell);
+        rows.push(row);
         if (inQuotes) {
           throw new Error(CSV_UNCLOSED_QUOTE_MSG);
         }
         return rows;
       }
 
-      function toCsv(rows) {
+      function fieldNeedsQuotingMinimal(str, delimiter) {
+        if (/[\r\n"]/.test(str)) return true;
+        if (delimiter && str.indexOf(delimiter) !== -1) return true;
+        return false;
+      }
+
+      function escapeCsvCell(val, delimiter) {
+        var str = val === null || val === undefined ? '' : String(val);
+        if (fieldNeedsQuotingMinimal(str, delimiter)) {
+          return '"' + str.replace(/"/g, '""') + '"';
+        }
+        return str;
+      }
+
+      function rowsToCsv(rows, delimiter) {
+        var d = delimiter != null ? delimiter : ',';
         return rows.map(function (r) {
-          return r.map(function (v) {
-            var s = String(v == null ? '' : v);
-            if (s.indexOf('"') !== -1) s = s.replace(/"/g, '""');
-            if (s.indexOf(',') !== -1 || s.indexOf('"') !== -1 || s.indexOf('\n') !== -1 || s.indexOf('\r') !== -1) {
-              return '"' + s + '"';
-            }
-            return s;
-          }).join(',');
+          return r.map(function (cell) {
+            return escapeCsvCell(cell, d);
+          }).join(d);
         }).join('\n');
+      }
+
+      function getOutputDelimiter(inputDelimiter) {
+        var v = outDelimSelect.value;
+        if (v === 'same') return inputDelimiter != null ? inputDelimiter : ',';
+        if (v === 'comma') return ',';
+        if (v === 'tab') return '\t';
+        return v;
       }
 
       function isEmptyRow(row) {
@@ -426,10 +560,20 @@
         return true;
       }
 
+      function updateNoHeaderHint() {
+        if (!noHeaderHint || !firstRowIsHeader) return;
+        if (firstRowIsHeader.checked) {
+          noHeaderHint.setAttribute('hidden', '');
+        } else {
+          noHeaderHint.removeAttribute('hidden');
+        }
+      }
+
       function updateButtonState() {
         var hasInput = (csvInput.value || '').trim().length > 0;
         cleanBtn.disabled = !hasInput;
         clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+        updateNoHeaderHint();
       }
 
       function cleanCsv() {
@@ -456,14 +600,25 @@
         cleanBtn.classList.add('spinning');
         window.setTimeout(function () {
           try {
-            var rows = parseCsv(text);
+            var inDelim = getInputDelimiter();
+            var rows = parseCsv(text, inDelim);
             if (!rows.length) throw new Error('No CSV rows found.');
 
-            var header = rows[0];
-            var dataRows = rows.slice(1);
+            var treatFirstAsHeader = firstRowIsHeader.checked;
+            var header;
+            var dataRows;
+            if (treatFirstAsHeader) {
+              header = rows[0];
+              dataRows = rows.slice(1);
+            } else {
+              header = null;
+              dataRows = rows.slice();
+            }
 
             if (trimSpaces.checked) {
-              header = header.map(function (v) { return String(v || '').trim(); });
+              if (treatFirstAsHeader) {
+                header = header.map(function (v) { return String(v || '').trim(); });
+              }
               dataRows = dataRows.map(function (r) {
                 return r.map(function (v) { return String(v || '').trim(); });
               });
@@ -502,22 +657,40 @@
               });
             }
 
-            var finalRows = [header].concat(dataRows);
-            outputText = toCsv(finalRows);
+            var finalRows;
+            if (treatFirstAsHeader) {
+              finalRows = [header].concat(dataRows);
+            } else {
+              var maxCols = 0;
+              for (var ri = 0; ri < dataRows.length; ri++) {
+                maxCols = Math.max(maxCols, dataRows[ri].length);
+              }
+              var synthetic = [];
+              for (var ci = 0; ci < maxCols; ci++) {
+                synthetic.push('col' + (ci + 1));
+              }
+              finalRows = [synthetic].concat(dataRows);
+            }
+            var outDelim = getOutputDelimiter(inDelim);
+            outputText = rowsToCsv(finalRows, outDelim);
             csvOutput.value = outputText;
 
             if (objectUrl) URL.revokeObjectURL(objectUrl);
             objectUrl = URL.createObjectURL(new Blob([outputText], { type: 'text/csv;charset=utf-8' }));
             downloadLink.href = objectUrl;
             downloadLink.style.display = 'inline-flex';
+            if (openCsvExcelBtn) openCsvExcelBtn.style.display = 'inline-flex';
             copyBtn.disabled = false;
-            resultMeta.textContent = dataRows.length.toLocaleString() + ' data rows cleaned';
+            resultMeta.textContent =
+              dataRows.length.toLocaleString() +
+              (treatFirstAsHeader ? ' data rows cleaned' : ' rows cleaned (synthetic header added)');
             resultSection.classList.add('visible');
             clearWarning();
           } catch (err) {
             setError(err && err.message ? err.message : 'Unable to clean CSV.');
             resultSection.classList.remove('visible');
             downloadLink.style.display = 'none';
+            if (openCsvExcelBtn) openCsvExcelBtn.style.display = 'none';
             copyBtn.disabled = true;
           } finally {
             cleanBtn.classList.remove('spinning');
@@ -530,10 +703,16 @@
         clearWarning();
         updateButtonState();
       });
-      [trimSpaces, removeEmptyRows, removeDuplicates, filterValue, sortColumn, sortOrder].forEach(function (el) {
+      [firstRowIsHeader, trimSpaces, removeEmptyRows, removeDuplicates, filterValue, sortColumn, sortOrder, outDelimSelect].forEach(function (el) {
         el.addEventListener('input', updateButtonState);
         el.addEventListener('change', updateButtonState);
       });
+      delimiterSelect.addEventListener('change', function () {
+        updateCustomDelimiterVisibility();
+        updateButtonState();
+      });
+      customDelimiter.addEventListener('input', updateButtonState);
+      updateCustomDelimiterVisibility();
 
       clearLink.addEventListener('click', function (event) {
         event.preventDefault();
@@ -542,10 +721,17 @@
         fileInput.value = '';
         filterValue.value = '';
         sortColumn.value = '';
+        delimiterSelect.value = 'auto';
+        customDelimiter.value = '';
+        outDelimSelect.value = 'comma';
+        if (firstRowIsHeader) firstRowIsHeader.checked = true;
+        updateNoHeaderHint();
+        updateCustomDelimiterVisibility();
         csvOutput.value = '';
         outputText = '';
         copyBtn.disabled = true;
         downloadLink.style.display = 'none';
+        if (openCsvExcelBtn) openCsvExcelBtn.style.display = 'none';
         resultSection.classList.remove('visible');
         if (objectUrl) {
           URL.revokeObjectURL(objectUrl);
@@ -555,6 +741,27 @@
         clearWarning();
         updateButtonState();
       });
+
+      if (openCsvExcelBtn) {
+        openCsvExcelBtn.addEventListener('click', function () {
+          var text = outputText || (csvOutput && csvOutput.value) || '';
+          if (!String(text).trim()) return;
+          var h = window.TinyDataToolExcelHandoff;
+          if (!h) {
+            setError(
+              'Excel handoff is unavailable. Copy your CSV, open CSV → Excel from the menu, and paste it there.'
+            );
+            return;
+          }
+          if (!h.stashCsvForExcel(text)) {
+            setError(
+              'Could not save your CSV for the Excel step (browser storage may be full or blocked). Copy the output, open CSV → Excel, and paste—or clear site data and try again.'
+            );
+            return;
+          }
+          window.location.href = '../csv-to-excel/index.html';
+        });
+      }
 
       function fileLooksLikeCsv(f) {
         if (!f || !f.name) return false;
@@ -631,13 +838,9 @@
       cleanBtn.addEventListener('click', cleanCsv);
       copyBtn.addEventListener('click', function () {
         if (!outputText) return;
-        var original = copyBtn.innerHTML;
-        navigator.clipboard.writeText(outputText).then(function () {
-          copyBtn.innerHTML = '<span>Copied!</span>';
-          window.setTimeout(function () { copyBtn.innerHTML = original; }, 1200);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(outputText, copyBtn, function () {
           setError('Copy failed. Please copy manually.');
-        });
+        }, { durationMs: 1200 });
       });
 
       updateButtonState();

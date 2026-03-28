@@ -750,15 +750,9 @@
       copyOutputBtn.addEventListener('click', function () {
         const text = outputEl.value;
         if (!text) return;
-        navigator.clipboard.writeText(text).then(function () {
-          const original = copyOutputBtn.textContent;
-          copyOutputBtn.textContent = 'Copied!';
-          setTimeout(function () {
-            copyOutputBtn.textContent = original;
-          }, 2000);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(text, copyOutputBtn, function () {
           showError('Copy failed. You can select and copy the output manually.');
-        });
+        }, { durationMs: 2000 });
       });
 
       clearOutputBtn.addEventListener('click', function () {

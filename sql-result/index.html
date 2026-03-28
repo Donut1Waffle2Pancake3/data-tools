@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>SQL Result to CSV / JSON &amp; SQL Formatter | TinyDataTool</title>
+  <meta name="description" content="Paste SQL query results (tab or space columns) into JSON or CSV, or pretty-print SQL text—all in your browser. No execution, no uploads. Free." />
+  <link rel="canonical" href="https://tinydatatool.com/sql-result/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SQL Result to CSV / JSON &amp; SQL Formatter | TinyDataTool" />
+  <meta property="og:description" content="Turn pasted result grids into JSON or CSV; format SQL for reading. Client-side only." />
+  <meta property="og:url" content="https://tinydatatool.com/sql-result/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="SQL Result to CSV / JSON | TinyDataTool" />
+  <meta name="twitter:description" content="Convert pasted SQL result grids to JSON or CSV; format SQL locally." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"SQL Result to CSV / JSON","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/sql-result/","description":"Convert pasted SQL result grids to JSON or CSV and pretty-print SQL text in the browser. No query execution."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .sql-output-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .sql-output-tabs button { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-surface); cursor: pointer; font-size: 14px; }
+    .sql-output-tabs button[aria-selected="true"] { border-color: var(--color-accent); background: var(--color-accent-soft); }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="sql-result"></div>
+
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">SQL Result &amp; SQL Formatter</h1>
+        <p class="hero__sub">Paste a <strong>result grid</strong> from a query tool (tabs or aligned spaces) and get <strong>JSON</strong> or <strong>CSV</strong>—or switch to <strong>Format SQL</strong> to pretty-print a statement for reading. Nothing runs on a database; formatting and conversion are local only.</p>
+      </div>
+    </section>
+
+    <section aria-label="SQL result and formatter" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region">
+
+          <div class="tool-tabs" role="tablist" aria-label="Tool mode">
+            <button type="button" class="tab active" role="tab" id="tabGrid" aria-selected="true" aria-controls="panelGrid" data-panel="grid">Result → CSV / JSON</button>
+            <button type="button" class="tab" role="tab" id="tabSql" aria-selected="false" aria-controls="panelSql" data-panel="sql">Format SQL</button>
+          </div>
+
+          <div id="panelGrid" role="tabpanel" aria-labelledby="tabGrid">
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="gridInput">Paste result grid</label>
+                <a href="#" class="clear-link" id="clearGridLink" role="button" aria-disabled="true">Clear</a>
+              </div>
+              <textarea id="gridInput" class="form-input" placeholder="Paste rows from SSMS, pgAdmin, DBeaver, etc. — usually tab-separated." spellcheck="false"></textarea>
+            </div>
+
+            <div class="drop-zone" id="dropZoneGrid" role="button" tabindex="0" aria-label="Upload text file with result grid" aria-describedby="drop-hint-grid">
+              <div class="drop-zone__busy" aria-hidden="true">
+                <span class="drop-zone__spinner"></span>
+                <p class="drop-zone__busy-label">Loading file…</p>
+              </div>
+              <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+              </svg>
+              <p class="drop-zone__label">Or upload a .txt / .csv file</p>
+              <p class="drop-zone__hint" id="drop-hint-grid">In your browser · Up to 200 MB (50+ MB may feel slow)</p>
+              <input type="file" id="fileInputGrid" accept=".txt,.csv,text/plain,text/csv" aria-label="Select file" />
+            </div>
+
+            <div class="form-section" aria-label="Grid options">
+              <span class="form-section__label">Columns</span>
+              <div class="delimiter-group" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+                <label for="gridDelim" class="form-label" style="margin: 0;">Delimiter</label>
+                <select id="gridDelim" class="field-md" style="min-width: 120px;">
+                  <option value="auto">Auto</option>
+                  <option value="tab">Tab</option>
+                  <option value="comma">Comma</option>
+                  <option value="pipe">Pipe</option>
+                  <option value="multispace">2+ spaces</option>
+                </select>
+              </div>
+              <label class="form-option" style="margin-top: 12px; display: flex;">
+                <input type="checkbox" id="gridHasHeader" checked />
+                <span>First row is header</span>
+              </label>
+            </div>
+
+            <button class="btn-primary" id="runGridBtn" type="button" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              Convert to JSON / CSV
+            </button>
+          </div>
+
+          <div id="panelSql" role="tabpanel" aria-labelledby="tabSql" hidden>
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="sqlInput">Paste SQL</label>
+                <a href="#" class="clear-link" id="clearSqlLink" role="button" aria-disabled="true">Clear</a>
+              </div>
+              <textarea id="sqlInput" class="form-input" placeholder="Paste a SELECT or other SQL statement to pretty-print (readability only)." spellcheck="false"></textarea>
+            </div>
+            <button class="btn-primary" id="runSqlBtn" type="button" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              Format SQL
+            </button>
+          </div>
+
+          <div class="status-message status-message--warning" id="warningMsg" role="status" aria-live="polite" aria-atomic="true">
+            <span id="warningText"></span>
+          </div>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Results</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="result-section__body">
+              <div id="gridResultBlock">
+                <div class="sql-output-tabs" role="tablist" aria-label="Output format">
+                  <button type="button" id="outTabJson" role="tab" aria-selected="true" aria-controls="outJsonPanel">JSON</button>
+                  <button type="button" id="outTabCsv" role="tab" aria-selected="false" aria-controls="outCsvPanel">CSV</button>
+                </div>
+                <div id="outJsonPanel" role="tabpanel" aria-labelledby="outTabJson">
+                  <div class="form-group">
+                    <label class="form-label" for="jsonOutput">JSON</label>
+                    <textarea id="jsonOutput" class="form-input" readonly style="min-height: 120px;"></textarea>
+                  </div>
+                  <div class="result-actions">
+                    <button class="btn-download" id="copyJsonBtn" type="button">Copy JSON</button>
+                    <a class="btn-download" id="downloadJsonLink" href="#" download="result.json" style="display: none;">Download JSON</a>
+                  </div>
+                </div>
+                <div id="outCsvPanel" role="tabpanel" aria-labelledby="outTabCsv" hidden>
+                  <div class="form-group">
+                    <label class="form-label" for="csvOutput">CSV</label>
+                    <textarea id="csvOutput" class="form-input" readonly style="min-height: 120px;"></textarea>
+                  </div>
+                  <div class="result-actions">
+                    <button class="btn-download" id="copyCsvBtn" type="button">Copy CSV</button>
+                    <a class="btn-download" id="downloadCsvLink" href="#" download="result.csv" style="display: none;">Download CSV</a>
+                  </div>
+                </div>
+              </div>
+              <div id="sqlResultBlock" hidden>
+                <div class="form-group">
+                  <label class="form-label" for="sqlOutput">Formatted SQL</label>
+                  <textarea id="sqlOutput" class="form-input" readonly style="min-height: 120px;"></textarea>
+                </div>
+                <div class="result-actions">
+                  <button class="btn-download" id="copySqlBtn" type="button">Copy SQL</button>
+                  <a class="btn-download" id="downloadSqlLink" href="#" download="formatted.sql" style="display: none;">Download .sql</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            No SQL is executed here. Text stays in your browser and is never uploaded.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">Result grid and SQL formatting</h2>
+        <p class="section-body">For <strong>results</strong>, copy the grid from your client and paste it here. The tool splits columns by tab (typical from SSMS), pipe, comma, or aligned spaces. For <strong>SQL</strong>, paste text to add line breaks and indentation for reading—this is not a validator and does not run your query.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Choose a tab</p>
+            <p class="step__desc">Use Result → CSV / JSON for pasted grids, or Format SQL for pretty-printing statements.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Paste and run</p>
+            <p class="step__desc">Pick delimiter Auto or explicit; toggle header row. Then copy or download JSON or CSV.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Export</p>
+            <p class="step__desc">Switch between JSON and CSV previews; download files when you need them on disk.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">Does this tool run my SQL on a database?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. SQL formatting only changes whitespace for readability. Result conversion only parses text you paste—it never connects to a server or executes queries.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Why is my comma-separated result wrong?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Comma mode uses a simple split on commas—it does not understand quoted CSV fields. Prefer Tab or Auto when copying from SQL clients; they usually use tabs between columns.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">What does “2+ spaces” delimiter mean?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Some tools align columns with multiple spaces in a monospace font. That mode splits on runs of two or more spaces. It is a heuristic—ragged or uneven grids may need cleanup in the source tool.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">Is my data private?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Everything runs in your browser; nothing is uploaded or logged by TinyDataTool.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="sql-result"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+  <script src="../js/site.js" defer></script>
+  <script>
+    (function () {
+      var MAX_DATA_ROWS = 100000;
+      var WARN_ROWS = 25000;
+
+      var tabGrid = document.getElementById('tabGrid');
+      var tabSql = document.getElementById('tabSql');
+      var panelGrid = document.getElementById('panelGrid');
+      var panelSql = document.getElementById('panelSql');
+      var gridInput = document.getElementById('gridInput');
+      var sqlInput = document.getElementById('sqlInput');
+      var clearGridLink = document.getElementById('clearGridLink');
+      var clearSqlLink = document.getElementById('clearSqlLink');
+      var gridDelim = document.getElementById('gridDelim');
+      var gridHasHeader = document.getElementById('gridHasHeader');
+      var runGridBtn = document.getElementById('runGridBtn');
+      var runSqlBtn = document.getElementById('runSqlBtn');
+      var dropZoneGrid = document.getElementById('dropZoneGrid');
+      var fileInputGrid = document.getElementById('fileInputGrid');
+      var warningMsg = document.getElementById('warningMsg');
+      var warningText = document.getElementById('warningText');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultSection = document.getElementById('resultSection');
+      var resultMeta = document.getElementById('resultMeta');
+      var gridResultBlock = document.getElementById('gridResultBlock');
+      var sqlResultBlock = document.getElementById('sqlResultBlock');
+      var jsonOutput = document.getElementById('jsonOutput');
+      var csvOutput = document.getElementById('csvOutput');
+      var sqlOutput = document.getElementById('sqlOutput');
+      var outTabJson = document.getElementById('outTabJson');
+      var outTabCsv = document.getElementById('outTabCsv');
+      var outJsonPanel = document.getElementById('outJsonPanel');
+      var outCsvPanel = document.getElementById('outCsvPanel');
+      var copyJsonBtn = document.getElementById('copyJsonBtn');
+      var copyCsvBtn = document.getElementById('copyCsvBtn');
+      var copySqlBtn = document.getElementById('copySqlBtn');
+      var downloadJsonLink = document.getElementById('downloadJsonLink');
+      var downloadCsvLink = document.getElementById('downloadCsvLink');
+      var downloadSqlLink = document.getElementById('downloadSqlLink');
+
+      var blobJson = null;
+      var blobCsv = null;
+      var blobSql = null;
+      var activeMode = 'grid';
+
+      function clearWarning() {
+        warningText.textContent = '';
+        warningMsg.classList.remove('visible');
+      }
+
+      function showWarning(msg) {
+        warningText.textContent = msg;
+        warningMsg.classList.add('visible');
+      }
+
+      function showError(msg) {
+        clearWarning();
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function clearError() {
+        errorMsg.classList.remove('visible');
+        errorText.textContent = '';
+      }
+
+      function revokeBlobs() {
+        if (blobJson) { URL.revokeObjectURL(blobJson); blobJson = null; }
+        if (blobCsv) { URL.revokeObjectURL(blobCsv); blobCsv = null; }
+        if (blobSql) { URL.revokeObjectURL(blobSql); blobSql = null; }
+      }
+
+      function hideResults() {
+        resultSection.classList.remove('visible');
+        revokeBlobs();
+        downloadJsonLink.style.display = 'none';
+        downloadCsvLink.style.display = 'none';
+        downloadSqlLink.style.display = 'none';
+        jsonOutput.value = '';
+        csvOutput.value = '';
+        sqlOutput.value = '';
+        resultMeta.textContent = '';
+      }
+
+      function splitLine(line, mode) {
+        if (mode === 'tab') return line.split('\t');
+        if (mode === 'comma') return line.split(',').map(function (c) { return c.trim(); });
+        if (mode === 'pipe') return line.split('|');
+        if (mode === 'multispace') return line.split(/\s{2,}/).map(function (c) { return c.trim(); });
+        return [line];
+      }
+
+      function stableCols(lines, mode, startIdx, maxRows) {
+        var counts = [];
+        var end = Math.min(lines.length, startIdx + maxRows);
+        for (var i = startIdx; i < end; i++) {
+          if (!lines[i].trim()) continue;
+          counts.push(splitLine(lines[i], mode).length);
+        }
+        if (!counts.length) return 0;
+        var c0 = counts[0];
+        for (var j = 1; j < counts.length; j++) {
+          if (counts[j] !== c0) return 0;
+        }
+        return c0;
+      }
+
+      function detectDelim(lines, startIdx) {
+        var order = ['tab', 'pipe', 'comma', 'multispace'];
+        for (var k = 0; k < order.length; k++) {
+          var n = stableCols(lines, order[k], startIdx, 12);
+          if (n >= 2) return order[k];
+        }
+        return 'multispace';
+      }
+
+      function normalizeLines(text) {
+        var s = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        var lines = s.split('\n');
+        while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
+        return lines;
+      }
+
+      function dedupeHeaders(names) {
+        var seen = Object.create(null);
+        var out = [];
+        for (var i = 0; i < names.length; i++) {
+          var n = names[i] == null || String(names[i]).trim() === '' ? 'column_' + (i + 1) : String(names[i]).trim();
+          if (!seen[n]) {
+            seen[n] = 1;
+            out.push(n);
+          } else {
+            seen[n]++;
+            out.push(n + '_' + seen[n]);
+          }
+        }
+        return out;
+      }
+
+      function cellToCsv(cell) {
+        var s = String(cell == null ? '' : cell);
+        if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+
+      function rowsToCsv(headers, objects) {
+        var lines = [headers.map(cellToCsv).join(',')];
+        for (var r = 0; r < objects.length; r++) {
+          var row = objects[r];
+          lines.push(headers.map(function (h) { return cellToCsv(row[h]); }).join(','));
+        }
+        return lines.join('\n');
+      }
+
+      function parseGrid(text) {
+        var lines = normalizeLines(text);
+        if (!lines.length) throw new Error('Paste a result grid or upload a file.');
+        var start = 0;
+        while (start < lines.length && !lines[start].trim()) start++;
+        if (start >= lines.length) throw new Error('No non-empty rows found.');
+
+        var delimMode = gridDelim.value;
+        if (delimMode === 'auto') delimMode = detectDelim(lines, start);
+
+        var firstCells = splitLine(lines[start], delimMode);
+        if (firstCells.length < 2) {
+          throw new Error(
+            'Could not find at least two columns. Try another delimiter (Tab is typical from SQL clients).'
+          );
+        }
+
+        var hasHeader = gridHasHeader.checked;
+        var headerRowIdx = hasHeader ? start : -1;
+        var dataStart = hasHeader ? start + 1 : start;
+
+        var headers;
+        if (hasHeader) {
+          headers = dedupeHeaders(firstCells);
+        } else {
+          var n = firstCells.length;
+          headers = [];
+          for (var h = 0; h < n; h++) headers.push('column_' + (h + 1));
+        }
+
+        var objects = [];
+        var begin = dataStart;
+        if (!hasHeader) {
+          objects.push(function () {
+            var o = {};
+            for (var c = 0; c < headers.length; c++) {
+              o[headers[c]] = firstCells[c] != null ? firstCells[c] : '';
+            }
+            return o;
+          }());
+          begin = start + 1;
+        }
+
+        for (var r = begin; r < lines.length; r++) {
+          if (!lines[r].trim()) continue;
+          var cells = splitLine(lines[r], delimMode);
+          if (cells.length !== headers.length) {
+            if (cells.length < headers.length) {
+              while (cells.length < headers.length) cells.push('');
+            } else {
+              throw new Error(
+                'Row ' + (r + 1) + ' has ' + cells.length + ' columns; expected ' + headers.length + '. Check delimiter or stray tabs.'
+              );
+            }
+          }
+          var obj = {};
+          for (var c2 = 0; c2 < headers.length; c2++) {
+            obj[headers[c2]] = cells[c2] != null ? cells[c2] : '';
+          }
+          objects.push(obj);
+        }
+
+        if (objects.length > MAX_DATA_ROWS) {
+          throw new Error('Too many data rows (max ' + MAX_DATA_ROWS.toLocaleString() + '). Trim the paste or split the file.');
+        }
+
+        return { objects: objects, headers: headers, delimUsed: delimMode };
+      }
+
+      function prettySqlLite(sql) {
+        var s = String(sql || '').replace(/\r\n/g, '\n').replace(/[ \t\n]+/g, ' ').trim();
+        if (!s) return '';
+        s = s.replace(/\s*,\s*/g, ',\n  ');
+        var keys = [
+          'UNION ALL',
+          'GROUP BY',
+          'ORDER BY',
+          'INNER JOIN',
+          'LEFT JOIN',
+          'RIGHT JOIN',
+          'FULL OUTER JOIN',
+          'CROSS JOIN',
+          'OUTER JOIN',
+          'JOIN',
+          'FROM',
+          'WHERE',
+          'HAVING',
+          'LIMIT',
+          'OFFSET',
+          'UNION',
+          'WITH',
+        ];
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          var re = new RegExp('\\s+' + k.replace(/\s+/g, '\\s+') + '\\s+', 'gi');
+          s = s.replace(re, '\n' + k + '\n  ');
+        }
+        s = s.replace(/^\s*SELECT\s+/i, 'SELECT\n  ');
+        return s.trim();
+      }
+
+      function setGridTabActive(active) {
+        outTabJson.setAttribute('aria-selected', active === 'json' ? 'true' : 'false');
+        outTabCsv.setAttribute('aria-selected', active === 'csv' ? 'true' : 'false');
+        outJsonPanel.hidden = active !== 'json';
+        outCsvPanel.hidden = active !== 'csv';
+      }
+
+      function switchMainTab(mode) {
+        activeMode = mode;
+        tabGrid.classList.toggle('active', mode === 'grid');
+        tabSql.classList.toggle('active', mode === 'sql');
+        tabGrid.setAttribute('aria-selected', mode === 'grid' ? 'true' : 'false');
+        tabSql.setAttribute('aria-selected', mode === 'sql' ? 'true' : 'false');
+        panelGrid.hidden = mode !== 'grid';
+        panelSql.hidden = mode !== 'sql';
+        hideResults();
+        clearError();
+        clearWarning();
+        checkReady();
+      }
+
+      tabGrid.addEventListener('click', function () { switchMainTab('grid'); });
+      tabSql.addEventListener('click', function () { switchMainTab('sql'); });
+
+      outTabJson.addEventListener('click', function () { setGridTabActive('json'); });
+      outTabCsv.addEventListener('click', function () { setGridTabActive('csv'); });
+
+      function gridText() {
+        return (gridInput.value || '').trim();
+      }
+
+      function sqlText() {
+        return (sqlInput.value || '').trim();
+      }
+
+      function checkReady() {
+        if (activeMode === 'grid') {
+          runGridBtn.disabled = gridText().length === 0;
+          clearGridLink.classList.toggle('clear-link--enabled', gridText().length > 0);
+          clearGridLink.setAttribute('aria-disabled', gridText().length > 0 ? 'false' : 'true');
+        } else {
+          runSqlBtn.disabled = sqlText().length === 0;
+          clearSqlLink.classList.toggle('clear-link--enabled', sqlText().length > 0);
+          clearSqlLink.setAttribute('aria-disabled', sqlText().length > 0 ? 'false' : 'true');
+        }
+      }
+
+      gridInput.addEventListener('input', checkReady);
+      sqlInput.addEventListener('input', checkReady);
+
+      clearGridLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!gridText()) return;
+        gridInput.value = '';
+        hideResults();
+        clearError();
+        clearWarning();
+        checkReady();
+        gridInput.focus();
+      });
+
+      clearSqlLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!sqlText()) return;
+        sqlInput.value = '';
+        hideResults();
+        clearError();
+        clearWarning();
+        checkReady();
+        sqlInput.focus();
+      });
+
+      function loadFileGrid(file) {
+        if (!file) return;
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var fr = TinyDataToolCsvLimits.checkFile(file);
+          if (!fr.allowed) {
+            showError(fr.hardError || 'File exceeds size limit.');
+            return;
+          }
+          clearError();
+          if (fr.warnMessage) showWarning(fr.warnMessage);
+          else clearWarning();
+        }
+        dropZoneGrid.classList.add('file-reading');
+        dropZoneGrid.setAttribute('aria-busy', 'true');
+        readFileAsText(file)
+          .then(function (text) {
+            gridInput.value = text;
+            hideResults();
+            clearError();
+            checkReady();
+          })
+          .catch(function (err) {
+            showError(err.message || 'Failed to read file.');
+          })
+          .finally(function () {
+            dropZoneGrid.classList.remove('file-reading');
+            dropZoneGrid.removeAttribute('aria-busy');
+          });
+      }
+
+      dropZoneGrid.addEventListener('click', function (e) {
+        if (e.target !== fileInputGrid) fileInputGrid.click();
+      });
+      dropZoneGrid.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInputGrid.click();
+        }
+      });
+      fileInputGrid.addEventListener('change', function () {
+        if (fileInputGrid.files && fileInputGrid.files[0]) {
+          loadFileGrid(fileInputGrid.files[0]);
+          fileInputGrid.value = '';
+        }
+      });
+      dropZoneGrid.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropZoneGrid.classList.add('drag-over');
+      });
+      dropZoneGrid.addEventListener('dragleave', function () {
+        dropZoneGrid.classList.remove('drag-over');
+      });
+      dropZoneGrid.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZoneGrid.classList.remove('drag-over');
+        var file = e.dataTransfer.files[0];
+        if (file) loadFileGrid(file);
+      });
+
+      runGridBtn.addEventListener('click', function () {
+        clearError();
+        clearWarning();
+        hideResults();
+        var text = gridText();
+        if (!text) {
+          showError('Paste a result grid first.');
+          return;
+        }
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          var cr = TinyDataToolCsvLimits.checkPaste(text);
+          if (!cr.allowed) {
+            showError(cr.hardError || 'Input exceeds size limit.');
+            return;
+          }
+          if (cr.warnMessage) showWarning(cr.warnMessage);
+        }
+        runGridBtn.classList.add('spinning');
+        runGridBtn.setAttribute('aria-busy', 'true');
+        try {
+          var parsed = parseGrid(text);
+          if (parsed.objects.length >= WARN_ROWS) {
+            showWarning('Large paste: ' + parsed.objects.length.toLocaleString() + ' rows. Your browser may slow down on copy or download.');
+          }
+          var jsonStr = JSON.stringify(parsed.objects, null, 2);
+          var csvStr = rowsToCsv(parsed.headers, parsed.objects);
+          jsonOutput.value = jsonStr;
+          csvOutput.value = csvStr;
+          gridResultBlock.hidden = false;
+          sqlResultBlock.hidden = true;
+          setGridTabActive('json');
+          resultSection.classList.add('visible');
+          resultMeta.textContent =
+            parsed.objects.length.toLocaleString() +
+            ' row(s) · delimiter: ' +
+            parsed.delimUsed +
+            (gridDelim.value === 'auto' ? ' (auto)' : '');
+
+          revokeBlobs();
+          blobJson = URL.createObjectURL(new Blob([jsonStr], { type: 'application/json;charset=utf-8' }));
+          blobCsv = URL.createObjectURL(new Blob([csvStr], { type: 'text/csv;charset=utf-8' }));
+          downloadJsonLink.href = blobJson;
+          downloadCsvLink.href = blobCsv;
+          downloadJsonLink.style.display = 'inline-flex';
+          downloadCsvLink.style.display = 'inline-flex';
+        } catch (err) {
+          showError(err.message || 'Could not parse grid.');
+        } finally {
+          runGridBtn.classList.remove('spinning');
+          runGridBtn.removeAttribute('aria-busy');
+        }
+      });
+
+      runSqlBtn.addEventListener('click', function () {
+        clearError();
+        clearWarning();
+        hideResults();
+        var t = sqlText();
+        if (!t) {
+          showError('Paste SQL to format.');
+          return;
+        }
+        runSqlBtn.classList.add('spinning');
+        runSqlBtn.setAttribute('aria-busy', 'true');
+        try {
+          var out = prettySqlLite(t);
+          sqlOutput.value = out;
+          gridResultBlock.hidden = true;
+          sqlResultBlock.hidden = false;
+          resultSection.classList.add('visible');
+          resultMeta.textContent = 'Pretty-print (readability only · not a validator)';
+
+          revokeBlobs();
+          blobSql = URL.createObjectURL(new Blob([out], { type: 'text/plain;charset=utf-8' }));
+          downloadSqlLink.href = blobSql;
+          downloadSqlLink.style.display = 'inline-flex';
+        } catch (err) {
+          showError(err.message || 'Format failed.');
+        } finally {
+          runSqlBtn.classList.remove('spinning');
+          runSqlBtn.removeAttribute('aria-busy');
+        }
+      });
+
+      copyJsonBtn.addEventListener('click', function () {
+        var v = jsonOutput.value;
+        if (!v) return;
+        window.TinyDataToolClipboard.copyWithFeedback(v, copyJsonBtn, function () {
+          showError('Copy failed. Select the text manually.');
+        });
+      });
+      copyCsvBtn.addEventListener('click', function () {
+        var v = csvOutput.value;
+        if (!v) return;
+        window.TinyDataToolClipboard.copyWithFeedback(v, copyCsvBtn, function () {
+          showError('Copy failed. Select the text manually.');
+        });
+      });
+      copySqlBtn.addEventListener('click', function () {
+        var v = sqlOutput.value;
+        if (!v) return;
+        window.TinyDataToolClipboard.copyWithFeedback(v, copySqlBtn, function () {
+          showError('Copy failed. Select the text manually.');
+        });
+      });
+
+      checkReady();
+    })();
+  </script>
+</body>
+</html>

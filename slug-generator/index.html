@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>URL Slug Generator | Free &amp; Private | TinyDataTool</title>
+  <meta name="description" content="Create clean URL slugs from titles or phrases in your browser. Options for hyphens, underscores, accents, stop words, and max length. Private, client-side—nothing is uploaded." />
+  <link rel="canonical" href="https://tinydatatool.com/slug-generator/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="URL Slug Generator | Free &amp; Private | TinyDataTool" />
+  <meta property="og:description" content="Create URL-safe slugs from text with options for separators, accents, and length. Runs entirely in your browser." />
+  <meta property="og:url" content="https://tinydatatool.com/slug-generator/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="URL Slug Generator | Free &amp; Private | TinyDataTool" />
+  <meta name="twitter:description" content="Generate URL slugs online. Private, client-side. No signup." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"URL Slug Generator","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/slug-generator/","description":"Create URL-friendly slugs from titles or lists. Free, private, browser-based."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+    .form-inline-row--wrap { flex-wrap: wrap; }
+    #maxLengthInput { max-width: 120px; }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="slug-generator"></div>
+
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">URL Slug Generator</h1>
+        <p class="hero__sub">Turn a title, headline, or list of phrases into URL-safe slugs. Choose hyphens or underscores, strip accents, drop common stop words, cap length, and copy the result—all locally in your browser.</p>
+      </div>
+    </section>
+
+    <section aria-label="URL slug generator" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region" aria-label="URL slug generator">
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="textInput">Text input</label>
+              <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+            </div>
+            <textarea id="textInput" class="form-input" placeholder="Paste a title (e.g. How to Build APIs in 2026) or multiple lines for bulk mode." spellcheck="true"></textarea>
+          </div>
+
+          <div class="form-section" role="group" aria-labelledby="slug-mode-label">
+            <span class="form-section__label" id="slug-mode-label">Mode</span>
+            <div class="form-inline-row form-inline-row--wrap">
+              <label class="form-option" for="modeSingle">
+                <input type="radio" name="slugMode" id="modeSingle" value="single" checked />
+                <span>Single slug (whole input)</span>
+              </label>
+              <label class="form-option" for="modeBulk">
+                <input type="radio" name="slugMode" id="modeBulk" value="bulk" />
+                <span>One slug per line</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section" role="group" aria-labelledby="slug-options-label">
+            <span class="form-section__label" id="slug-options-label">Options</span>
+            <div class="form-inline-row form-inline-row--wrap">
+              <label class="form-option" for="lowercaseCheck">
+                <input type="checkbox" id="lowercaseCheck" checked />
+                <span>Lowercase</span>
+              </label>
+              <label class="form-option" for="stripAccentsCheck">
+                <input type="checkbox" id="stripAccentsCheck" checked />
+                <span>Strip accents (transliterate)</span>
+              </label>
+              <label class="form-option" for="stopwordsCheck">
+                <input type="checkbox" id="stopwordsCheck" />
+                <span>Remove stop words</span>
+              </label>
+            </div>
+            <div class="form-inline-row form-inline-row--wrap" style="margin-top: 12px;">
+              <span class="form-label" style="margin: 0; align-self: center;">Separator</span>
+              <label class="form-option" for="sepHyphen">
+                <input type="radio" name="separator" id="sepHyphen" value="-" checked />
+                <span>Hyphen (-)</span>
+              </label>
+              <label class="form-option" for="sepUnderscore">
+                <input type="radio" name="separator" id="sepUnderscore" value="_" />
+                <span>Underscore (_)</span>
+              </label>
+            </div>
+            <div class="form-group" style="margin-top: 16px; margin-bottom: 0;">
+              <label class="form-label" for="customStopwords">Extra stop words (optional, comma-separated)</label>
+              <input type="text" id="customStopwords" class="form-input" placeholder="e.g. tutorial, guide, review" autocomplete="off" />
+            </div>
+            <div class="form-inline-row" style="margin-top: 12px; align-items: center; gap: 12px;">
+              <label class="form-label" for="maxLengthInput" style="margin: 0;">Max length (0 = no limit)</label>
+              <input type="number" id="maxLengthInput" class="form-input" min="0" max="500" value="0" inputmode="numeric" aria-describedby="maxLengthHint" />
+              <span id="maxLengthHint" class="form-hint" style="margin: 0;">Characters; longer slugs trim at the last separator when possible.</span>
+            </div>
+          </div>
+
+          <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+            <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="errorText"></span>
+          </div>
+
+          <div class="result-section visible" id="resultSection" aria-live="polite">
+            <div class="result-section__heading">
+              <p class="result-section__title">Slug preview</p>
+              <p class="result-section__meta" id="resultMeta"></p>
+            </div>
+            <div class="result-section__body">
+            <div class="form-group">
+              <label class="form-label" for="textOutput">Output</label>
+              <textarea id="textOutput" class="form-input" readonly placeholder="Your slug will appear here as you type." aria-label="Generated slug output" style="min-height: 120px;"></textarea>
+            </div>
+            <div class="result-actions">
+              <button class="btn-download" id="copyBtn" type="button" disabled aria-label="Copy slug to clipboard">
+                <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/>
+                </svg>
+                Copy output
+              </button>
+            </div>
+            </div>
+          </div>
+
+          <div class="privacy-note" aria-label="Privacy information">
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Text is processed entirely in your browser and is never uploaded to any server.
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to create a URL slug from text</h2>
+        <p class="section-body">Paste your title or lines, adjust separator and cleanup options, and copy a slug that works in addresses and filenames. Everything runs locally with no uploads.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Paste your text</p>
+            <p class="step__desc">Enter one headline for a single slug, or multiple lines to generate one slug per line.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Set options</p>
+            <p class="step__desc">Pick hyphens or underscores, strip accents, optionally remove stop words, and cap length if you need a short slug.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Copy the slug</p>
+            <p class="step__desc">The preview updates as you type; copy the result when it looks right for your CMS or routes.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Why use a slug generator?</h2>
+        <p class="section-body">Readable URLs help people and search engines understand a page. A consistent slug format avoids broken links, duplicate routes, and manual cleanup in blogs, docs, and static site generators.</p>
+        <p class="section-body" style="margin-top: 12px;">Useful when you need to:</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M3 9h12M9 3v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Match CMS conventions</p>
+              <p class="benefit__desc">Produce lowercase, hyphenated paths that match common WordPress, Ghost, or static-site defaults.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M5 8h8M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Clean up titles</p>
+              <p class="benefit__desc">Strip punctuation and accents so slugs stay ASCII-safe where your stack expects it.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M4 6h10v8H4V6z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 4v4M12 4v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Batch file or route names</p>
+              <p class="benefit__desc">Use one-slug-per-line mode to turn a list of titles into slugs in one pass.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 6v4l2 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Keep slugs short</p>
+              <p class="benefit__desc">Optional max length trims at a separator when possible so you do not cut mid-word unnecessarily.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="secure-heading">
+      <div class="container--wide">
+        <p class="section-label">Privacy</p>
+        <h2 class="section-title" id="secure-heading">Private and secure</h2>
+        <p class="section-body">Your text is never uploaded. Slugs are computed in your browser only; nothing is stored or logged on a server.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Data stays on your device</p>
+              <p class="benefit__desc">No cloud processing—your headlines and lists never leave the tab.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M184 64C135.4 64 96 103.4 96 152L96 496C96 540.2 131.8 576 176 576L520 576C533.3 576 544 565.3 544 552C544 538.7 533.3 528 520 528L512 528L512 451.9C531.3 439 544 417 544 392L544 136C544 96.2 511.8 64 472 64L184 64zM464 464L464 528L176 528C158.3 528 144 513.7 144 496C144 478.3 158.3 464 176 464L464 464zM176 416C164.6 416 153.8 418.4 144 422.7L144 152C144 129.9 161.9 112 184 112L472 112C485.3 112 496 122.7 496 136L496 392C496 405.3 485.3 416 472 416L176 416z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Nothing stored or sent</p>
+              <p class="benefit__desc">Slugs exist only in the page until you copy them.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Fast and predictable</p>
+              <p class="benefit__desc">Rules are fixed and visible in the UI so you get the same shape of slug every time for the same options.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="slug-faq-1-answer">
+              <span itemprop="name">What is a URL slug?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="slug-faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">A slug is the human-readable part of a URL path, usually lowercase words separated by hyphens. It identifies a page without spaces or special characters.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="slug-faq-2-answer">
+              <span itemprop="name">How do I create a URL slug from a title online?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="slug-faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Paste your title, pick a separator and options, and copy the preview. This tool runs in your browser—no upload required.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="slug-faq-3-answer">
+              <span itemprop="name">Hyphens or underscores for SEO?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="slug-faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Hyphens are the most common default in public URLs. Use what your CMS or style guide requires; both are widely supported technically.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="slug-faq-4-answer">
+              <span itemprop="name">What does strip accents do?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="slug-faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">It converts letters like é or ñ to their closest ASCII base letters so the slug works in systems that expect plain Latin characters.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="slug-faq-5-answer">
+              <span itemprop="name">Can I generate many slugs at once?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="slug-faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">Yes. Choose one slug per line and paste a list of titles; each non-empty line becomes its own slug in the output.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="slug-faq-6-answer">
+              <span itemprop="name">Is my text uploaded when I use this slug generator?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="slug-faq-6-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. All processing happens locally in your browser; your input never leaves your device.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="related-tools-root" data-base="../" data-current="slug-generator"></div>
+
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+
+  <script>
+    (function () {
+      var DEFAULT_STOP_WORDS = [
+        'a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'as', 'by', 'from', 'is', 'it', 'be', 'are', 'was', 'were'
+      ];
+
+      var textInput = document.getElementById('textInput');
+      var modeSingle = document.getElementById('modeSingle');
+      var modeBulk = document.getElementById('modeBulk');
+      var lowercaseCheck = document.getElementById('lowercaseCheck');
+      var stripAccentsCheck = document.getElementById('stripAccentsCheck');
+      var stopwordsCheck = document.getElementById('stopwordsCheck');
+      var sepHyphen = document.getElementById('sepHyphen');
+      var sepUnderscore = document.getElementById('sepUnderscore');
+      var customStopwords = document.getElementById('customStopwords');
+      var maxLengthInput = document.getElementById('maxLengthInput');
+      var clearLink = document.getElementById('clearLink');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var resultMeta = document.getElementById('resultMeta');
+      var textOutput = document.getElementById('textOutput');
+      var copyBtn = document.getElementById('copyBtn');
+
+      var debounceTimer = null;
+      var DEBOUNCE_MS = 160;
+
+      function clearError() {
+        errorMsg.classList.remove('visible');
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function stripDiacritics(str) {
+        return String(str).normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+      }
+
+      function buildStopwordSet(useDefault, customLine) {
+        var set = Object.create(null);
+        if (useDefault) {
+          for (var i = 0; i < DEFAULT_STOP_WORDS.length; i++) {
+            set[DEFAULT_STOP_WORDS[i]] = true;
+          }
+        }
+        var parts = String(customLine || '').split(/[,;]+/);
+        for (var j = 0; j < parts.length; j++) {
+          var w = parts[j].trim().toLowerCase();
+          if (w) set[w] = true;
+        }
+        return set;
+      }
+
+      function tokenize(s, useUnicode) {
+        if (!s) return [];
+        if (useUnicode) {
+          try {
+            return String(s).split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+          } catch (e) {
+            useUnicode = false;
+          }
+        }
+        return String(s).split(/[^a-zA-Z0-9]+/).filter(Boolean);
+      }
+
+      function applyMaxLength(slug, maxLen, sep) {
+        if (!maxLen || slug.length <= maxLen) return slug;
+        var cut = slug.slice(0, maxLen);
+        var esc = sep.replace(/[-[\]{}()*+?.\\^$|]/g, '\\$&');
+        var reEnd = new RegExp(esc + '+$');
+        cut = cut.replace(reEnd, '');
+        var last = cut.lastIndexOf(sep);
+        if (last > Math.floor(maxLen * 0.5)) cut = cut.slice(0, last);
+        cut = cut.replace(reEnd, '');
+        return cut || slug.slice(0, maxLen);
+      }
+
+      function slugifyOne(raw, opts) {
+        var t = String(raw || '').trim();
+        if (!t) return '';
+        if (opts.stripAccents) t = stripDiacritics(t);
+        if (opts.lowercase) t = t.toLowerCase();
+
+        var tokens = tokenize(t, true);
+        if (opts.removeStopwords && tokens.length) {
+          var next = [];
+          for (var i = 0; i < tokens.length; i++) {
+            var tok = tokens[i];
+            var key = tok.toLowerCase();
+            if (!opts.stopSet[key]) next.push(tok);
+          }
+          tokens = next;
+        }
+
+        var slug = tokens.join(opts.separator);
+        var esc = opts.separator.replace(/[-[\]{}()*+?.\\^$|]/g, '\\$&');
+        slug = slug.replace(new RegExp(esc + '+', 'g'), opts.separator);
+        slug = slug.replace(new RegExp('^' + esc + '+|' + esc + '+$', 'g'), '');
+
+        if (opts.maxLength > 0) slug = applyMaxLength(slug, opts.maxLength, opts.separator);
+        return slug;
+      }
+
+      function getOptions() {
+        var sep = sepUnderscore.checked ? '_' : '-';
+        var maxRaw = parseInt(maxLengthInput.value, 10);
+        if (isNaN(maxRaw) || maxRaw < 0 || maxRaw > 500) {
+          return { error: 'Max length must be a number from 0 to 500.' };
+        }
+        return {
+          separator: sep,
+          lowercase: lowercaseCheck.checked,
+          stripAccents: stripAccentsCheck.checked,
+          removeStopwords: stopwordsCheck.checked,
+          stopSet: buildStopwordSet(stopwordsCheck.checked, customStopwords.value),
+          maxLength: maxRaw
+        };
+      }
+
+      function render() {
+        clearError();
+        var opts = getOptions();
+        if (opts.error) {
+          showError(opts.error);
+          textOutput.value = '';
+          resultMeta.textContent = '';
+          copyBtn.disabled = true;
+          return;
+        }
+
+        var raw = textInput.value || '';
+        var bulk = modeBulk.checked;
+        var lines;
+        var out;
+        if (bulk) {
+          lines = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+          var slugs = [];
+          for (var i = 0; i < lines.length; i++) {
+            var s = slugifyOne(lines[i], opts);
+            if (s) slugs.push(s);
+          }
+          out = slugs.join('\n');
+          resultMeta.textContent = slugs.length
+            ? slugs.length + ' slug' + (slugs.length !== 1 ? 's' : '')
+            : 'No slugs yet — add non-empty lines.';
+        } else {
+          out = slugifyOne(raw, opts);
+          resultMeta.textContent = out ? '1 slug' : 'No slug yet — add some text.';
+        }
+
+        textOutput.value = out;
+        copyBtn.disabled = !out;
+
+        var hasInput = raw.trim().length > 0;
+        clearLink.classList.toggle('clear-link--enabled', hasInput);
+        clearLink.setAttribute('aria-disabled', hasInput ? 'false' : 'true');
+      }
+
+      function scheduleRender() {
+        if (debounceTimer) window.clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(function () {
+          debounceTimer = null;
+          render();
+        }, DEBOUNCE_MS);
+      }
+
+      textInput.addEventListener('input', scheduleRender);
+      [modeSingle, modeBulk, lowercaseCheck, stripAccentsCheck, stopwordsCheck, sepHyphen, sepUnderscore].forEach(function (el) {
+        el.addEventListener('change', function () { render(); });
+      });
+      customStopwords.addEventListener('input', scheduleRender);
+      maxLengthInput.addEventListener('input', scheduleRender);
+
+      clearLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (clearLink.getAttribute('aria-disabled') === 'true') return;
+        textInput.value = '';
+        clearError();
+        render();
+        textInput.focus();
+      });
+
+      copyBtn.addEventListener('click', function () {
+        var out = textOutput.value;
+        if (!out) return;
+        window.TinyDataToolClipboard.copyWithFeedback(out, copyBtn, function () {
+          showError('Copy failed. You can select and copy the output manually.');
+        });
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

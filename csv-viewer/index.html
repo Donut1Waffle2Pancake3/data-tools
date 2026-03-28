@@ -199,6 +199,12 @@
                     </svg>
                     <span>Download CSV</span>
                   </a>
+                  <button type="button" class="btn-download" id="openCsvExcelBtn" style="display: none;" aria-label="Open this CSV in the CSV to Excel converter">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                      <path d="M6.5 1.5v7M3.5 6l3 3 3-3M1.5 11.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <span>Open in CSV → Excel</span>
+                  </button>
                 </div>
               </header>
               <div class="table-wrap" id="tableWrap"></div>
@@ -356,6 +362,7 @@
       var tableWrap = document.getElementById('tableWrap');
       var copyBtn = document.getElementById('copyBtn');
       var downloadLink = document.getElementById('downloadLink');
+      var openCsvExcelBtn = document.getElementById('openCsvExcelBtn');
 
       var parsedRows = [];
       var outputCsv = '';
@@ -525,6 +532,7 @@
           tableWrap.innerHTML = '';
           copyBtn.disabled = true;
           downloadLink.style.display = 'none';
+          if (openCsvExcelBtn) openCsvExcelBtn.style.display = 'none';
           hideError();
           clearWarning();
           updateButtonState();
@@ -575,6 +583,7 @@
             var blob = new Blob([outputCsv], { type: 'text/csv;charset=utf-8' });
             downloadLink.href = URL.createObjectURL(blob);
             downloadLink.style.display = 'inline-flex';
+            if (openCsvExcelBtn) openCsvExcelBtn.style.display = 'inline-flex';
           } catch (err) {
             var parseMsg = err && err.message ? String(err.message) : '';
             showError(
@@ -583,6 +592,7 @@
             );
             copyBtn.disabled = true;
             downloadLink.style.display = 'none';
+            if (openCsvExcelBtn) openCsvExcelBtn.style.display = 'none';
           } finally {
             setBusy(false);
           }
@@ -662,8 +672,29 @@
         if (downloadLink.href) URL.revokeObjectURL(downloadLink.href);
         downloadLink.href = '#';
         downloadLink.style.display = 'none';
+        if (openCsvExcelBtn) openCsvExcelBtn.style.display = 'none';
         updateButtonState();
       });
+
+      if (openCsvExcelBtn) {
+        openCsvExcelBtn.addEventListener('click', function () {
+          if (!outputCsv) return;
+          var h = window.TinyDataToolExcelHandoff;
+          if (!h) {
+            showError(
+              'Excel handoff is unavailable. Copy your CSV, open CSV → Excel from the menu, and paste it there.'
+            );
+            return;
+          }
+          if (!h.stashCsvForExcel(outputCsv)) {
+            showError(
+              'Could not save your CSV for the Excel step (browser storage may be full or blocked). Copy the output, open CSV → Excel, and paste—or clear site data and try again.'
+            );
+            return;
+          }
+          window.location.href = '../csv-to-excel/index.html';
+        });
+      }
 
       fileInput.addEventListener('change', function (event) {
         var file = event.target.files && event.target.files[0];
@@ -709,13 +740,9 @@
 
       copyBtn.addEventListener('click', function () {
         if (!outputCsv) return;
-        var original = copyBtn.innerHTML;
-        navigator.clipboard.writeText(outputCsv).then(function () {
-          copyBtn.innerHTML = '<span>Copied!</span>';
-          window.setTimeout(function () { copyBtn.innerHTML = original; }, 1200);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(outputCsv, copyBtn, function () {
           showError('Copy failed. Please copy manually.');
-        });
+        }, { durationMs: 1200 });
       });
 
       updateButtonState();

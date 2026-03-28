@@ -67,11 +67,15 @@
             </div>
 
             <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload CSV file. Click or drag and drop." aria-describedby="drop-hint">
+              <div class="drop-zone__busy" aria-hidden="true">
+                <span class="drop-zone__spinner"></span>
+                <p class="drop-zone__busy-label">Loading file…</p>
+              </div>
               <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
               </svg>
               <p class="drop-zone__label">Or upload a CSV file</p>
-              <p class="drop-zone__hint" id="drop-hint">Processed entirely in your browser</p>
+              <p class="drop-zone__hint" id="drop-hint">In your browser · Up to 200 MB (50+ MB may feel slow)</p>
               <input type="file" id="fileInput" accept=".csv,.txt,text/csv,text/plain" aria-label="Select CSV file" />
             </div>
 
@@ -140,6 +144,10 @@
               </svg>
             </button>
             </div>
+          </div>
+
+          <div class="status-message status-message--warning" id="warningMsg" role="status" aria-live="polite" aria-atomic="true">
+            <span id="warningText"></span>
           </div>
 
           <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
@@ -360,6 +368,8 @@
       const modeRemoveRadio = document.getElementById('modeRemove');
       const filterBtn = document.getElementById('filterBtn');
       const resetFiltersLink = document.getElementById('resetFiltersLink');
+      const warningMsg = document.getElementById('warningMsg');
+      const warningText = document.getElementById('warningText');
       const errorMsg = document.getElementById('errorMsg');
       const errorText = document.getElementById('errorText');
       const resultSection = document.getElementById('resultSection');
@@ -410,6 +420,12 @@
             cell += ch;
           }
         }
+        if (inQuotes) {
+          throw new Error(
+            'CSV appears malformed: a quoted field was never closed. ' +
+            'Check for a stray quote character, or try a different delimiter.'
+          );
+        }
         row.push(cell);
         rows.push(row);
         return rows;
@@ -456,7 +472,21 @@
         errorText.textContent = '';
       }
 
+      function showWarning(msg) {
+        if (!warningMsg || !warningText) return;
+        errorMsg.classList.remove('visible');
+        warningText.textContent = msg;
+        warningMsg.classList.add('visible');
+      }
+
+      function clearWarning() {
+        if (!warningMsg || !warningText) return;
+        warningText.textContent = '';
+        warningMsg.classList.remove('visible');
+      }
+
       function showError(msg) {
+        clearWarning();
         errorText.textContent = msg;
         errorMsg.classList.add('visible');
       }
@@ -602,8 +632,20 @@
 
         const text = getInputText();
         if (!text) {
+          clearWarning();
           updateFilterButtonState();
           return;
+        }
+
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          const pr = TinyDataToolCsvLimits.checkPaste(text);
+          if (!pr.allowed) {
+            showError(pr.hardError || 'Input exceeds size limit.');
+            updateFilterButtonState();
+            return;
+          }
+          if (pr.warnMessage) showWarning(pr.warnMessage);
+          else clearWarning();
         }
 
         const delim = getDelimiterChar();
@@ -611,7 +653,7 @@
         try {
           rows = parseCSV(text, delim);
         } catch (err) {
-          showError('Could not parse CSV. Please check the delimiter and structure.');
+          showError(err && err.message ? err.message : 'Could not parse CSV. Please check the delimiter and structure.');
           updateFilterButtonState();
           return;
         }
@@ -658,6 +700,13 @@
         if (!text) {
           showError('Paste CSV data or upload a file before filtering.');
           return;
+        }
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          const ar = TinyDataToolCsvLimits.checkPaste(text);
+          if (!ar.allowed) {
+            showError(ar.hardError || 'Input exceeds size limit.');
+            return;
+          }
         }
         if (!parsedRows || !parsedRows.length) {
           parseAndUpdateFilterUi();
@@ -769,15 +818,35 @@
 
       function handleFileSelect(file) {
         if (!file) return;
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          const fr = TinyDataToolCsvLimits.checkFile(file);
+          if (!fr.allowed) {
+            showError(fr.hardError || 'File exceeds size limit.');
+            if (fileInput) fileInput.value = '';
+            return;
+          }
+        }
         clearError();
+        clearWarning();
+        if (typeof TinyDataToolCsvLimits !== 'undefined') {
+          const wr = TinyDataToolCsvLimits.checkFile(file);
+          if (wr.warnMessage) showWarning(wr.warnMessage);
+        }
         clearResult();
-        readFileAsText(file).then(function (text) {
-          setInputText(text, file.name);
-        }).catch(function (err) {
-          showError(err.message || 'Failed to read file. Please try again.');
-        }).finally(function () {
-          if (fileInput) fileInput.value = '';
-        });
+        dropZone.classList.add('file-reading');
+        dropZone.setAttribute('aria-busy', 'true');
+        readFileAsText(file)
+          .then(function (text) {
+            setInputText(text, file.name);
+          })
+          .catch(function (err) {
+            showError(err.message || 'Failed to read file. Please try again.');
+          })
+          .finally(function () {
+            dropZone.classList.remove('file-reading');
+            dropZone.removeAttribute('aria-busy');
+            if (fileInput) fileInput.value = '';
+          });
       }
 
       csvInput.addEventListener('input', function () {
@@ -785,6 +854,7 @@
         clearResult();
         parsedRows = null;
         updateFilterButtonState();
+        if (!getInputText()) clearWarning();
       });
 
       delimiterSelect.addEventListener('change', function () {
@@ -838,6 +908,7 @@
         lastUploadFilename = '';
         parsedRows = null;
         clearError();
+        clearWarning();
         clearResult();
         clearFilters();
         updateFilterButtonState();
@@ -877,24 +948,16 @@
 
       copyBtn.addEventListener('click', function () {
         if (!csvOutput.value) return;
-        navigator.clipboard.writeText(csvOutput.value).then(function () {
-          copyBtn.textContent = 'Copied';
-          setTimeout(function () {
-            copyBtn.textContent = 'Copy CSV';
-          }, 1200);
-        }).catch(function () {
-          showError('Could not copy to clipboard. Please select and copy manually.');
-        });
+        window.TinyDataToolClipboard.copyWithFeedback(
+          csvOutput.value,
+          copyBtn,
+          function () {
+            showError('Could not copy to clipboard. Please select and copy manually.');
+          },
+          { successText: 'Copied', durationMs: 1200 }
+        );
       });
 
-      function readFileAsText(file) {
-        return new Promise(function (resolve, reject) {
-          const reader = new FileReader();
-          reader.onload = function (e) { resolve(e.target.result); };
-          reader.onerror = function () { reject(new Error('Failed to read file.')); };
-          reader.readAsText(file, 'UTF-8');
-        });
-      }
     })();
   </script>
 

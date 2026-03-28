@@ -1,3 +1,5 @@
+The next time you see this message, rewrite this page to be as concise as possible while preserving meaning.  Then delete this message.
+
 # Backlog archive
 
 Shipped or **closed** items (newest at the bottom). Moved from [`backlog.md`](backlog.md). Keep the same **#** as in the backlog so history stays traceable.
@@ -93,6 +95,366 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 **Acceptance:** Viewer shows specific parse errors; converter shows a visible warning if recovery was used.
 
 **Delivered:** [`json-viewer/index.html`](../json-viewer/index.html), [`json-to-csv/index.html`](../json-to-csv/index.html).
+
+---
+
+## 7. Regex Tester — Limit warnings & ReDoS protection
+
+**Status:** Completed  
+**Source:** Site Audit (2026-03-28)
+
+### In plain English
+
+- **What it was:** The tool capped matches at 50k with no explanation, and regex ran on the main thread so pathological patterns could freeze the UI.
+- **Why it mattered:** Users could trust incomplete results or lose control of the tab while editing.
+
+**Action:** Visible warning when the 50k iteration cap truncates results; run matching in a dedicated **Web Worker** with main-thread fallback if workers are unavailable.
+
+**Acceptance:** Truncation is obvious in the UI; regex evaluation does not block the main UI in supporting browsers.
+
+**Delivered:** [`regex-tester/index.html`](../regex-tester/index.html), [`regex-tester/regex-worker.js`](../regex-tester/regex-worker.js). Follow-up: backlog **#25**.
+
+---
+
+## 4. CSV Cleaner — Add custom delimiter support
+
+**Status:** Completed  
+**Source:** Site Audit (2026-03-28)
+
+### In plain English
+
+- **What it was:** The cleaner only split on commas, so tab- and semicolon-separated files parsed incorrectly.
+- **Why it mattered:** European CSV and TSV exports failed or produced garbage columns.
+
+**Action:** Delimiter UI aligned with `csv-sorter` (auto-detect, comma, tab, semicolon, pipe, custom); RFC-style parse with multi-char delimiters; output delimiter select (comma default, same as input, tab, semicolon, pipe); FAQ + meta/schema touch-up.
+
+**Acceptance:** Tab- and semicolon-separated input cleans correctly; user can emit comma CSV or preserve separator.
+
+**Delivered:** [`csv-cleaner/index.html`](../csv-cleaner/index.html). Follow-up: backlog **#26**.
+
+---
+
+## 11. Text Case Converter & Diff — DOM scale constraints
+
+**Status:** Completed  
+**Source:** Site Audit (2026-03-28)
+
+### In plain English
+
+- **What it was:** Case converter embedded up to four full copies of huge text in the DOM; diff built one table row per change with no upper bound.
+- **Why it mattered:** Large pastes could freeze layout or exhaust memory.
+
+**Action:** Case tool: keep full conversions in memory; cap each on-screen preview (~12k chars); scrollable preview panels; Copy uses full strings. Diff: cap rendered rows (4k) with banner + truncated copy note; global add/remove/change counts still from full diff.
+
+**Acceptance:** Very large inputs avoid massive DOM duplication; diff UI stays bounded with explicit truncation messaging.
+
+**Delivered:** [`text-case-converter/index.html`](../text-case-converter/index.html), [`text-diff/index.html`](../text-diff/index.html). Follow-up: backlog **#27**.
+
+---
+
+## 8. CSV / JSON Tools — Excel export integration
+
+**Status:** Completed  
+**Source:** Site Audit (2026-03-28)
+
+### In plain English
+
+- **What it was:** After sorting, cleaning, or viewing CSV—or viewing JSON—users had to hunt for the Excel converters and re-paste data.
+- **Why it mattered:** Excel is a common next step; friction dropped completion rates.
+
+**Action:** `TinyDataToolExcelHandoff` in [`js/site.js`](../js/site.js) stores CSV/JSON in `sessionStorage` for one-shot handoff; **CSV → Excel** and **JSON → Excel** pages consume it on load. **Open in CSV → Excel** / **Open in JSON → Excel** actions on `csv-sorter`, `csv-cleaner`, `csv-viewer`, `json-to-csv`, and `json-viewer`.
+
+**Acceptance:** One click from those tools lands on the right converter with the current output pre-filled (when storage allows).
+
+**Delivered:** [`js/site.js`](../js/site.js), [`csv-to-excel/index.html`](../csv-to-excel/index.html), [`json-to-excel/index.html`](../json-to-excel/index.html), [`csv-sorter/index.html`](../csv-sorter/index.html), [`csv-cleaner/index.html`](../csv-cleaner/index.html), [`csv-viewer/index.html`](../csv-viewer/index.html), [`json-to-csv/index.html`](../json-to-csv/index.html), [`json-viewer/index.html`](../json-viewer/index.html).
+
+---
+
+## 9. All Tools — Robust clipboard fallback & icon state
+
+**Status:** Completed  
+**Source:** Site Audit (2026-03-28)
+
+### In plain English
+
+- **What it was:** Copy failed without the Clipboard API; success handlers often replaced button content with plain text and removed SVG icons.
+- **Why it mattered:** Copy is core UX; broken or ugly copy states erode trust.
+
+**Action:** Central `TinyDataToolClipboard` in [`js/site.js`](../js/site.js) with `execCommand('copy')` fallback and `flashCopySuccess` that preserves icons; migrate tool pages and JSON Validator copy-error control.
+
+**Acceptance:** Copy works in more environments; icons stay intact where applicable.
+
+**Delivered:** [`js/site.js`](../js/site.js) (`TinyDataToolClipboard`, optional `flashOpts` on `copyWithFeedback`), tool `index.html` pages (CSV/JSON/text/encoder tools + template reference), [`json-validator/script.js`](../json-validator/script.js). Removed unused global `copyWithFeedback` helper that only used `navigator.clipboard`.
+
+---
+
+## 10. JSON Viewer — Mobile action wrapping
+
+**Status:** Completed  
+**Source:** Site Audit (2026-03-28)
+
+### In plain English
+
+- **What it was:** Copy / Download / Excel action buttons stayed on one row and could overflow on narrow viewports.
+- **Why it mattered:** Core actions were hard to reach on phones.
+
+**Action:** Allow `.output-actions` to wrap; tune button flex so rows wrap cleanly.
+
+**Acceptance:** Buttons stack on narrow widths without horizontal overflow.
+
+**Delivered:** [`json-viewer/index.html`](../json-viewer/index.html) (`.output-actions` `flex-wrap: wrap`; `.output-actions .btn-download` `flex: 1 1 auto` + `min-width: min(100%, 140px)`; `.path-bar__text` `min-width: 0` + `flex: 1 1 auto` so path ellipsis works in the flex row on narrow widths).
+
+---
+
+## 19. New tool — Text → URL slug generator
+
+**Status:** Completed  
+**Source:** Product roadmap (2026-03-28)
+
+### In plain English
+
+- **What it was:** No dedicated slug utility; high-intent “slug from title” queries were uncaptured.
+- **Why it mattered:** Fast SEO and UX win next to case, trim, and URL tools.
+
+**Action:** New `slug-generator/` page with live preview, separator and cleanup options, default + custom stop words, bulk mode, copy.
+
+**Acceptance:** Predictable slugs; linked from nav, All Tools, homepage text grid, and related tools on case/trim/URL pages.
+
+**Delivered:** [`slug-generator/index.html`](../slug-generator/index.html), [`js/site.js`](../js/site.js) (`NAV_GROUPS`, `RELATED_TOOL_OVERRIDES`), [`tools/index.html`](../tools/index.html) (grid + ItemList), [`index.html`](../index.html) (homepage card), [`docs/tools.md`](../tools.md), [`sitemap.xml`](../sitemap.xml) (new URL).
+
+---
+
+## 29. SEO — `sitemap.xml` lists every public tool URL (parity with nav)
+
+**Status:** Completed  
+**Source:** Gap found while shipping #19 (2026-03-28)
+
+### In plain English
+
+- **What it was:** `sitemap.xml` listed only part of the site; many live tools were missing from crawl hints.
+- **Why it mattered:** Weaker discovery for indexed pages and drift every time a tool shipped.
+
+**Action:** Align [`sitemap.xml`](../sitemap.xml) with [`js/site.js`](../js/site.js) `NAV_GROUPS` and `PRODUCTION_HIDDEN_TOOL_IDS`.
+
+**Acceptance:** Every public (non-hidden) tool has a `<loc>`; home and `/tools/` retained; policy noted in-file.
+
+**Delivered:** [`sitemap.xml`](../sitemap.xml) — full public set (all non-hidden tool paths + `/` + `/tools/`), top XML comment documents sync rule with `PRODUCTION_HIDDEN_TOOL_IDS`.
+
+---
+
+## 20. New tool — UUID generator / validator
+
+**Status:** Completed  
+**Source:** Product roadmap (2026-03-28)
+
+### In plain English
+
+- **What it was:** No in-product UUID helper for bulk IDs or pasted list validation.
+- **Why it mattered:** High dev intent, low build cost, complements JSON tooling.
+
+**Action:** `uuid-generator/` with v4 generation (`randomUUID` + `getRandomValues` fallback), bulk cap 10k with chunked generation, multi-line validator (RFC-style, nil UUID, braces / `urn:` / quotes).
+
+**Acceptance:** Copy integration, nav + All Tools + homepage + sitemap + related links from formatter, regex tester, JSON viewer.
+
+**Delivered:** [`uuid-generator/index.html`](../uuid-generator/index.html), [`js/site.js`](../js/site.js), [`tools/index.html`](../tools/index.html), [`index.html`](../index.html), [`docs/tools.md`](../tools.md), [`sitemap.xml`](../sitemap.xml).
+
+---
+
+## 21. New tool — Unix timestamp ↔ human datetime
+
+**Status:** Completed  
+**Source:** Product roadmap (2026-03-28)
+
+### In plain English
+
+- **What it was:** No dedicated epoch / ISO conversion tool for logs and JSON workflows.
+- **Why it mattered:** High search volume and natural fit next to JSON utilities.
+
+**Action:** `unix-timestamp-converter/` with IANA zone select (incl. local), s/ms modes, ISO ↔ epoch, batch (500 lines, auto-detect s vs ms), **Now** on epoch and human (ISO) flows, DST called out in UI.
+
+**Acceptance:** Linked from nav, All Tools, homepage, sitemap; related tools on `json-viewer`, `uuid-generator`, `json-formatter`.
+
+**Delivered:** [`unix-timestamp-converter/index.html`](../unix-timestamp-converter/index.html), [`js/site.js`](../js/site.js), [`tools/index.html`](../tools/index.html), [`index.html`](../index.html), [`docs/tools.md`](../tools.md), [`sitemap.xml`](../sitemap.xml).
+
+---
+
+## 28. Excel handoff — user-visible message when sessionStorage prefill fails (quota)
+
+**Status:** Completed  
+**Source:** Gap after #8 (2026-03-28)
+
+### In plain English
+
+- **What it was:** “Open in … Excel” always navigated even when `sessionStorage.setItem` failed, so the converter opened empty with no explanation.
+- **Why it mattered:** Large handoffs looked like a broken product.
+
+**Action:** Before navigation, require `TinyDataToolExcelHandoff.stash*` to return true; on false or missing API, show an inline error and stay on the tool.
+
+**Acceptance:** Failed stash never silently sends users to an empty Excel page.
+
+**Delivered:** [`csv-sorter/index.html`](../csv-sorter/index.html), [`csv-viewer/index.html`](../csv-viewer/index.html), [`csv-cleaner/index.html`](../csv-cleaner/index.html), [`json-to-csv/index.html`](../json-to-csv/index.html), [`json-viewer/index.html`](../json-viewer/index.html).
+
+---
+
+## 24. Other CSV tools — unclosed-quote detection (parity with #5)
+
+**Status:** Completed  
+**Source:** Gap after #5 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Several tools still accepted CSV with an unclosed quoted field and produced misleading output instead of a clear error like the viewer, cleaner, and sorter.
+- **Why it mattered:** Same input should meet the same trust bar everywhere CSV or TSV is parsed client-side.
+
+**Action:** After each parse loop, if `inQuotes` is still true, throw the same user-facing message as #5; ensure UI catches surface `err.message`. Extend `parseCSVLines` in `site.js` for merge/split/csv-to-tsv row splitting.
+
+**Acceptance:** No listed tool silently completes a full pipeline on input that would fail for unclosed quotes in the sorter/viewer.
+
+**Delivered:** [`js/site.js`](../js/site.js) (`parseCSVLines`), [`js/site.min.js`](../js/site.min.js) (build), [`csv-column-remover/index.html`](../csv-column-remover/index.html), [`csv-column-splitter/index.html`](../csv-column-splitter/index.html), [`csv-column-joiner/index.html`](../csv-column-joiner/index.html), [`csv-row-filter/index.html`](../csv-row-filter/index.html), [`csv-deduplicator/index.html`](../csv-deduplicator/index.html), [`csv-to-tsv/index.html`](../csv-to-tsv/index.html), [`csv-to-json/index.html`](../csv-to-json/index.html), [`csv-to-excel/index.html`](../csv-to-excel/index.html), [`tsv-to-csv/index.html`](../tsv-to-csv/index.html) (TSV-specific message), [`csv-sorter/index.html`](../csv-sorter/index.html) (deferred row-count `parseCSVLines` catch), [`merge-csv/test/merge-test.js`](../merge-csv/test/merge-test.js), [`split-csv/test/split-test.js`](../split-csv/test/split-test.js), [`csv-to-tsv/test/csv-to-tsv-test.js`](../csv-to-tsv/test/csv-to-tsv-test.js).
+
+---
+
+## 23. Other CSV tools — match upload size limits & file-reading UX
+
+**Status:** Completed  
+**Source:** Gap after #2 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Several CSV/TSV tools accepted very large uploads with no hard cap, no “loading file” overlay, and no soft warning for 50+ MB inputs — unlike viewer, cleaner, and sorter.
+- **Why it mattered:** Inconsistent policy and surprise main-thread stalls on big files.
+
+**Action:** Centralize **50 MB warn / 200 MB hard** checks on `window.TinyDataToolCsvLimits`; use `readFileAsText` + `.drop-zone.file-reading` overlay and optional `status-message--warning` on affected tool pages.
+
+**Acceptance:** No listed upload path loads >200 MB without rejection; 50+ MB shows warning and/or visible busy state during read.
+
+**Delivered:** [`js/site.js`](../js/site.js) + [`js/site.min.js`](../js/site.min.js) (`TinyDataToolCsvLimits`), [`css/global.css`](../css/global.css) + [`css/global.min.css`](../css/global.min.css) (shared `.drop-zone__busy` / `.file-reading` styles), [`merge-csv/index.html`](../merge-csv/index.html), [`split-csv/index.html`](../split-csv/index.html), [`csv-deduplicator/index.html`](../csv-deduplicator/index.html), [`csv-row-filter/index.html`](../csv-row-filter/index.html), [`csv-column-remover/index.html`](../csv-column-remover/index.html), [`csv-column-splitter/index.html`](../csv-column-splitter/index.html), [`csv-column-joiner/index.html`](../csv-column-joiner/index.html), [`csv-to-tsv/index.html`](../csv-to-tsv/index.html), [`csv-to-json/index.html`](../csv-to-json/index.html), [`csv-to-excel/index.html`](../csv-to-excel/index.html), [`tsv-to-csv/index.html`](../tsv-to-csv/index.html).
+
+---
+
+## 26. CSV Cleaner — optional “no header” mode (first row is data)
+
+**Status:** Completed  
+**Source:** Backlog #26 (2026-03-28)
+
+### In plain English
+
+- **What it was:** The cleaner always split row 1 into a “header” and the rest into data, so headerless exports mis-labeled the first data row and sort/filter semantics were wrong for those files.
+- **Why it mattered:** Many systems emit all data rows with no header row.
+
+**Action:** Checkbox **First row is column header** (default on). When off, treat every parsed row as data; emit output with a synthetic first row `col1`, `col2`, … up to max column width; hint + FAQ.
+
+**Acceptance:** No-header input can be trimmed, deduped, filtered, and sorted without treating the first record as column names.
+
+**Delivered:** [`csv-cleaner/index.html`](../csv-cleaner/index.html) (`firstRowIsHeader`, synthetic header row, FAQ).
+
+---
+
+## 25. Regex Tester — wall-clock cancel / UX when worker is still pegged (ReDoS follow-up)
+
+**Status:** Completed  
+**Source:** Backlog #25 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Regex matching ran in a Web Worker with a 50k match cap, but catastrophic backtracking could still burn CPU until the engine finished a single `exec`, with no time budget or obvious “still running” affordance.
+- **Why it mattered:** Users could think the tool failed or wonder whether to wait, even though the tab UI stayed responsive.
+
+**Action:** Cooperative wall clock in [`regex-worker.js`](../regex-tester/regex-worker.js) (~8s budget, partial results + warning); main-thread backup `terminate()` (~12s); “Matching…” row with **Stop**; sync fallback loop budget; FAQ.
+
+**Acceptance:** Pathological patterns get visible running state, user cancel, soft time stop with partial output, or hard stop with a clear message—not an unbounded silent peg.
+
+**Delivered:** [`regex-tester/index.html`](../regex-tester/index.html), [`regex-tester/regex-worker.js`](../regex-tester/regex-worker.js).
+
+---
+
+## 27. Text Diff — virtualized / incremental render beyond row cap
+
+**Status:** Completed  
+**Source:** Backlog #27 (2026-03-28)
+
+### In plain English
+
+- **What it was:** The diff table only showed the first 4,000 rows with no way to reveal more without re-running on a smaller excerpt; large comparisons hit a hard wall.
+- **Why it mattered:** Log and document diffs often exceed a few thousand change rows; users still need a controlled way to grow the view.
+
+**Action:** Cache full diff rows client-side; render an initial chunk (4k); **Load more rows** adds 4k at a time; hard cap **50,000** table rows with clear copy + FAQ; copy text matches visible rows with a footer explaining how to include more.
+
+**Acceptance:** Large diffs can be explored incrementally without a single 50k-row first paint; predictable copy behavior; optional full virtualized recycling left as a future optimization if needed.
+
+**Delivered:** [`text-diff/index.html`](../text-diff/index.html).
+
+---
+
+## 17. New tool — JSON Schema generator
+
+**Status:** Completed  
+**Source:** Backlog #17 (2026-03-28)
+
+### In plain English
+
+- **What it was:** No way to bootstrap JSON Schema from a sample document on-site; devs had to hand-write or use external tools.
+- **Why it mattered:** High-intent workflow for APIs, configs, and validation pipelines.
+
+**Action:** New tool [`json-schema-generator/`](../json-schema-generator/): infer Draft 07 schema from parsed JSON; options for listing all object keys as `required` and toggling `additionalProperties`; heterogeneous arrays → `oneOf` (capped); copy + download; nav, sitemap, tools index, `docs/tools.md`; `site.js` / `site.min.js` build.
+
+**Acceptance:** Valid JSON in → valid JSON Schema document out; options change output predictably; linked from JSON nav cluster and related-tool overrides.
+
+**Delivered:** [`json-schema-generator/index.html`](../json-schema-generator/index.html), [`js/site.js`](../js/site.js), [`js/site.min.js`](../js/site.min.js), [`sitemap.xml`](../sitemap.xml), [`tools/index.html`](../tools/index.html), [`docs/tools.md`](../docs/tools.md).
+
+---
+
+## 18. New tool — CSV Column Analyzer (light analytics)
+
+**Status:** Completed  
+**Source:** Backlog #18 (2026-03-28)
+
+### In plain English
+
+- **What it was:** No dedicated way on-site to profile CSV columns (cardinality, top values, empties, numeric summaries) without exporting to another tool.
+- **Why it mattered:** QA and quick exploration before filter/dedupe/clean workflows.
+
+**Action:** New [`csv-column-analyzer/`](../csv-column-analyzer/): delimiter auto/manual (incl. custom), header toggle, RFC-style parse + unclosed-quote error; **250k** data-row cap with warning; per-column distinct count, top 10 frequencies, empty count; numeric min/max/mean when ≥95% of non-empty cells parse as finite numbers; copy summary JSON; shared CSV byte limits via `TinyDataToolCsvLimits`; nav, sitemap, tools index, `docs/tools.md`, related-tool overrides.
+
+**Acceptance:** Multi-column CSV shows clear per-column stats; documented limits; linked from CSV nav cluster and related tools.
+
+**Delivered:** [`csv-column-analyzer/index.html`](../csv-column-analyzer/index.html), [`js/site.js`](../js/site.js), [`js/site.min.js`](../js/site.min.js), [`sitemap.xml`](../sitemap.xml), [`tools/index.html`](../tools/index.html), [`docs/tools.md`](../docs/tools.md).
+
+---
+
+## 13. Upgrade — CSV → JSON (schema-aware, smarter)
+
+**Status:** Completed  
+**Source:** Backlog #13 (2026-03-28)
+
+### In plain English
+
+- **What it was:** CSV → JSON always emitted string cell values and comma-only parsing; no typed output, header cleanup, nested keys, or delimiter choice.
+- **Why it mattered:** APIs and configs expect real JSON types and stable header names; TSV and semicolon exports are common.
+
+**Action:** Extended [`csv-to-json/index.html`](../csv-to-json/index.html): delimiter **Auto** / comma / tab / semicolon / pipe / custom (RFC-style parse, unclosed-quote error); **Simple** (all strings, legacy behavior) vs **Typed** (int/float/bool/null, empty → null); optional **snake_case**, **dedupe** headers (`name_2`, …); optional **nest** dotted keys with explicit conflict error; “Keep as string” list for typed mode; result meta summarizes options; FAQ + hero/schema copy; tests in [`csv-to-json/test/csv-to-json-test.js`](../csv-to-json/test/csv-to-json-test.js).
+
+**Acceptance:** Same CSV exports as before under defaults; typed/nested/normalization opt-in with clear errors on nesting conflicts.
+
+**Delivered:** [`csv-to-json/index.html`](../csv-to-json/index.html), [`csv-to-json/test/csv-to-json-test.js`](../csv-to-json/test/csv-to-json-test.js).
+
+---
+
+## 16. New tool — SQL result formatter (→ CSV / JSON) + optional SQL pretty-print
+
+**Status:** Completed  
+**Source:** Backlog #16 (2026-03-28)
+
+### In plain English
+
+- **What it was:** No in-browser path from pasted SQL client grids to JSON/CSV, and no lightweight SQL read formatter on-site.
+- **Why it mattered:** Common copy/paste from SSMS-style tools; long-tail SQL + tabular intent.
+
+**Action:** New [`sql-result/`](../sql-result/): tabs **Result → CSV/JSON** (delimiter auto/tab/comma/pipe/2+ spaces; header row; deduped column names; RFC-style CSV export; JSON array of objects; `TinyDataToolCsvLimits` paste/file; 100k row cap; warn ≥25k) and **Format SQL** (lightweight keyword/line-break pretty-print, not a full parser). FAQ: no execution, comma limits, privacy. Nav (Converters), related overrides, sitemap, tools index + ItemList, `docs/tools.md`.
+
+**Acceptance:** Representative grids → valid JSON + CSV; common SELECTs read cleaner after format; ambiguous grid surfaces clear errors.
+
+**Delivered:** [`sql-result/index.html`](../sql-result/index.html), [`js/site.js`](../js/site.js), [`js/site.min.js`](../js/site.min.js), [`sitemap.xml`](../sitemap.xml), [`tools/index.html`](../tools/index.html), [`docs/tools.md`](../docs/tools.md).
 
 ---
 

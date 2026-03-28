@@ -446,11 +446,7 @@
       copyBtn.addEventListener('click', function () {
         var out = textOutput.value;
         if (!out) return;
-        var originalContent = copyBtn.innerHTML;
-        navigator.clipboard.writeText(out).then(function () {
-          copyBtn.innerHTML = 'Copied!';
-          setTimeout(function () { copyBtn.innerHTML = originalContent; }, 2000);
-        }).catch(function () {
+        window.TinyDataToolClipboard.copyWithFeedback(out, copyBtn, function () {
           showError('Copy failed. You can select and copy the preview text manually.');
         });
       });

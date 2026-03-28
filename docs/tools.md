@@ -18,6 +18,7 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 | CSV Column Joiner | [tinydatatool.com/csv-column-joiner/](https://tinydatatool.com/csv-column-joiner/) |
 | CSV Deduplicator | [tinydatatool.com/csv-deduplicator/](https://tinydatatool.com/csv-deduplicator/) |
 | CSV Row Filter | [tinydatatool.com/csv-row-filter/](https://tinydatatool.com/csv-row-filter/) |
+| CSV Column Analyzer | [tinydatatool.com/csv-column-analyzer/](https://tinydatatool.com/csv-column-analyzer/) |
 | CSV Sorter | [tinydatatool.com/csv-sorter/](https://tinydatatool.com/csv-sorter/) |
 | CSV Cleaner | [tinydatatool.com/csv-cleaner/](https://tinydatatool.com/csv-cleaner/) |
 
@@ -29,10 +30,13 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 |------|-----|
 | JSON Viewer | [tinydatatool.com/json-viewer/](https://tinydatatool.com/json-viewer/) |
 | JSON Validator | [tinydatatool.com/json-validator/](https://tinydatatool.com/json-validator/) |
+| JSON Schema Generator | [tinydatatool.com/json-schema-generator/](https://tinydatatool.com/json-schema-generator/) |
 | JSON Formatter | [tinydatatool.com/json-formatter/](https://tinydatatool.com/json-formatter/) |
 | JSON Minifier | [tinydatatool.com/json-minifier/](https://tinydatatool.com/json-minifier/) |
 | JSON → CSV | [tinydatatool.com/json-to-csv/](https://tinydatatool.com/json-to-csv/) |
 | JSON → TSV | [tinydatatool.com/json-to-tsv/](https://tinydatatool.com/json-to-tsv/) |
+| UUID Generator | [tinydatatool.com/uuid-generator/](https://tinydatatool.com/uuid-generator/) |
+| Unix Timestamp Converter | [tinydatatool.com/unix-timestamp-converter/](https://tinydatatool.com/unix-timestamp-converter/) |
 | CSV → JSON | [tinydatatool.com/csv-to-json/](https://tinydatatool.com/csv-to-json/) |
 
 ---
@@ -47,6 +51,7 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 | Word, Line, and Character Counter | [tinydatatool.com/text-counter/](https://tinydatatool.com/text-counter/) |
 | Find and Replace | [tinydatatool.com/find-and-replace-text/](https://tinydatatool.com/find-and-replace-text/) |
 | Trim Whitespace | [tinydatatool.com/trim-whitespace/](https://tinydatatool.com/trim-whitespace/) |
+| URL Slug Generator | [tinydatatool.com/slug-generator/](https://tinydatatool.com/slug-generator/) |
 | Base64 Encoder / Decoder | [tinydatatool.com/base64-encoder-decoder/](https://tinydatatool.com/base64-encoder-decoder/) |
 | Regex Tester | [tinydatatool.com/regex-tester/](https://tinydatatool.com/regex-tester/) |
 | Text Case Converter | [tinydatatool.com/text-case-converter/](https://tinydatatool.com/text-case-converter/) |
@@ -73,6 +78,7 @@ Tabular and spreadsheet conversions that are not only JSON- or CSV-only.
 | JSON → Excel | [tinydatatool.com/json-to-excel/](https://tinydatatool.com/json-to-excel/) |
 | CSV → TSV | [tinydatatool.com/csv-to-tsv/](https://tinydatatool.com/csv-to-tsv/) |
 | TSV → CSV | [tinydatatool.com/tsv-to-csv/](https://tinydatatool.com/tsv-to-csv/) |
+| SQL result → CSV / JSON | [tinydatatool.com/sql-result/](https://tinydatatool.com/sql-result/) |
 
 ---
 

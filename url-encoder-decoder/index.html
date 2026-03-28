@@ -690,7 +690,11 @@
       copyOutputBtn.addEventListener('click', function () {
         const text = outputEl.textContent || '';
         if (!text) return;
-        navigator.clipboard.writeText(text).then(function () {
+        window.TinyDataToolClipboard.copyText(text).then(function (ok) {
+          if (!ok) {
+            showError('Copy failed. You can select and copy the output manually.');
+            return;
+          }
           if (copyTooltipTimer) clearTimeout(copyTooltipTimer);
           if (copyOutputBtnIcon) copyOutputBtnIcon.innerHTML = checkmarkIconSvg;
           copyOutputBtn.setAttribute('aria-label', 'Copied');
@@ -705,8 +709,6 @@
             copyTooltipTimer = null;
             resetCopyButton();
           }, 2000);
-        }).catch(function () {
-          showError('Copy failed. You can select and copy the output manually.');
         });
       });
 

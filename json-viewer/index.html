@@ -200,6 +200,8 @@
     }
     .path-bar__text {
       margin: 0;
+      min-width: 0;
+      flex: 1 1 auto;
       font-family: var(--font-body);
       font-size: var(--text-sm);
       line-height: var(--line-height-tight);
@@ -210,13 +212,13 @@
     }
     .output-actions {
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       gap: var(--space-12);
       width: 100%;
     }
     .output-actions .btn-download {
-      flex: 1 1 0;
-      min-width: 0;
+      flex: 1 1 auto;
+      min-width: min(100%, 140px);
       justify-content: center;
     }
     .copy-toast {
@@ -309,6 +311,12 @@
                     <path d="M64 392C81.7 392 96 406.3 96 424L96 512L544 512L544 424C544 406.3 558.3 392 576 392C593.7 392 608 406.3 608 424L608 528C608 563.3 579.3 592 544 592L96 592C60.7 592 32 563.3 32 528L32 424C32 406.3 46.3 392 64 392zM297.4 438.6C309.9 451.1 330.2 451.1 342.7 438.6L470.7 310.6C483.2 298.1 483.2 277.8 470.7 265.3C458.2 252.8 437.9 252.8 425.4 265.3L352 338.7L352 80C352 62.3 337.7 48 320 48C302.3 48 288 62.3 288 80L288 338.7L214.6 265.4C202.1 252.9 181.8 252.9 169.3 265.4C156.8 277.9 156.8 298.2 169.3 310.7L297.3 438.7z"></path>
                   </svg>
                   <span>Download JSON</span>
+                </button>
+                <button class="btn-download" id="openJsonExcelBtn" type="button" disabled aria-label="Open this JSON in the JSON to Excel converter">
+                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                    <path d="M6.5 1.5v7M3.5 6l3 3 3-3M1.5 11.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                  <span>Open in JSON → Excel</span>
                 </button>
               </div>
             </section>
@@ -495,6 +503,7 @@
       var copyPathBtn = document.getElementById('copyPathBtn');
       var copyBtn = document.getElementById('copyBtn');
       var downloadBtn = document.getElementById('downloadBtn');
+      var openJsonExcelBtn = document.getElementById('openJsonExcelBtn');
       var copyToast = document.getElementById('copyToast');
 
       var parsedData = null;
@@ -529,6 +538,7 @@
         resultSection.classList.remove('visible');
         copyBtn.disabled = true;
         downloadBtn.disabled = true;
+        if (openJsonExcelBtn) openJsonExcelBtn.disabled = true;
       }
 
       function hideError() {
@@ -696,6 +706,7 @@
           resultSection.classList.remove('visible');
           copyBtn.disabled = true;
           downloadBtn.disabled = true;
+          if (openJsonExcelBtn) openJsonExcelBtn.disabled = true;
           parsedData = null;
           formattedOutput = '';
           clearElementChildren(treeOutput);
@@ -720,11 +731,13 @@
           if (!showOutput()) {
             copyBtn.disabled = true;
             downloadBtn.disabled = true;
+            if (openJsonExcelBtn) openJsonExcelBtn.disabled = true;
             return;
           }
           resultSection.classList.add('visible');
           copyBtn.disabled = false;
           downloadBtn.disabled = false;
+          if (openJsonExcelBtn) openJsonExcelBtn.disabled = false;
         } catch (err) {
           parsedData = null;
           formattedOutput = '';
@@ -819,22 +832,25 @@
       });
 
       copyPathBtn.addEventListener('click', function () {
-        navigator.clipboard.writeText(currentPath).then(function () {
-          showInlineCopied(copyPathBtn);
-          showToast('Copied path: ' + currentPath);
-        }).catch(function () {
-          showError('Path copy failed. Please copy manually.');
+        window.TinyDataToolClipboard.copyText(currentPath).then(function (ok) {
+          if (ok) {
+            showInlineCopied(copyPathBtn);
+            showToast('Copied path: ' + currentPath);
+          } else {
+            showError('Path copy failed. Please copy manually.');
+          }
         });
       });
 
-      copyBtn.addEventListener('click', async function () {
+      copyBtn.addEventListener('click', function () {
         if (!formattedOutput) return;
-        try {
-          await navigator.clipboard.writeText(formattedOutput);
-          showToast('Copied!');
-        } catch (err) {
-          showError('Copy failed. Please copy manually.');
-        }
+        window.TinyDataToolClipboard.copyText(formattedOutput).then(function (ok) {
+          if (ok) {
+            showToast('Copied!');
+          } else {
+            showError('Copy failed. Please copy manually.');
+          }
+        });
       });
 
       downloadBtn.addEventListener('click', function () {
@@ -849,6 +865,26 @@
         a.remove();
         URL.revokeObjectURL(url);
       });
+
+      if (openJsonExcelBtn) {
+        openJsonExcelBtn.addEventListener('click', function () {
+          if (!formattedOutput) return;
+          var h = window.TinyDataToolExcelHandoff;
+          if (!h) {
+            showError(
+              'Excel handoff is unavailable. Copy your JSON, open JSON → Excel from the menu, and paste it there.'
+            );
+            return;
+          }
+          if (!h.stashJsonForExcel(formattedOutput)) {
+            showError(
+              'Could not save your JSON for the Excel step (browser storage may be full or blocked). Copy the output, open JSON → Excel, and paste—or clear site data and try again.'
+            );
+            return;
+          }
+          window.location.href = '../json-to-excel/index.html';
+        });
+      }
 
       updateUiState();
       hideError();
