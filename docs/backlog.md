@@ -1,17 +1,53 @@
 # Backlog
 
+## Execution rules (read every run)
+
+You are an **execution agent** in this repo. **Sources of truth:** this file ([`backlog.md`](backlog.md)) for active work; [`backlog-archive.md`](backlog-archive.md) for completed/closed work.
+
+**Mindset:** Reassess priority every run—ordering may be wrong. Reprioritize when you find higher-impact work. Optimize for **product quality over time**.
+
+### Each run
+
+1. **Evaluate** — Review all items; reorder only if clearly wrong (no unnecessary reshuffles).
+2. **Select** — One task: best mix of user impact, risk reduction, leverage, and effort vs payoff.
+3. **Scope** — Too large → split and reprioritize. Blocked by dependencies → reorder.
+4. **Execute** — Real changes (code, UX, SEO, etc.). No analysis-only stops. Tight, production-quality diffs.
+5. **Discover** — While working, note bugs, weak errors, UX dead ends, performance, SEO gaps, high-value features. Add to this file: short title, 1–2 line description, correct priority row + ticket section.
+6. **Complete** — Move finished items to [`backlog-archive.md`](backlog-archive.md); remove them here.
+7. **Maintain** — Merge duplicates, drop stale items, keep formatting consistent; **preserve stable ticket IDs** unless unavoidable.
+8. **Idle** — Nothing meaningful left to execute? See [When no actionable tasks remain](#when-no-actionable-tasks-remain): **one audit type per cycle** (rotation), not a broad mixed audit.
+
+### Priority heuristic (override if clearly wrong)
+
+1. Broken core functionality  
+2. Incorrect results / missing error handling  
+3. UX blockers / dead ends  
+4. Trust & accuracy  
+5. High-leverage SEO  
+6. Performance  
+7. Small high-value features  
+8. Visual polish  
+
+### Constraints
+
+Do not ask permission; do not over-explain; do not multitask unrelated tickets; do not ignore prioritization without reason.
+
+### Output (concise)
+
+Task selected · why (1–2 lines) · what shipped · new backlog items (if any) · reprioritization (if any).
+
+### Goal
+
+Each run improves **both** the product and this backlog (best task → execute → discover → refine).
+
+---
+
 Action items from [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.md), [`README.md`](README.md), and audits or notes.
 
 Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or **closed** items go in [`backlog-archive.md`](backlog-archive.md); append there and remove them from this file.
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Medium | **4** | CSV Cleaner — Add custom delimiter support |
-| Medium | **7** | Regex Tester — Limit warnings & ReDoS protection |
-| Medium | **11** | Text Case Converter & Diff — DOM scale constraints |
-| Polish | **8** | CSV / JSON Tools — Excel export integration |
-| Polish | **9** | All Tools — Robust clipboard fallback & icon state |
-| Polish | **10** | JSON Viewer — Mobile action wrapping |
 | High | **12** | New tool: JSON → JSON Transformer (JQ-style lite) |
 | High | **13** | Upgrade: CSV → JSON (schema-aware, types, nesting) |
 | High | **14** | New tool: JSON Diff (structured tree diff) |
@@ -19,118 +55,14 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 | Medium | **16** | New tool: SQL result / SQL formatter → CSV or JSON |
 | Medium | **17** | New tool: JSON Schema generator (+ optional validate later) |
 | Medium | **18** | New tool: CSV Column Analyzer (uniques, counts, light stats) |
-| Optional | **19** | New tool: Text → URL slug generator (SEO, options) |
-| Optional | **20** | New tool: UUID generator / validator (bulk, v4) |
-| Optional | **21** | New tool: Unix timestamp ↔ human (timezones, “now”) |
 | Medium | **22** | JSON tools — Web Worker parse / higher cap (follow-up to #1) |
-| Optional | **23** | Other CSV tools — match viewer/sorter upload limits & reading state |
-| Optional | **24** | Other CSV tools — unclosed-quote error (parity with #5) |
+| Optional | **25** | Regex Tester — wall-clock cancel / UX when worker is still pegged (ReDoS follow-up) |
+| Optional | **26** | CSV Cleaner — optional “no header” mode (first row is data) |
+| Optional | **27** | Text Diff — virtualized / incremental render beyond row cap |
 
-**Suggested order:** **7** → **4** → **11** → **8** → **9** → **10** (audit backlog). **Roadmap (new tools):** **19** → **20** → **21** (quick SEO wins) → **13** → **17** → **18** → **16** → **14** → **15** → **12** (largest build last among greenfield). **22** when raising limits safely matters more than new tools.
+**Suggested order:** **Roadmap (new tools):** **13** → **17** → **18** → **16** → **14** → **15** → **12** (largest build last among greenfield). **22** when raising limits safely matters more than new tools.
 
 Each open item below includes **In plain English** — a short, non-technical read of what the ticket is, why you’d care, and what improves if you do it.
-
----
-
-## 4. CSV Cleaner — Add custom delimiter support
-
-**Status:** Not completed
-**Source:** Site Audit (2026-03-28)
-
-### In plain English
-
-- **What it is:** The CSV cleaner assumes everything is separated by commas, unlike the viewer and sorter which let you choose tabs, semicolons, etc.
-- **Why you’d do it:** Real-world files from Europe (semicolons) or databases (tabs) currently break in the cleaner.
-- **Upside:** Reliable cleaning for any tabular data format.
-
-**Action:** Add delimiter selection (comma, tab, semicolon, pipe, custom) to `csv-cleaner`, similar to `csv-sorter`.
-
-**Acceptance:** Can successfully clean a tab-separated or semicolon-separated file.
-
----
-
-## 7. Regex Tester — Limit warnings & ReDoS protection
-
-**Status:** Not completed
-**Source:** Site Audit (2026-03-28)
-
-### In plain English
-
-- **What it is:** The regex tool quietly stops finding matches after 50,000 iterations to prevent crashes, but doesn't tell the user. Bad regex patterns can still freeze the tab before hitting the limit.
-- **Why you’d do it:** Users need to know if the matches they see are incomplete. Tab freezes from bad patterns are a frustrating UX.
-- **Upside:** Clear communication of limits and safe execution of complex patterns.
-
-**Action:** Show a visible UI warning when the match loop hits the 50k safety limit. Consider a Web Worker for executing regex to prevent tab hangs (ReDoS).
-
-**Acceptance:** Warning appears if matches are truncated; pathological regex patterns don't hang the main UI.
-
----
-
-## 8. CSV / JSON Tools — Excel export integration
-
-**Status:** Not completed
-**Source:** Site Audit (2026-03-28)
-
-### In plain English
-
-- **What it is:** Tools like CSV Sorter and JSON Viewer only let you export as text/CSV, even though there's a dedicated Excel converter tool elsewhere on the site.
-- **Why you’d do it:** People frequently want to sort/clean data and immediately drop it into Excel.
-- **Upside:** Smooth, discovered workflow from data manipulation directly to an `.xlsx` file.
-
-**Action:** Add "Download as Excel" capability or prominent cross-links to the `csv-to-excel` / `json-to-excel` converters from the core viewers, sorters, and cleaners.
-
-**Acceptance:** Users can easily go from viewing/sorting CSV/JSON to having an Excel file.
-
----
-
-## 9. All Tools — Robust clipboard fallback & icon state
-
-**Status:** Not completed
-**Source:** Site Audit (2026-03-28)
-
-### In plain English
-
-- **What it is:** "Copy" buttons fail in non-secure contexts or older browsers, and when they succeed (like in JSON to CSV), the "Copied!" text sometimes accidentally deletes the button's icon.
-- **Why you’d do it:** Copying is a core feature; it should work reliably and look polished.
-- **Upside:** Better compatibility and a glitch-free interface.
-
-**Action:** Add a `document.execCommand('copy')` fallback for `navigator.clipboard`. Fix the copy success state in `json-to-csv` (and others) so it doesn't destroy the SVG icon.
-
-**Acceptance:** Copy works in more environments; button retains its layout/icon when transitioning to "Copied!".
-
----
-
-## 10. JSON Viewer — Mobile action wrapping
-
-**Status:** Not completed
-**Source:** Site Audit (2026-03-28)
-
-### In plain English
-
-- **What it is:** On small mobile screens, the buttons under the JSON viewer don't wrap to a new line and can push off the edge of the screen.
-- **Why you’d do it:** Basic responsive design makes the tool usable on phones.
-- **Upside:** A clean, accessible layout for all device sizes.
-
-**Action:** Change `.output-actions` from `flex-wrap: nowrap` to `flex-wrap: wrap`.
-
-**Acceptance:** Action buttons stack nicely on narrow viewports without overflowing.
-
----
-
-## 11. Text Case Converter & Diff — DOM scale constraints
-
-**Status:** Not completed
-**Source:** Site Audit (2026-03-28)
-
-### In plain English
-
-- **What it is:** For massive text inputs, the Case Converter copies the text into the page four times, and the Diff tool creates tens of thousands of table rows, bogging down the browser.
-- **Why you’d do it:** Big text comparisons or conversions should be fast and not consume excessive memory.
-- **Upside:** Better performance and stability for power users with large text payloads.
-
-**Action:** Implement progressive rendering or row limits for huge inputs in `text-diff`. Reduce redundant DOM nodes for `text-case-converter`.
-
-**Acceptance:** Diffing or converting very large texts doesn't cause severe lag or layout thrashing.
 
 ---
 
@@ -267,63 +199,6 @@ Each open item below includes **In plain English** — a short, non-technical re
 
 ---
 
-## 19. New tool — Text → URL slug generator
-
-**Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
-
-### In plain English
-
-- **What it is:** Turn a title or phrase into a **URL-safe slug** with options: lowercase, separator, strip accents, remove **stopwords**, max length.
-- **Why you’d do it:** Very high search volume, fast build, broad non-technical audience.
-- **Upside:** Cheap SEO surface area; pairs with trim/case tools.
-
-**Action:** New tool (e.g. `slug-generator/`). Live preview; toggles for hyphen vs underscore, transliteration, stopword list (small default + custom). Copy button; optional bulk lines → slugs.
-
-**SEO / content:** “URL slug generator”, “create slug from title online”. FAQ: SEO best practices (short, one line — avoid fluff per seo-rules).
-
-**Acceptance:** Slugs are stable and predictable given options; document character stripping rules. Link from `text-case-converter`, `trim-whitespace`, `url-encoder-decoder`.
-
----
-
-## 20. New tool — UUID generator / validator
-
-**Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
-
-### In plain English
-
-- **What it is:** Generate **RFC 4122 v4** UUIDs (single or **bulk**), and **validate** pasted UUID strings (strip braces, case-insensitive).
-- **Why you’d do it:** Constant micro-need in dev/test; strong query volume relative to implementation cost.
-- **Upside:** Low effort, high utility; good for homepage / All Tools density.
-
-**Action:** New tool (e.g. `uuid-generator/`). Use `crypto.randomUUID` where available with fallback. Bulk count input with cap (e.g. 10k) and warning. Validator: multi-line paste, mark valid/invalid per line.
-
-**SEO / content:** “UUID generator online”, “generate UUID v4”, “validate UUID”. FAQ: version, collision (practical note, one sentence).
-
-**Acceptance:** Generated IDs pass validator; bulk generation doesn’t freeze UI (chunk or debounce). Linked from `regex-tester`, `json-formatter` (IDs in JSON).
-
----
-
-## 21. New tool — Unix timestamp ↔ human datetime
-
-**Status:** Not completed  
-**Source:** Product roadmap (2026-03-28)
-
-### In plain English
-
-- **What it is:** Convert **Unix seconds or milliseconds** ↔ local or chosen **timezone** human-readable datetime; **“Now”** one-click for both directions.
-- **Why you’d do it:** Huge search demand; mixes dev logs with general “what time is this epoch?”
-- **Upside:** Broad traffic; complements timestamp-heavy JSON/CSV workflows.
-
-**Action:** New tool (e.g. `timestamp-converter/`). Inputs: epoch + unit toggle; timezone select (IANA list or subset); output ISO + locale string. Batch mode: one timestamp per line. DST labeled in UI text.
-
-**SEO / content:** “Unix timestamp converter”, “epoch to date online”, “milliseconds to date”. FAQ: UTC vs local, ms vs s.
-
-**Acceptance:** Round-trip is correct for test vectors; “Now” fills current epoch and human form. Linked from `json-viewer`, `csv-sorter` (date columns optional future tie-in).
-
----
-
 ## 22. JSON tools — Web Worker parse / higher size cap (optional follow-up)
 
 **Status:** Not completed  
@@ -341,37 +216,56 @@ Each open item below includes **In plain English** — a short, non-technical re
 
 ---
 
-## 23. Other CSV tools — match upload size limits & file-reading UX
+## 25. Regex Tester — wall-clock cancel / UX when worker is still pegged (ReDoS follow-up)
 
 **Status:** Not completed  
-**Source:** Gap after #2 (2026-03-28)
+**Source:** Gap after #7 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** `csv-viewer` and `csv-cleaner` now share the sorter’s **50 MB / 200 MB** policy and loading overlay; **merge-csv**, **split-csv**, **deduplicator**, **row-filter**, etc. may still load huge files with weaker feedback.
-- **Why you’d do it:** One consistent safety story across the CSV cluster.
-- **Upside:** Fewer surprise freezes; easier support.
+- **What it is:** Matching now runs in a **Web Worker** and the **50k** cap shows a warning, but catastrophic backtracking can still pin a CPU core until the engine yields—no hard wall-clock stop yet.
+- **Why you’d do it:** Power users may still think the site “hung” even though the tab stays clickable.
+- **Upside:** Clear “still working / cancelled” state and optional time budget without blocking the main thread.
 
-**Action:** Audit each CSV tool’s `FileReader` / `readFileAsText` path; reuse the same constants, warning banner, and drop-zone busy pattern where uploads exist.
+**Action:** Explore chunked matching, `postMessage` ping + `worker.terminate()` after N ms, or engine-specific mitigations; pair with visible “running…” / cancel UI.
 
-**Acceptance:** No CSV upload entry point accepts >200 MB without rejection; ≥50 MB paths show a visible warning or busy state consistent with viewer/cleaner/sorter.
+**Acceptance:** Pathological pattern cannot peg the experience indefinitely without user-visible feedback or a clean abort path.
 
 ---
 
-## 24. Other CSV tools — unclosed-quote detection (parity with #5)
+## 26. CSV Cleaner — optional “no header” mode (first row is data)
 
 **Status:** Not completed  
-**Source:** Gap after #5 (2026-03-28)
+**Source:** Gap after #4 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** Viewer and cleaner now error on unclosed quotes; **merge-csv**, **split-csv**, **deduplicator**, **row-filter**, **column** tools, etc. may still parse with the old “silent drift” behavior.
-- **Why you’d do it:** Same trust bar everywhere CSV is parsed in-browser.
-- **Upside:** Fewer bad merges/splits from a single stray `"`.
+- **What it is:** The cleaner always treats row 1 as column headers; files with no header row get a misleading “header” and wrong sort column semantics.
+- **Why you’d do it:** Exports from some systems are all data rows.
+- **Upside:** Sort/filter apply to real data without inventing a fake header.
 
-**Action:** Find each tool’s CSV parse loop; after EOF push, if `inQuotes` throw the same `CSV_UNCLOSED_QUOTE_MSG` string (or shared helper in `site.js` later).
+**Action:** Add a checkbox (e.g. “First row is header”) defaulting to on; when off, treat every row as data and use synthetic column labels or 1-based indices in UI copy.
 
-**Acceptance:** No tool silently completes a full pipeline on input that sorter/viewer would reject for unclosed quotes.
+**Acceptance:** A no-header TSV/CSV can be deduped and sorted without corrupting the first record.
+
+---
+
+## 27. Text Diff — virtualized / incremental render beyond row cap
+
+**Status:** Not completed  
+**Source:** Gap after #11 (2026-03-28)
+
+### In plain English
+
+- **What it is:** Large diffs now cap **rendered** table rows, but users who need the full inline table still hit a wall.
+- **Why you’d do it:** Power users comparing logs want scroll-through without splitting files manually.
+- **Upside:** Keeps DOM bounded while exposing more than a fixed row budget.
+
+**Action:** Virtualize the diff table (e.g. recycle rows on scroll) or stream chunks with “Load more”; ensure accessibility and copy/export behavior stay predictable.
+
+**Acceptance:** 50k+ line diffs remain scrollable without creating tens of thousands of live `<tr>` nodes.
+
+---
 
 ## Audit inbox
 
@@ -398,3 +292,47 @@ Copy and place above **Audit inbox** for each new ticket:
 **Acceptance:** How you know it’s done.
 
 -->
+
+## When no actionable tasks remain
+
+If no meaningful tasks are available (everything completed, archived, or not worth doing), **do not** run a broad, mixed-domain audit.
+
+1. **Select the next audit type** from the rotation (see [Audit rotation](#audit-rotation)). Infer the last completed audit from the most recent `Audit:` entry in [`backlog-archive.md`](backlog-archive.md); if none exists, start with **Product**.
+2. **Create a new backlog task** (then stop execution for this run):
+   - **Title:** `Audit: <type>` (type is one of: Product, UX, SEO, Reliability)
+   - Clear, scoped description of what to review in that category only
+   - **LOW** priority; place at the **bottom** of the backlog (new stable ID + table row + ticket section)
+3. **Stop** — Do not execute the audit in the same run; the next run picks up the audit ticket or other work.
+
+---
+
+## When executing an audit task
+
+When **`Audit: <type>`** is the selected task:
+
+- Audit **only** that category (no mixing Product + SEO in one pass, etc.).
+- Work systematically across: key tool pages, shared components / [`js/site.js`](../js/site.js) patterns, and relevant docs ([`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.md)).
+- **Output:** concrete backlog items only—no vague observations. Each finding needs a **clear problem** and a **specific fix**.
+- Add findings to this file with correct priority; merge duplicates and trim overlap.
+- **Completion:** Move the audit task to [`backlog-archive.md`](backlog-archive.md). The next time you hit idle, the new `Audit:` task must be the **next** type in the rotation (never the same type twice in a row).
+
+---
+
+## Audit rotation
+
+**Order (cycle):** Product → UX → SEO → Reliability → repeat.
+
+**Rule:** Do not use the same audit type on consecutive idle spawns. After archiving `Audit: UX`, the next idle-created audit is **SEO** (then Reliability, then Product, …).
+
+**Types (scope hint):**
+
+| Type | Focus |
+|------|--------|
+| **Product** | New tools, meaningful feature gaps on existing tools |
+| **UX** | Flows, friction, clarity, accessibility |
+| **SEO** | Titles, metadata, internal linking, content gaps |
+| **Reliability** | Errors, edge cases, performance |
+
+## Agent workspace notes
+
+You may add **other `.md` files** under `docs/` (or elsewhere in the repo) whenever they help you work faster or more consistently—e.g. audit checklists, per-sprint scratchpads, decision logs, tool-specific investigation notes, or copy-paste templates. Keep them **focused and maintained** so they stay trustworthy; avoid duplicating what already lives in [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.md), or this backlog unless it genuinely reduces friction.
