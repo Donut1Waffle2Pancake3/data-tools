@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X X X X _`
+**Tracker (5 slots):** `X X X X X`
 
 **Rules**
 
@@ -74,26 +74,9 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| Low | **50** | TOML ↔ JSON (or explicit defer) |
 | Low | **51** | CSV → Markdown / GFM table |
 
-**Suggested order:** **50**, **51**.
-
----
-
-## 50. TOML ↔ JSON
-
-**Status:** Not completed  
-**Source:** Audit: Product #47 (2026-03-28)
-
-### In plain English
-
-- **What it is:** JSON ↔ YAML exists; **TOML** (Cargo, pyproject, many configs) has no first-party converter beside “paste JSON only.”
-- **Why you’d do it:** Same privacy story as other config converters.
-
-**Action:** Add converter page + nav entry with bundled MIT parser **or** backlog “defer” with link to recommended external flow.
-
-**Acceptance:** Tool live **or** documented defer with rationale.
+**Suggested order:** **51**.
 
 ---
 

@@ -33,6 +33,7 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 | JSON Diff | [tinydatatool.com/json-diff/](https://tinydatatool.com/json-diff/) |
 | JSON Transformer | [tinydatatool.com/json-transformer/](https://tinydatatool.com/json-transformer/) |
 | JSON ↔ YAML | [tinydatatool.com/json-yaml/](https://tinydatatool.com/json-yaml/) |
+| JSON ↔ TOML | [tinydatatool.com/json-toml/](https://tinydatatool.com/json-toml/) |
 | JSON Formatter | [tinydatatool.com/json-formatter/](https://tinydatatool.com/json-formatter/) |
 | JSON → CSV | [tinydatatool.com/json-to-csv/](https://tinydatatool.com/json-to-csv/) |
 | JSON → TSV | [tinydatatool.com/json-to-tsv/](https://tinydatatool.com/json-to-tsv/) |

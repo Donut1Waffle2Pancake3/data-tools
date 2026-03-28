@@ -890,6 +890,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 50. TOML ↔ JSON
+
+**Status:** Completed  
+**Source:** Audit: Product #47 (2026-03-28)
+
+### In plain English
+
+- **What it was:** No first-party **TOML ↔ JSON** converter; YAML path existed only.
+- **Why it mattered:** Cargo, pyproject, and similar configs use TOML; same local-only story as other converters.
+
+**Action:** New tool + nav + hub + sitemap **or** documented defer.
+
+**Acceptance:** Tool live **or** documented defer.
+
+**Delivered:** [`json-toml/`](../json-toml/) (`index.html`, `tool.js`, bundled `tomllib.js` from `@iarna/toml` via `scripts/iarna-toml-browser-entry.js` + `npm run bundle:toml`); [`js/site.js`](../js/site.js) `NAV_GROUPS` + related overrides; [`tools/index.html`](../tools/index.html) grid + ItemList (39); [`sitemap.xml`](../sitemap.xml); [`docs/tools.md`](../tools.md); `package.json` `bundle:toml`.
+
+---
+
 <!--
 ## N. Short title
 
