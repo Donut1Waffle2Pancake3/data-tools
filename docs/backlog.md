@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `_ _ _ _ _`
+**Tracker (5 slots):** `X _ _ _ _`
 
 **Rules**
 
@@ -72,27 +72,7 @@ Action items from [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.m
 
 Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or **closed** items go in [`backlog-archive.md`](backlog-archive.md); append there and remove them from this file.
 
-| Priority | # | Focus |
-|----------|---|-------|
-| Low | **46** | JSON formatter — clearer error for cyclic `JSON.stringify` (vs parse errors) |
-
-**Suggested order:** **46**.
-
----
-
-## 46. JSON formatter — cyclic structure message
-
-**Status:** Not completed  
-**Source:** Audit: Reliability #43 (2026-03-28)
-
-### In plain English
-
-- **What it is:** Valid `JSON.parse` + cyclic object → `JSON.stringify` throws `TypeError`; [`json-formatter`](../json-formatter/index.html) `catch` uses parse-oriented `getFriendlyParseError`.
-- **Why you’d do it:** Users see misleading “syntax” wording for structural cycles.
-
-**Action:** In `runAction` `catch`, if `err instanceof TypeError` and message matches cyclic/converting circular, show a short dedicated string; else keep existing helper.
-
-**Acceptance:** Cyclic input yields a cycle-specific error line, not a generic parse hint.
+**No open numbered tickets.** Next run: [idle / audit rotation](#when-no-actionable-tasks-remain) unless the audit inbox adds work.
 
 ---
 

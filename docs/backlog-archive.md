@@ -818,6 +818,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 46. JSON formatter — cyclic structure message
+
+**Status:** Completed  
+**Source:** Audit: Reliability #43 (2026-03-28)
+
+### In plain English
+
+- **What it was:** `JSON.stringify` `TypeError` (circular/cyclic) was passed through `getFriendlyParseError`, which is aimed at `SyntaxError` / parse text.
+- **Why it mattered:** Clearer guidance when stringification fails on cyclic graphs (e.g. future reviver paths or non-JSON inputs if extended).
+
+**Action:** [`json-formatter/index.html`](../json-formatter/index.html) `runAction` `catch`: `TypeError` + message matching `circular`/`cyclic` → dedicated copy; else existing helper.
+
+**Acceptance:** Cycle errors show the new line; parse errors unchanged.
+
+**Delivered:** [`json-formatter/index.html`](../json-formatter/index.html).
+
+---
+
 <!--
 ## N. Short title
 

@@ -445,6 +445,15 @@
             showSuccess('Valid JSON.');
           }
         } catch (err) {
+          if (err instanceof TypeError) {
+            var em = (err.message || '').toLowerCase();
+            if (/circular|cyclic/.test(em)) {
+              showError(
+                'This data has a circular reference (something points back to itself). JSON cannot be stringified until that loop is removed.'
+              );
+              return;
+            }
+          }
           showError(getFriendlyParseError(err));
         }
       }
