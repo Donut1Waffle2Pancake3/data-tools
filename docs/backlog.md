@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `_ _ _ _ _`
+**Tracker (5 slots):** `X X X X X`
 
 **Rules**
 
@@ -74,59 +74,42 @@ Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or *
 
 | Priority | # | Focus |
 |----------|---|-------|
-| High | **31** | Homepage — grid parity vs prod nav |
-| Medium | **33** | New tool: JSON ↔ YAML |
-| Low | **32** | README — Tools section vs site |
+| Medium | **36** | Tabbed tools — tabpanel `aria-labelledby` |
+| Low | **37** | `initDropZone` — `aria-busy` while reading |
 
-**Suggested order:** **31** (discoverability), **33**, **32**.
-
----
-
-## 31. Homepage — grid parity vs production nav
-
-**Status:** Not completed  
-**Source:** Audit: Product #30 (2026-03-28)
-
-### In plain English
-
-- **What it is:** [`index.html`](../index.html) omits many tools that appear under production-visible nav (`ACTIVE_NAV_GROUPS` / `PRODUCTION_HIDDEN_TOOL_IDS` in [`js/site.js`](../js/site.js)).
-- **Why you’d do it:** Users landing on the homepage never see SQL result, ZIP, JSON Diff, etc., though they exist in the header.
-
-**Action:** Add `home-tool-card` entries (and new **Converters** / **File** section blocks if needed) so every **non-hidden** nav item has a homepage card: **JSON** — viewer, schema generator, diff, transformer; **CSV** — diff, column analyzer; **Text** — text diff, base64, regex tester, text case converter, HTML encoder; **Converters** — `sql-result`; **File** — `zip-combiner`. Match card tone/length to existing rows.
-
-**Acceptance:** Spot-check: nav dropdown (prod) ⊆ homepage links; no duplicate cards for the same tool.
+**Suggested order:** **36**, **37**.
 
 ---
 
-## 32. README — Tools section vs live site
+## 36. Tabbed tools — tabpanel `aria-labelledby`
 
 **Status:** Not completed  
-**Source:** Audit: Product #30 (2026-03-28)
+**Source:** Audit: UX #34 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** [`docs/README.md`](../README.md) lists ~9 tools; the site ships dozens.
-- **Why you’d do it:** Repo onboarding misleads contributors and future-you.
+- **What it is:** Shared `role="tabpanel"` often keeps `aria-labelledby` fixed to the first tab while the second tab is selected.
+- **Why you’d do it:** Screen readers should hear the active tab’s label for the visible panel.
 
-**Action:** Replace the long stale bullet list with a short intro + links to [`tools/index.html`](../tools/index.html) (All Tools) and [`docs/tools.md`](tools.md); optionally one line: “Canonical list: `js/site.js` `NAV_GROUPS`.”
+**Action:** Audit pages with `.tool-tabs` (e.g. [`json-yaml/tool.js`](../json-yaml/tool.js), [`json-formatter`](../json-formatter/index.html) inline script): on tab change, set `aria-labelledby` on the panel to the active tab’s `id`.
 
-**Acceptance:** README Tools section has no false “complete” list unless it mirrors nav or defers to `tools.md`.
+**Acceptance:** JSON ↔ YAML + JSON formatter (and any other tab UIs) update `aria-labelledby` when switching tabs.
 
 ---
 
-## 33. New tool — JSON ↔ YAML
+## 37. `initDropZone` — `aria-busy` while reading
 
 **Status:** Not completed  
-**Source:** Audit: Product #30 (2026-03-28)
+**Source:** Audit: UX #34 (2026-03-28)
 
 ### In plain English
 
-- **What it is:** No YAML import/export; configs and CI often use YAML next to JSON.
-- **Why you’d do it:** Common pipeline step; complements formatter/validator/transformer.
+- **What it is:** [`initDropZone`](../js/site.js) reads files asynchronously but does not set `aria-busy` on the drop zone; custom tools (json-diff, csv-to-json) add it manually.
+- **Why you’d do it:** Consistent “working” state for assistive tech on paste/upload paths that only use shared `initDropZone`.
 
-**Action:** New tool folder (e.g. `json-yaml/`): JSON→YAML and YAML→JSON tabs or toggle; **js-yaml** or small parser with **documented limits** (size, recursion); client-side only; wire nav (JSON group), sitemap, `tools/index.html`, `docs/tools.md`, related tools.
+**Action:** Extend `initDropZone` (opt-in or default): set `aria-busy="true"` and optional `file-reading` class from `readFileAsText` start until settle; document in template reference. Roll out to [`json-yaml/tool.js`](../json-yaml/tool.js), [`json-validator/script.js`](../json-validator/script.js) if no duplicate handlers.
 
-**Acceptance:** Round-trip sane samples; invalid YAML/JSON surfaces explicit errors; caps documented in FAQ.
+**Acceptance:** At least one consumer-only drop zone exposes busy during read without double-wiring.
 
 ---
 

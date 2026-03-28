@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>JSON ↔ YAML Converter | Free &amp; Private | TinyDataTool</title>
+  <meta name="description" content="Convert JSON to YAML and YAML to JSON in your browser. Paste or upload—10 MB limit, client-side only, no uploads." />
+  <link rel="canonical" href="https://tinydatatool.com/json-yaml/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="JSON ↔ YAML Converter | TinyDataTool" />
+  <meta property="og:description" content="Bidirectional JSON and YAML conversion locally in your browser." />
+  <meta property="og:url" content="https://tinydatatool.com/json-yaml/" />
+  <meta property="og:site_name" content="TinyDataTool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="JSON ↔ YAML Converter | TinyDataTool" />
+  <meta name="twitter:description" content="Convert JSON and YAML privately in the browser." />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"JSON ↔ YAML Converter","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"TinyDataTool","url":"https://tinydatatool.com/"},"url":"https://tinydatatool.com/json-yaml/","description":"Convert between JSON and YAML with local processing, size limits, and clear parse errors."}
+  </script>
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../assets/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
+  </style>
+</head>
+<body>
+
+  <div id="site-header-root" data-base="../" data-active="json-yaml"></div>
+  <div id="privacy-banner-root"></div>
+
+  <main id="main-content">
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading">JSON ↔ YAML Converter</h1>
+        <p class="hero__sub">Switch between <strong>JSON</strong> and <strong>YAML</strong> for configs, CI files, and API samples. Pick a direction, paste or upload, then copy or download. Uses <a href="https://github.com/nodeca/js-yaml" rel="noopener noreferrer">js-yaml</a> (MIT) bundled on this page—nothing is sent to a server. For JSON-only formatting, use the <a href="../json-formatter/index.html">JSON formatter</a>.</p>
+      </div>
+    </section>
+
+    <section aria-label="JSON YAML converter" id="tool">
+      <div class="container">
+        <div class="tool-card" role="region">
+
+          <div class="tool-tabs" role="tablist" aria-label="Conversion direction">
+            <button type="button" class="tab active" role="tab" id="tabJ2Y" aria-selected="true" aria-controls="panel-main">JSON → YAML</button>
+            <button type="button" class="tab" role="tab" id="tabY2J" aria-selected="false" aria-controls="panel-main">YAML → JSON</button>
+          </div>
+
+          <div id="panel-main" role="tabpanel" aria-labelledby="tabJ2Y">
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="textInput" id="inputLabel">JSON input</label>
+                <a href="#" class="clear-link" id="clearLink" role="button" aria-disabled="true">Clear</a>
+              </div>
+              <textarea id="textInput" class="form-input" placeholder='{"hello": "world", "n": 1}' spellcheck="false" style="min-height: 120px;"></textarea>
+            </div>
+
+            <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload file" aria-describedby="drop-hint">
+              <svg class="upload-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M14.0273 1.75C9.59766 1.75 5.60547 4.10156 3.41797 7.875C1.17578 11.7031 1.17578 16.3516 3.41797 20.125C5.60547 23.9531 9.59766 26.25 14.0273 26.25C18.4023 26.25 22.3945 23.9531 24.582 20.125C26.8242 16.3516 26.8242 11.7031 24.582 7.875C22.3945 4.10156 18.4023 1.75 14.0273 1.75ZM14.0273 28C8.99609 28 4.40234 25.375 1.88672 21C-0.628906 16.6797 -0.628906 11.375 1.88672 7C4.40234 2.67969 8.99609 0 14.0273 0C19.0039 0 23.5977 2.67969 26.1133 7C28.6289 11.375 28.6289 16.6797 26.1133 21C23.5977 25.375 19.0039 28 14.0273 28ZM19.8789 11.6484C20.207 11.9766 20.207 12.5781 19.8789 12.9062C19.5508 13.2344 18.9492 13.2344 18.6211 12.9062L14.9023 9.13281V20.125C14.9023 20.6172 14.4648 21 14.0273 21C13.5352 21 13.1523 20.6172 13.1523 20.125V9.13281L9.37891 12.9062C9.05078 13.2344 8.44922 13.2344 8.12109 12.9062C7.79297 12.5781 7.79297 11.9766 8.12109 11.6484L13.3711 6.39844C13.6992 6.07031 14.3008 6.07031 14.6289 6.39844L19.8789 11.6484Z" fill="currentColor"/>
+              </svg>
+              <p class="drop-zone__label">Or upload a JSON file</p>
+              <p class="drop-zone__hint" id="drop-hint">Max 10 MB UTF-8 · processed locally</p>
+              <input type="file" id="fileInput" accept=".json,.txt,application/json,text/plain" aria-label="Select file" />
+            </div>
+
+            <div class="form-section">
+              <span class="form-section__label">Output</span>
+              <label class="form-label" for="indentSel">Indent (spaces)</label>
+              <select id="indentSel" class="field-md" style="min-width: 120px;">
+                <option value="2">2</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+
+            <button class="btn-primary" id="convertBtn" type="button" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              Convert
+            </button>
+
+            <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
+              <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M8 5v4M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span id="errorText"></span>
+            </div>
+
+            <div class="result-section" id="resultSection" aria-live="polite">
+              <div class="result-section__heading">
+                <p class="result-section__title">Output</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="textOutput">Result</label>
+                <textarea id="textOutput" class="form-input" readonly spellcheck="false" style="min-height: 160px;"></textarea>
+              </div>
+              <div class="result-actions">
+                <button class="btn-download" id="copyBtn" type="button">Copy</button>
+                <a class="btn-download" id="downloadLink" href="#" download="output.yaml" style="display: none;">Download</a>
+              </div>
+            </div>
+
+            <div class="privacy-note" aria-label="Privacy">
+              <svg viewBox="0 0 14 14" fill="none" aria-hidden="true" style="width:14px;height:14px;"><path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.1 5 5.5 2.9-.4 5-2.7 5-5.5v-4L7 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              Runs only in your browser. Includes bundled js-yaml (MIT).
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section content-section--centered" aria-labelledby="how-heading">
+      <div class="container--wide">
+        <p class="section-label">HOW IT WORKS</p>
+        <h2 class="section-title" id="how-heading">How to convert JSON and YAML online</h2>
+        <p class="section-body">Choose a direction, validate input with Convert, then copy or download the other format.</p>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">1</span>
+            <p class="step__title">Pick JSON → YAML or YAML → JSON</p>
+            <p class="step__desc">Tabs switch labels, placeholders, and which file types the uploader suggests.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">2</span>
+            <p class="step__title">Paste or upload</p>
+            <p class="step__desc">Stay under the size limit. JSON must be valid; YAML must parse as a single document.</p>
+          </article>
+          <article class="step" role="listitem">
+            <span class="step__number" aria-hidden="true">3</span>
+            <p class="step__title">Convert and export</p>
+            <p class="step__desc">Adjust indent for output, then copy or download <code>.yaml</code> or <code>.json</code>.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="why-heading">
+      <div class="container--wide">
+        <p class="section-label">Why use this tool</p>
+        <h2 class="section-title" id="why-heading">Why Use a JSON ↔ YAML Converter?</h2>
+        <p class="section-body">Teams mix JSON (APIs, package files) and YAML (Kubernetes, GitHub Actions, Ansible). A quick converter avoids context-switching to the command line.</p>
+        <div class="benefits" style="margin-top: 24px;">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 14V4a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Config and CI pipelines</p>
+              <p class="benefit__desc">Turn JSON samples into readable YAML snippets—or flatten YAML to JSON for tools that only accept JSON.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">No CLI required</p>
+              <p class="benefit__desc">Paste from Slack, docs, or logs and get the other format without installing yq or jq.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Explicit errors</p>
+              <p class="benefit__desc">Invalid JSON or YAML surfaces the parser message so you can fix commas, quotes, or indentation.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Controlled output shape</p>
+              <p class="benefit__desc">Choose 2- or 4-space indentation for both YAML dumps and pretty-printed JSON.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="secure-heading">
+      <div class="container--wide">
+        <p class="section-label">Privacy</p>
+        <h2 class="section-title" id="secure-heading">Private and Secure</h2>
+        <p class="section-body">Conversion runs entirely in your browser. Text and files are not uploaded, logged, or stored on any server.</p>
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L3 5v5c0 3.3 2.5 6.1 6 6.9 3.5-.8 6-3.6 6-6.9V5L9 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 9l2 2L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Local processing</p>
+              <p class="benefit__desc">js-yaml executes in your tab only; your data never leaves the device.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true">
+                <path d="M184 64C135.4 64 96 103.4 96 152L96 496C96 540.2 131.8 576 176 576L520 576C533.3 576 544 565.3 544 552C544 538.7 533.3 528 520 528L512 528L512 451.9C531.3 439 544 417 544 392L544 136C544 96.2 511.8 64 472 64L184 64z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">No account or API</p>
+              <p class="benefit__desc">No keys, quotas, or backend—just static pages and scripts.</p>
+            </div>
+          </div>
+          <div class="benefit">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M9 5.5v4l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="benefit__title">Size limits on purpose</p>
+              <p class="benefit__desc">Large pastes are rejected to reduce memory pressure and keep the tab responsive.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="faq-heading">
+      <div class="container--wide">
+        <p class="section-label">FAQ</p>
+        <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+        <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-1-answer">
+              <span itemprop="name">What is the input size limit?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-1-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">About 10 MB of UTF-8 text per paste or file, similar to other JSON tools on this site. Bigger documents may still exhaust memory on low-end devices.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-2-answer">
+              <span itemprop="name">Can I convert multiple YAML documents at once?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-2-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. The converter expects a single YAML document (one stream). Split multi-document files or use only the first document.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-3-answer">
+              <span itemprop="name">Will YAML anchors and custom tags round-trip through JSON?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-3-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">JSON only has data types JSON supports. YAML dates, binary, and other tags are converted to the nearest JSON representation; going back to YAML may look different but stay data-equivalent where possible.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-4-answer">
+              <span itemprop="name">Is my data uploaded?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-4-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">No. Parsing and dumping run in your browser; the bundled js-yaml library is loaded with the page, not from a remote API call for your content.</span>
+            </div>
+          </div>
+          <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-5-answer">
+              <span itemprop="name">How is this different from the JSON formatter?</span>
+              <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-answer" id="faq-5-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+              <span itemprop="text">The formatter prettifies or minifies JSON only. Here you change the serialization format between JSON and YAML.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="related-tools-root" data-base="../" data-current="json-yaml"></section>
+  </main>
+
+  <div id="site-footer-root"></div>
+
+  <script src="../js/site.js" defer></script>
+  <script src="js-yaml.min.js" defer></script>
+  <script src="tool.js" defer></script>
+</body>
+</html>

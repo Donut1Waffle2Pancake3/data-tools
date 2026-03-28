@@ -34,6 +34,7 @@ Live URLs use the site root; each tool folder also has `index.html` in the repo.
 | JSON Schema Generator | [tinydatatool.com/json-schema-generator/](https://tinydatatool.com/json-schema-generator/) |
 | JSON Diff | [tinydatatool.com/json-diff/](https://tinydatatool.com/json-diff/) |
 | JSON Transformer | [tinydatatool.com/json-transformer/](https://tinydatatool.com/json-transformer/) |
+| JSON ↔ YAML | [tinydatatool.com/json-yaml/](https://tinydatatool.com/json-yaml/) |
 | JSON Formatter | [tinydatatool.com/json-formatter/](https://tinydatatool.com/json-formatter/) |
 | JSON Minifier | [tinydatatool.com/json-minifier/](https://tinydatatool.com/json-minifier/) |
 | JSON → CSV | [tinydatatool.com/json-to-csv/](https://tinydatatool.com/json-to-csv/) |

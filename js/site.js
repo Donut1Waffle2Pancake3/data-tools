@@ -31,6 +31,7 @@ const NAV_GROUPS = [
         { id: 'json-schema-generator', href: 'json-schema-generator/index.html', label: 'JSON Schema Generator' },
         { id: 'json-diff', href: 'json-diff/index.html', label: 'JSON Diff' },
         { id: 'json-transformer', href: 'json-transformer/index.html', label: 'JSON Transformer' },
+        { id: 'json-yaml', href: 'json-yaml/index.html', label: 'JSON ↔ YAML' },
         { id: 'json-formatter', href: 'json-formatter/index.html', label: 'JSON Formatter' },
         { id: 'json-minifier', href: 'json-minifier/index.html', label: 'JSON Minifier' },
         { id: 'json-to-csv', href: 'json-to-csv/index.html', label: 'JSON → CSV' },
@@ -127,11 +128,12 @@ const RELATED_TOOL_OVERRIDES = {
   'csv-sorter': ['sort-lines'],
   'csv-row-filter': ['csv-column-analyzer', 'find-and-replace-text', 'trim-whitespace'],
   'csv-column-analyzer': ['csv-row-filter', 'csv-deduplicator', 'csv-sorter'],
-  'json-formatter': ['json-transformer', 'json-diff', 'json-schema-generator'],
-  'json-validator': ['json-transformer', 'json-diff', 'json-formatter'],
+  'json-formatter': ['json-yaml', 'json-diff', 'json-schema-generator'],
+  'json-validator': ['json-yaml', 'json-transformer', 'json-formatter'],
   'json-schema-generator': ['json-validator', 'json-viewer', 'json-formatter'],
   'json-diff': ['json-transformer', 'json-viewer', 'json-formatter'],
-  'json-transformer': ['json-formatter', 'json-viewer', 'json-to-csv'],
+  'json-transformer': ['json-yaml', 'json-formatter', 'json-viewer'],
+  'json-yaml': ['json-formatter', 'json-validator', 'json-transformer'],
   'sql-result': ['csv-to-json', 'json-to-csv', 'tsv-to-csv'],
   'csv-diff': ['csv-deduplicator', 'merge-csv', 'text-diff'],
   'csv-to-json': ['json-to-csv', 'sql-result', 'csv-to-tsv'],
@@ -480,26 +482,31 @@ function initNavDrawer() {
     document.body.classList.add('nav-drawer-open');
     burger.setAttribute('aria-expanded', 'true');
     overlay.setAttribute('aria-hidden', 'false');
+    requestAnimationFrame(function () {
+      var target = closeBtn || drawer.querySelector('.nav-drawer__item');
+      if (target && typeof target.focus === 'function') target.focus();
+    });
   }
 
-  function closeDrawer() {
+  /** @param {{ focusBurger?: boolean }} [opts] — focusBurger true after overlay/close/Escape; false when a nav link will navigate away */
+  function closeDrawer(opts) {
     document.body.classList.remove('nav-drawer-open');
     burger.setAttribute('aria-expanded', 'false');
     overlay.setAttribute('aria-hidden', 'true');
+    if (opts && opts.focusBurger) burger.focus();
   }
 
   burger.addEventListener('click', () => openDrawer());
-  overlay.addEventListener('click', () => closeDrawer());
-  if (closeBtn) closeBtn.addEventListener('click', () => closeDrawer());
+  overlay.addEventListener('click', () => closeDrawer({ focusBurger: true }));
+  if (closeBtn) closeBtn.addEventListener('click', () => closeDrawer({ focusBurger: true }));
 
   drawer.querySelectorAll('.nav-drawer__item').forEach((link) => {
-    link.addEventListener('click', () => closeDrawer());
+    link.addEventListener('click', () => closeDrawer({ focusBurger: false }));
   });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.body.classList.contains('nav-drawer-open')) {
-      closeDrawer();
-      burger.focus();
+      closeDrawer({ focusBurger: true });
     }
   });
 }

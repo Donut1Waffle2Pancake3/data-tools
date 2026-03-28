@@ -6,15 +6,11 @@ Free, browser-based utilities for working with CSV and JSON files. All tools run
 
 ## Tools
 
-- **Split CSV** — Break a large CSV into smaller files by row count
-- **Merge CSV** — Combine multiple CSV files into one
-- **CSV Column Remover** — Remove columns from a CSV
-- **CSV Deduplicator** — Remove duplicate rows
-- **CSV Sorter** — Sort rows by column
-- **JSON Formatter** — Pretty-print and validate JSON
-- **JSON to CSV** — Convert JSON arrays of objects to CSV
-- **CSV to JSON** — Convert CSV to JSON
-- **CSV to TSV** / **TSV to CSV** — Convert between comma- and tab-separated
+The site ships **many** CSV, JSON, text, file, and converter tools. The list here is **not** kept in sync with every release.
+
+- **Browse all utilities:** [All Tools](../tools/index.html) (same directory as the live site).
+- **Markdown catalog:** [docs/tools.md](tools.md) — URLs grouped like the navigation.
+- **Source of truth for names and order:** [`js/site.js`](../js/site.js) → `NAV_GROUPS` (plus `PRODUCTION_HIDDEN_TOOL_IDS` for tools that stay in the repo but out of the production menu).
 
 ## Run locally
 
@@ -39,13 +35,13 @@ This updates `assets/favicon.ico` and `assets/apple-touch-icon.png`. Commit the 
 
 ## Project structure
 
-- `docs/` — Markdown notes (backlog, backlog archive, site/SEO rules)
+- `docs/` — Markdown notes (backlog, backlog archive, site/SEO rules, [tools catalog](tools.md))
 - `index.html` — Homepage
 - `404.html` — Custom not-found page
-- `split-csv/`, `merge-csv/`, `csv-column-remover/`, `csv-deduplicator/`, `csv-sorter/`, `json-formatter/`, `json-to-csv/`, `csv-to-json/`, `csv-to-tsv/`, `tsv-to-csv/` — Tool pages (each has `index.html`)
+- `*/index.html` — One folder per tool at repo root (see [tools.md](tools.md)); shared header/footer/related links from `js/site.js`
 - `tools/index.html` — All Tools listing
 - `css/global.css` — Shared styles
-- `js/site.js` — Header, nav, and related-tools (injected into each page)
+- `js/site.js` — Navigation config (`NAV_GROUPS`), header, footer, related-tools, shared helpers
 - `assets/` — Logo, favicon SVG
 - `sitemap.xml`, `robots.txt` — SEO
 

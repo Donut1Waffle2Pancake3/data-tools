@@ -548,6 +548,96 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 31. Homepage — grid parity vs production nav
+
+**Status:** Completed  
+**Source:** Audit: Product #30 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Homepage grids skipped many production-nav tools (JSON diff/transformer, CSV diff/analyzer, several text tools, SQL result, ZIP).
+- **Why it mattered:** Organic visitors only saw a subset of what the header offered.
+
+**Action:** [`index.html`](../index.html): add `home-tool-card` rows for JSON viewer/schema/diff/transformer; CSV diff + column analyzer (row-filter → analyzer → sorter order); text diff, Base64, regex, case, HTML encoder; **Converters** section (`sql-result`); **File** section (`zip-combiner`); place JSON formatter after transformer per nav.
+
+**Acceptance:** Prod-visible `NAV_GROUPS` items ⊆ homepage links; no duplicate cards.
+
+**Delivered:** [`index.html`](../index.html).
+
+---
+
+## 33. New tool — JSON ↔ YAML
+
+**Status:** Completed  
+**Source:** Audit: Product #30 (2026-03-28)
+
+### In plain English
+
+- **What it was:** No YAML path on-site; configs and CI often pair YAML with JSON.
+- **Why it mattered:** Users reached for CLI converters instead of staying in TinyDataTool.
+
+**Action:** New [`json-yaml/`](../json-yaml/): tabs **JSON → YAML** / **YAML → JSON**; bundled **js-yaml 4.1.0** (`js-yaml.min.js`); `tool.js` + `JSON.parse` / `load` / `dump`; 10 MB UTF-8; indent 2/4; copy/download; HOW TO / Why / Privacy / FAQ; nav, related overrides, sitemap, `tools/index.html` + ItemList, `docs/tools.md`, root + All Tools homepage cards.
+
+**Acceptance:** Valid round-trip; parse errors surfaced; limits in FAQ.
+
+**Delivered:** [`json-yaml/index.html`](../json-yaml/index.html), [`json-yaml/tool.js`](../json-yaml/tool.js), [`json-yaml/js-yaml.min.js`](../json-yaml/js-yaml.min.js) (MIT), [`js/site.js`](../js/site.js), [`js/site.min.js`](../js/site.min.js), [`sitemap.xml`](../sitemap.xml), [`tools/index.html`](../tools/index.html), [`index.html`](../index.html), [`docs/tools.md`](../docs/tools.md).
+
+---
+
+## 32. README — Tools section vs live site
+
+**Status:** Completed  
+**Source:** Audit: Product #30 (2026-03-28)
+
+### In plain English
+
+- **What it was:** [`docs/README.md`](../README.md) implied a ~9-tool product; the repo ships far more.
+- **Why it mattered:** Contributors and readers trusted a false “complete” list.
+
+**Action:** Replaced stale bullets with links to [All Tools](../tools/index.html), [tools.md](tools.md), and `js/site.js` `NAV_GROUPS` / `PRODUCTION_HIDDEN_TOOL_IDS`; shortened **Project structure** (generic `*/index.html` + tools.md).
+
+**Acceptance:** No implied exhaustive tool list without mirroring nav.
+
+**Delivered:** [`docs/README.md`](../README.md).
+
+---
+
+## 34. Audit: UX
+
+**Status:** Completed  
+**Source:** Backlog #34 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Scheduled UX-only audit of shared chrome and representative tab/upload flows.
+- **Why it mattered:** Catch a11y/focus gaps without mixing SEO or reliability.
+
+**Action:** Reviewed [`js/site.js`](../js/site.js) (`initNavDrawer`, `initDropZone`, FAQ) and tabbed tools (`json-yaml`, patterns vs `json-diff` / `csv-to-json` drop-zone busy).
+
+**Acceptance:** New tickets with concrete fixes.
+
+**Delivered:** **#35** nav drawer focus on open, **#36** tabpanel `aria-labelledby`, **#37** `initDropZone` `aria-busy` during read.
+
+---
+
+## 35. Nav drawer — focus on open
+
+**Status:** Completed  
+**Source:** Audit: UX #34 (2026-03-28)
+
+### In plain English
+
+- **What it was:** Drawer opened without moving focus; only Escape returned focus to the burger.
+- **Why it mattered:** Keyboard/SR users had no entry point into the dialog.
+
+**Action:** [`js/site.js`](../js/site.js) `initNavDrawer`: `openDrawer` uses `requestAnimationFrame` to focus `navDrawerClose` or first `.nav-drawer__item`; `closeDrawer({ focusBurger })` returns focus to the burger for overlay, close, and Escape—not when following a drawer link (navigation).
+
+**Acceptance:** Open → focus inside; dismiss without navigation → focus on burger.
+
+**Delivered:** [`js/site.js`](../js/site.js), [`js/site.min.js`](../js/site.min.js).
+
+---
+
 <!--
 ## N. Short title
 
