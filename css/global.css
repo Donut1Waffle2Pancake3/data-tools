@@ -590,6 +590,100 @@ body.nav-drawer-open .nav-drawer {
   outline-offset: 2px;
 }
 
+/* Collapsible options panel (e.g. CSV Sorter output options, Unix timestamp Advanced) */
+.output-options {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-secondary);
+}
+
+.tool-card > .output-options {
+  margin-top: 0;
+}
+
+.result-section .output-options {
+  margin-top: var(--space-16);
+}
+
+.output-options__summary {
+  cursor: pointer;
+  padding: var(--space-12) var(--space-16);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  list-style: none;
+}
+
+.output-options__summary::-webkit-details-marker {
+  display: none;
+}
+
+.output-options__body {
+  padding: 0 var(--space-16) var(--space-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.output-options .form-section {
+  margin: 0;
+}
+
+.output-options .form-label {
+  display: block;
+  margin-bottom: var(--space-8);
+}
+
+/* Unix timestamp converter — primary readout + secondary grid */
+.tool-card .ts-primary-readout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16);
+  background: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.tool-card .ts-primary-readout .form-label {
+  margin-bottom: 0;
+}
+
+.tool-card .ts-primary-readout .form-input {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  font-family: ui-monospace, monospace;
+  line-height: var(--line-height-relaxed);
+}
+
+.tool-card .ts-primary-readout textarea.form-input {
+  min-height: 0;
+}
+
+.tool-card .ts-out-grid {
+  display: grid;
+  gap: var(--space-16);
+  align-items: start;
+}
+
+/* Read-only zone line: avoid global textarea min-height (160px) — keep output compact */
+.tool-card .ts-out-grid textarea.form-input {
+  min-height: 0;
+}
+
+@media (min-width: 640px) {
+  .tool-card .ts-out-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.tool-card .ts-out-grid > .form-group--full {
+  grid-column: 1 / -1;
+}
+
+.tool-card .ts-human-input {
+  min-height: 120px;
+}
+
 /* ============================================================
    HOME PAGE — TOOL CARDS
 ============================================================ */

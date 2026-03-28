@@ -30,9 +30,6 @@
     .tool-panel { display: none; }
     .tool-panel.is-active { display: block; }
     .result-section.visible { display: flex; flex-direction: column; gap: var(--space-24); }
-    .ts-out-grid { display: grid; gap: 16px; }
-    @media (min-width: 640px) { .ts-out-grid { grid-template-columns: 1fr 1fr; } }
-    #tzSelect { max-width: 100%; }
   </style>
 </head>
 <body>
@@ -46,7 +43,7 @@
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container">
         <h1 id="hero-heading">Unix Timestamp Converter</h1>
-        <p class="hero__sub">Turn <strong>Unix epoch</strong> values (seconds or milliseconds) into <strong>UTC ISO</strong> strings and a readable date in a <strong>chosen time zone</strong>, or paste an <strong>ISO 8601</strong> date to get the epoch. Use <strong>batch mode</strong> for one value per line—ideal for logs and JSON exports. Everything stays in your browser.</p>
+        <p class="hero__sub">Paste a <strong>Unix timestamp</strong> and read the <strong>UTC ISO 8601</strong> string first—then copy or dig into local time and epoch values. Open <strong>Advanced</strong> to change time zone, switch to <strong>date → epoch</strong> or <strong>batch</strong>, or toggle seconds vs milliseconds. All in your browser.</p>
       </div>
     </section>
 
@@ -54,74 +51,41 @@
       <div class="container">
         <div class="tool-card" role="region" aria-label="Unix timestamp converter">
 
-          <div class="form-group">
-            <label class="form-label" for="tzSelect">Display time zone</label>
-            <select id="tzSelect" class="form-input" aria-describedby="tzHint"></select>
-            <p class="form-hint" id="tzHint">Uses the IANA time zone database. <strong>Daylight saving</strong> is applied automatically for the region you pick. “Local” follows this device’s clock.</p>
-          </div>
-
-          <div class="form-section" role="group" aria-labelledby="mode-label">
-            <span class="form-section__label" id="mode-label">Mode</span>
-            <div class="form-inline-row" style="flex-wrap: wrap;">
-              <label class="form-option" for="modeEpoch">
-                <input type="radio" name="toolMode" id="modeEpoch" value="epoch" checked />
-                <span>Epoch → date</span>
-              </label>
-              <label class="form-option" for="modeHuman">
-                <input type="radio" name="toolMode" id="modeHuman" value="human" />
-                <span>Date → epoch</span>
-              </label>
-              <label class="form-option" for="modeBatch">
-                <input type="radio" name="toolMode" id="modeBatch" value="batch" />
-                <span>Batch (epochs → dates)</span>
-              </label>
-            </div>
-          </div>
-
           <div id="panelEpoch" class="tool-panel is-active" role="tabpanel">
             <div class="form-group">
               <div class="form-label-row">
                 <label class="form-label" for="epochInput">Unix timestamp</label>
-                <button type="button" class="clear-link clear-link--enabled" id="nowBtn">Now</button>
+                <button type="button" class="btn-secondary" id="nowBtn">Now</button>
               </div>
-              <input type="text" id="epochInput" class="form-input" inputmode="numeric" placeholder="e.g. 1711537200 or 1711537200000" autocomplete="off" aria-describedby="unitHint" />
-              <div class="form-inline-row" style="margin-top: 12px; flex-wrap: wrap;">
-                <label class="form-option" for="unitSeconds">
-                  <input type="radio" name="epochUnit" id="unitSeconds" value="seconds" />
-                  <span>Seconds</span>
-                </label>
-                <label class="form-option" for="unitMillis">
-                  <input type="radio" name="epochUnit" id="unitMillis" value="millis" checked />
-                  <span>Milliseconds</span>
-                </label>
-              </div>
-              <p class="form-hint" id="unitHint">JSON and JavaScript usually use <strong>milliseconds</strong>. Some APIs and CLIs use <strong>seconds</strong>.</p>
+              <input type="text" id="epochInput" class="form-input field-lg" inputmode="numeric" placeholder="e.g. 1711537200 or 1711537200000" autocomplete="off" aria-describedby="epochMainHint" />
+              <p class="form-hint" id="epochMainHint">Digits only. Assumes <strong>milliseconds</strong> unless you change units in Advanced.</p>
             </div>
             <div class="result-section visible" aria-live="polite">
               <p class="result-section__title">Result</p>
-              <div class="ts-out-grid">
-                <div class="form-group" style="margin: 0;">
-                  <label class="form-label" for="outIso">UTC (ISO 8601)</label>
-                  <textarea id="outIso" class="form-input" readonly rows="2" style="min-height: 0;"></textarea>
-                </div>
-                <div class="form-group" style="margin: 0;">
-                  <label class="form-label" for="outZoned">Selected zone</label>
-                  <textarea id="outZoned" class="form-input" readonly rows="3" style="min-height: 0;"></textarea>
-                </div>
-                <div class="form-group" style="margin: 0;">
-                  <label class="form-label" for="outSeconds">Unix seconds</label>
-                  <input type="text" id="outSeconds" class="form-input" readonly />
-                </div>
-                <div class="form-group" style="margin: 0;">
-                  <label class="form-label" for="outMillis">Unix milliseconds</label>
-                  <input type="text" id="outMillis" class="form-input" readonly />
-                </div>
+              <div class="ts-primary-readout">
+                <label class="form-label" for="outIso">UTC (ISO 8601)</label>
+                <textarea id="outIso" class="form-input" readonly rows="2" spellcheck="false"></textarea>
               </div>
-              <div class="result-actions" style="margin-top: 8px;">
-                <button type="button" class="btn-download" id="copyEpochBtn" disabled>
+              <div class="result-actions">
+                <button type="button" class="btn-download" id="copyUtcBtn" disabled aria-label="Copy UTC ISO string">
                   <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true"><path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/></svg>
-                  Copy summary
+                  Copy UTC
                 </button>
+                <button type="button" class="btn-secondary" id="copyEpochBtn" disabled>Copy summary</button>
+              </div>
+              <div class="ts-out-grid">
+                <div class="form-group">
+                  <label class="form-label" for="outZoned">Selected zone</label>
+                  <textarea id="outZoned" class="form-input" readonly rows="2" spellcheck="false"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="outSeconds">Unix seconds</label>
+                  <input type="text" id="outSeconds" class="form-input field-md" readonly />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="outMillis">Unix milliseconds</label>
+                  <input type="text" id="outMillis" class="form-input field-md" readonly />
+                </div>
               </div>
             </div>
           </div>
@@ -130,28 +94,28 @@
             <div class="form-group">
               <div class="form-label-row">
                 <label class="form-label" for="humanInput">Date/time (ISO 8601)</label>
-                <button type="button" class="clear-link clear-link--enabled" id="humanNowBtn">Now</button>
+                <button type="button" class="btn-secondary" id="humanNowBtn">Now</button>
               </div>
-              <textarea id="humanInput" class="form-input" rows="2" placeholder="2026-03-28T15:30:00Z&#10;2026-03-28T12:30:00-04:00" spellcheck="false" aria-describedby="humanHint"></textarea>
-              <p class="form-hint" id="humanHint">Include a <strong>Z</strong> (UTC) or a numeric <strong>offset</strong> (e.g. <code>-04:00</code>) so the instant is unambiguous.</p>
+              <textarea id="humanInput" class="form-input ts-human-input" rows="3" placeholder="2026-03-28T15:30:00Z&#10;2026-03-28T12:30:00-04:00" spellcheck="false" aria-describedby="humanHint"></textarea>
+              <p class="form-hint" id="humanHint">Use <strong>Z</strong> (UTC) or a numeric offset (e.g. <code>-04:00</code>) so the instant is unambiguous.</p>
             </div>
             <div class="result-section visible" aria-live="polite">
-              <p class="result-section__title">Epoch</p>
+              <p class="result-section__title">Result</p>
+              <div class="ts-primary-readout">
+                <label class="form-label" for="humanOutMs">Unix milliseconds</label>
+                <input type="text" id="humanOutMs" class="form-input" readonly />
+              </div>
               <div class="ts-out-grid">
-                <div class="form-group" style="margin: 0;">
-                  <label class="form-label" for="humanOutMs">Milliseconds</label>
-                  <input type="text" id="humanOutMs" class="form-input" readonly />
+                <div class="form-group">
+                  <label class="form-label" for="humanOutS">Unix seconds</label>
+                  <input type="text" id="humanOutS" class="form-input field-md" readonly />
                 </div>
-                <div class="form-group" style="margin: 0;">
-                  <label class="form-label" for="humanOutS">Seconds</label>
-                  <input type="text" id="humanOutS" class="form-input" readonly />
+                <div class="form-group form-group--full">
+                  <label class="form-label" for="humanOutZoned">Selected zone</label>
+                  <textarea id="humanOutZoned" class="form-input" readonly rows="2" spellcheck="false"></textarea>
                 </div>
               </div>
-              <div class="form-group" style="margin-top: 16px;">
-                <label class="form-label" for="humanOutZoned">Same instant in selected zone</label>
-                <textarea id="humanOutZoned" class="form-input" readonly rows="2"></textarea>
-              </div>
-              <div class="result-actions" style="margin-top: 8px;">
+              <div class="result-actions">
                 <button type="button" class="btn-download" id="copyHumanBtn" disabled>
                   <svg width="16" height="16" viewBox="0 0 640 640" fill="currentColor" aria-hidden="true"><path d="M480 400L288 400C279.2 400 272 392.8 272 384L272 128C272 119.2 279.2 112 288 112L421.5 112C425.7 112 429.8 113.7 432.8 116.7L491.3 175.2C494.3 178.2 496 182.3 496 186.5L496 384C496 392.8 488.8 400 480 400zM288 448L480 448C515.3 448 544 419.3 544 384L544 186.5C544 169.5 537.3 153.2 525.3 141.2L466.7 82.7C454.7 70.7 438.5 64 421.5 64L288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L368 496L368 512C368 520.8 360.8 528 352 528L160 528C151.2 528 144 520.8 144 512L144 256C144 247.2 151.2 240 160 240L176 240L176 192L160 192z"/></svg>
                   Copy summary
@@ -164,27 +128,13 @@
             <div class="form-group">
               <label class="form-label" for="batchInput">One Unix timestamp per line</label>
               <textarea id="batchInput" class="form-input" rows="4" placeholder="1711537200&#10;1711537200000" spellcheck="false" aria-describedby="batchHint"></textarea>
-              <div class="form-inline-row" style="margin-top: 12px; flex-wrap: wrap;">
-                <label class="form-option" for="batchUnitSeconds">
-                  <input type="radio" name="batchUnit" id="batchUnitSeconds" value="seconds" />
-                  <span>Interpret as seconds</span>
-                </label>
-                <label class="form-option" for="batchUnitAuto">
-                  <input type="radio" name="batchUnit" id="batchUnitAuto" value="auto" checked />
-                  <span>Auto (≥ 1e12 → ms, else seconds)</span>
-                </label>
-                <label class="form-option" for="batchUnitMillis">
-                  <input type="radio" name="batchUnit" id="batchUnitMillis" value="millis" />
-                  <span>Interpret as milliseconds</span>
-                </label>
-              </div>
-              <p class="form-hint" id="batchHint">Up to <strong>500</strong> non-empty lines. Output: <code>input → ISO (UTC) | localized</code> per line.</p>
+              <p class="form-hint" id="batchHint">Up to <strong>500</strong> non-empty lines; output is <code>input → ISO (UTC) | localized</code> per line. Unit interpretation is in Advanced.</p>
             </div>
             <div class="result-section visible" aria-live="polite">
               <p class="result-section__title">Batch output</p>
               <div class="form-group">
                 <label class="form-label" for="batchOutput">Results</label>
-                <textarea id="batchOutput" class="form-input" readonly rows="8" style="min-height: 120px;"></textarea>
+                <textarea id="batchOutput" class="form-input" readonly rows="8" spellcheck="false"></textarea>
               </div>
               <div class="result-actions">
                 <button type="button" class="btn-download" id="copyBatchBtn" disabled>
@@ -194,6 +144,65 @@
               </div>
             </div>
           </div>
+
+          <details class="output-options" id="tsAdvancedDetails">
+            <summary class="output-options__summary">Advanced options</summary>
+            <div class="output-options__body">
+              <div class="form-section">
+                <label class="form-label" for="tzSelect">Display time zone</label>
+                <select id="tzSelect" class="field-md" aria-describedby="tzHint"></select>
+                <p class="form-hint" id="tzHint">IANA zones with automatic DST. “Local” uses this device’s clock.</p>
+              </div>
+              <div class="form-section" role="group" aria-labelledby="mode-label">
+                <span class="form-section__label" id="mode-label">Mode</span>
+                <div class="form-inline-row">
+                  <label class="form-option" for="modeEpoch">
+                    <input type="radio" name="toolMode" id="modeEpoch" value="epoch" checked />
+                    <span>Epoch → date</span>
+                  </label>
+                  <label class="form-option" for="modeHuman">
+                    <input type="radio" name="toolMode" id="modeHuman" value="human" />
+                    <span>Date → epoch</span>
+                  </label>
+                  <label class="form-option" for="modeBatch">
+                    <input type="radio" name="toolMode" id="modeBatch" value="batch" />
+                    <span>Batch (epochs → dates)</span>
+                  </label>
+                </div>
+              </div>
+              <div id="advEpochUnits" class="form-section" role="group" aria-labelledby="epoch-units-label">
+                <span class="form-section__label" id="epoch-units-label">Epoch input unit</span>
+                <div class="form-inline-row">
+                  <label class="form-option" for="unitSeconds">
+                    <input type="radio" name="epochUnit" id="unitSeconds" value="seconds" />
+                    <span>Seconds</span>
+                  </label>
+                  <label class="form-option" for="unitMillis">
+                    <input type="radio" name="epochUnit" id="unitMillis" value="millis" checked />
+                    <span>Milliseconds</span>
+                  </label>
+                </div>
+                <p class="form-hint" id="unitHint">JavaScript usually uses <strong>milliseconds</strong>; many CLIs use <strong>seconds</strong>.</p>
+              </div>
+              <div id="advBatchUnits" class="form-section" role="group" aria-labelledby="batch-units-label" hidden>
+                <span class="form-section__label" id="batch-units-label">Batch line unit</span>
+                <div class="form-inline-row">
+                  <label class="form-option" for="batchUnitSeconds">
+                    <input type="radio" name="batchUnit" id="batchUnitSeconds" value="seconds" />
+                    <span>Seconds</span>
+                  </label>
+                  <label class="form-option" for="batchUnitAuto">
+                    <input type="radio" name="batchUnit" id="batchUnitAuto" value="auto" checked />
+                    <span>Auto (≥ 1e12 → ms)</span>
+                  </label>
+                  <label class="form-option" for="batchUnitMillis">
+                    <input type="radio" name="batchUnit" id="batchUnitMillis" value="millis" />
+                    <span>Milliseconds</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </details>
 
           <div class="status-message status-message--error" id="errorMsg" role="alert" aria-atomic="true">
             <svg class="status-message__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -219,22 +228,22 @@
       <div class="container--wide">
         <p class="section-label">HOW IT WORKS</p>
         <h2 class="section-title" id="how-heading">How to convert Unix time</h2>
-        <p class="section-body">Unix time counts seconds (or milliseconds) from 1 January 1970 UTC. Pick seconds or milliseconds, choose a zone for readable output, and copy ISO or epoch values for logs, APIs, and databases.</p>
+        <p class="section-body">Unix time counts from 1 January 1970 UTC. Paste a value, read <strong>UTC ISO</strong> first, then use <strong>Copy UTC</strong> or open <strong>Advanced</strong> for zone, mode, and units.</p>
         <div class="steps" role="list">
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">1</span>
-            <p class="step__title">Choose a mode</p>
-            <p class="step__desc">Convert a single epoch, parse an ISO string into epoch values, or paste many numbers at once.</p>
+            <p class="step__title">Paste your timestamp</p>
+            <p class="step__desc">Enter digits for epoch → date, or switch mode in Advanced for ISO → epoch or many lines at once.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">2</span>
-            <p class="step__title">Set units and zone</p>
-            <p class="step__desc">Match seconds vs milliseconds to your source (CLI vs JavaScript). Pick a time zone for the human-friendly line.</p>
+            <p class="step__title">Read UTC, then details</p>
+            <p class="step__desc">The ISO line is always UTC. Local wording and raw seconds or milliseconds sit below for APIs and logs.</p>
           </article>
           <article class="step" role="listitem">
             <span class="step__number" aria-hidden="true">3</span>
-            <p class="step__title">Copy the result</p>
-            <p class="step__desc">Use UTC ISO for APIs, localized text for reading, or batch lines for spreadsheets.</p>
+            <p class="step__title">Tune in Advanced</p>
+            <p class="step__desc">Change display zone, seconds vs milliseconds, or batch interpretation when the defaults are not enough.</p>
           </article>
         </div>
       </div>
@@ -416,7 +425,10 @@
       var outZoned = document.getElementById('outZoned');
       var outSeconds = document.getElementById('outSeconds');
       var outMillis = document.getElementById('outMillis');
+      var copyUtcBtn = document.getElementById('copyUtcBtn');
       var copyEpochBtn = document.getElementById('copyEpochBtn');
+      var advEpochUnits = document.getElementById('advEpochUnits');
+      var advBatchUnits = document.getElementById('advBatchUnits');
       var humanInput = document.getElementById('humanInput');
       var humanOutMs = document.getElementById('humanOutMs');
       var humanOutS = document.getElementById('humanOutS');
@@ -498,6 +510,7 @@
         outZoned.value = '';
         outSeconds.value = '';
         outMillis.value = '';
+        copyUtcBtn.disabled = true;
         copyEpochBtn.disabled = true;
       }
 
@@ -518,6 +531,7 @@
         outZoned.value = formatZoned(ms, getTzValue());
         outSeconds.value = String(Math.floor(ms / 1000));
         outMillis.value = String(ms);
+        copyUtcBtn.disabled = false;
         copyEpochBtn.disabled = false;
       }
 
@@ -591,6 +605,13 @@
         copyBatchBtn.disabled = nonEmpty === 0;
       }
 
+      function updateAdvancedVisibility() {
+        var epoch = modeEpoch.checked;
+        var batch = modeBatch.checked;
+        advEpochUnits.hidden = !epoch;
+        advBatchUnits.hidden = !batch;
+      }
+
       function setMode(which) {
         panelEpoch.classList.toggle('is-active', which === 'epoch');
         panelHuman.classList.toggle('is-active', which === 'human');
@@ -599,6 +620,7 @@
         panelHuman.hidden = which !== 'human';
         panelBatch.hidden = which !== 'batch';
         clearError();
+        updateAdvancedVisibility();
       }
 
       modeEpoch.addEventListener('change', function () { if (modeEpoch.checked) setMode('epoch'); });
@@ -647,6 +669,14 @@
       batchUnitSeconds.addEventListener('change', runBatch);
       batchUnitAuto.addEventListener('change', runBatch);
       batchUnitMillis.addEventListener('change', runBatch);
+
+      copyUtcBtn.addEventListener('click', function () {
+        var t = outIso.value;
+        if (!t) return;
+        window.TinyDataToolClipboard.copyWithFeedback(t, copyUtcBtn, function () {
+          showError('Copy failed. Select text and copy manually.');
+        });
+      });
 
       copyEpochBtn.addEventListener('click', function () {
         var summary = 'UTC: ' + outIso.value + '\n' + outZoned.value + '\nSeconds: ' + outSeconds.value + '\nMilliseconds: ' + outMillis.value;
