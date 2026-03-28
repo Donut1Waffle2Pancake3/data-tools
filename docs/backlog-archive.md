@@ -746,6 +746,24 @@ Use the same sections as open tickets (**Source**, **In plain English**, **Actio
 
 ---
 
+## 42. Tools hub — JSON-LD ItemList vs nav
+
+**Status:** Completed  
+**Source:** Audit: SEO #38 (2026-03-28)
+
+### In plain English
+
+- **What it was:** `ItemList` had 35 entries, wrong order vs header nav, and missed CSV Diff, CSV Column Analyzer, JSON Viewer, and Batch ZIP Extractor while hiding prod-hidden tools correctly only by omission.
+- **Why it mattered:** Structured data should mirror **visible** `NAV_GROUPS` order and labels for consistency and rich results.
+
+**Action:** Rebuilt `itemListElement` + `numberOfItems` (38) from `NAV_GROUPS` minus `PRODUCTION_HIDDEN_TOOL_IDS`. Note in [`docs/tools.md`](../tools.md) to update hub JSON-LD when nav changes.
+
+**Acceptance:** Count, URLs, order, and names match shipped nav labels.
+
+**Delivered:** [`tools/index.html`](../tools/index.html), [`docs/tools.md`](../tools.md).
+
+---
+
 <!--
 ## N. Short title
 

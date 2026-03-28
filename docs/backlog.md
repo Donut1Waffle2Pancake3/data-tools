@@ -4,7 +4,7 @@
 
 Batch on **`main`** (or current branch). **Tracker below is source of truth.**
 
-**Tracker (5 slots):** `X _ _ _ _`
+**Tracker (5 slots):** `X X _ _ _`
 
 **Rules**
 
@@ -72,27 +72,7 @@ Action items from [`site-rules.md`](site-rules.md), [`seo-rules.md`](seo-rules.m
 
 Item **numbers stay stable** (do not renumber when reprioritizing). Shipped or **closed** items go in [`backlog-archive.md`](backlog-archive.md); append there and remove them from this file.
 
-| Priority | # | Focus |
-|----------|---|-------|
-| Low | **42** | `tools/index.html` — keep JSON-LD `ItemList` `numberOfItems` + order aligned with [`js/site.js`](../js/site.js) nav (incl. hidden ids) |
-
-**Suggested order:** **42**.
-
----
-
-## 42. Tools hub — JSON-LD ItemList vs nav
-
-**Status:** Not completed  
-**Source:** Audit: SEO #38 (2026-03-28)
-
-### In plain English
-
-- **What it is:** [`tools/index.html`](../tools/index.html) embeds `numberOfItems` and a fixed `itemListElement` list; easy to drift when tools are added, reordered, or hidden via `NAV_GROUPS` / prod flags.
-- **Why you’d do it:** Rich result / internal consistency; avoids advertising URLs that are hidden in prod.
-
-**Action:** After any nav change, reconcile ItemList positions, names, and `numberOfItems` with [`js/site.js`](../js/site.js) `NAV_GROUPS` + `PRODUCTION_HIDDEN_TOOL_IDS` (same source of truth as [`sitemap.xml`](../sitemap.xml) comment). Optionally add a short note in [`docs/tools.md`](tools.md) or site-rules for editors.
-
-**Acceptance:** ItemList count and URLs match shipped nav intent; hidden tools omitted or documented if intentionally listed for staging only.
+**No open numbered tickets.** Next run: [idle / audit rotation](#when-no-actionable-tasks-remain) unless the audit inbox adds work.
 
 ---
 

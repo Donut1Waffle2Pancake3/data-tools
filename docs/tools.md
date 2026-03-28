@@ -1,6 +1,6 @@
 # Tools catalog
 
-All utilities on [TinyDataTool](https://tinydatatool.com), grouped like the site navigation. The canonical list and order live in [`js/site.js`](../js/site.js) (`NAV_GROUPS`); update that file when you add or rename a tool, then refresh this doc if you want them to stay in sync.
+All utilities on [TinyDataTool](https://tinydatatool.com), grouped like the site navigation. The canonical list and order live in [`js/site.js`](../js/site.js) (`NAV_GROUPS`); update that file when you add or rename a tool, then refresh this doc if you want them to stay in sync. The tools hub page [`tools/index.html`](../tools/index.html) JSON-LD `ItemList` should list the same **visible** tools in the same order—omit ids in `PRODUCTION_HIDDEN_TOOL_IDS` (see `site.js`).
 
 Live URLs use the site root; each tool folder also has `index.html` in the repo.
 
