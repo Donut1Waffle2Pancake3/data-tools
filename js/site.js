@@ -259,7 +259,7 @@ const RELATED_TOOL_OVERRIDES = {
       '      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">\n' +
       '        <path d="M6 1L2 2.8v3.5c0 2.3 1.7 4.3 4 4.7 2.3-.4 4-2.4 4-4.7V2.8L6 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>\n' +
       '      </svg>\n' +
-      '      No uploads · No tracking · No accounts\n' +
+      '      No uploads · No accounts\n' +
       '    </p>\n' +
       '  </div>\n' +
       '</footer>'
@@ -1024,6 +1024,35 @@ function parseCSVLines(text) {
       return safeTake(KEYS.json);
     },
   };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ============================================================
+   Vercel Analytics
+============================================================ */
+(function (global) {
+  if (!global || !global.document) return;
+
+  var hostname = global.location && global.location.hostname;
+  var isLocal =
+    !hostname ||
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '::1';
+
+  if (isLocal || global.location.protocol === 'file:') return;
+
+  global.va =
+    global.va ||
+    function () {
+      (global.vaq = global.vaq || []).push(arguments);
+    };
+
+  if (document.querySelector('script[src="/_vercel/insights/script.js"]')) return;
+
+  var script = document.createElement('script');
+  script.defer = true;
+  script.src = '/_vercel/insights/script.js';
+  (document.head || document.documentElement).appendChild(script);
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ============================================================

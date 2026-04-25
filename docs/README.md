@@ -1,6 +1,6 @@
 # TinyDataTool — Data Tools
 
-Free, browser-based utilities for working with CSV and JSON files. All tools run locally; no uploads, no tracking.
+Free, browser-based utilities for working with CSV and JSON files. All tools run locally with no uploads or accounts.
 
 **Live site:** [tinydatatool.com](https://tinydatatool.com)
 
